@@ -6,7 +6,7 @@ import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { RotatingLines } from 'react-loader-spinner'
+import { Puff } from 'react-loader-spinner'
 
 const Auth: FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -93,14 +93,14 @@ const Auth: FC = () => {
             Submit
           </span>
           <span className='absolute right-2'>
-            <RotatingLines
+            <Puff
               visible={isFetch === 'fetch'}
-              height='24'
-              width='24'
-              color='grey'
-              strokeWidth='5'
-              animationDuration='0.75'
-              ariaLabel='rotating-lines-loading'
+              height='80'
+              width='80'
+              color='#4fa94d'
+              ariaLabel='puff-loading'
+              wrapperStyle={{}}
+              wrapperClass=''
             />
           </span>
         </button>
