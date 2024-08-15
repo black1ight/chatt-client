@@ -101,8 +101,6 @@ const Auth: FC = () => {
               strokeWidth='5'
               animationDuration='0.75'
               ariaLabel='rotating-lines-loading'
-              wrapperStyle={{}}
-              wrapperClass=''
             />
           </span>
         </button>

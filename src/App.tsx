@@ -5,7 +5,6 @@ import { useAppDispatch } from './store/hooks'
 import { getTokenFromLocalStorage } from './helpers/localstorage.helper'
 import { AuthService } from './services/auth.service'
 import { logIn, logOut } from './store/user/userSlice'
-import { getMessages } from './store/messenger/messengerSlice'
 
 const App: FC = () => {
   const dispatch = useAppDispatch()

@@ -2,7 +2,6 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { MessagesService } from '../../services/messages.service'
 import { toast } from 'react-toastify'
 import { IPatchData } from '../../types/types'
-import { act } from 'react'
 
 export const getMessages = createAsyncThunk<any>(
   'messenger/getMyMessagesStatus',

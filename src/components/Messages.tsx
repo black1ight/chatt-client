@@ -3,7 +3,6 @@ import { useAppSelector } from '../store/hooks'
 import { format } from 'date-fns'
 import { GoKebabHorizontal } from 'react-icons/go'
 import MenuList from './MenuList'
-import { Audio, RotatingLines } from 'react-loader-spinner'
 
 const Messages: FC = () => {
   const { messages } = useAppSelector((state) => state.messenger)
