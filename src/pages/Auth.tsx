@@ -92,17 +92,6 @@ const Auth: FC = () => {
           <span className={`${isFetch === 'success' && 'animate-bounce'}`}>
             Submit
           </span>
-          <span className='absolute right-2'>
-            <RotatingLines
-              visible={isFetch === 'fetch'}
-              height='24'
-              width='24'
-              color='grey'
-              strokeWidth='5'
-              animationDuration='0.75'
-              ariaLabel='rotating-lines-loading'
-            />
-          </span>
         </button>
       </form>
       <div className='text-center pt-4'>
