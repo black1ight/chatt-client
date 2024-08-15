@@ -95,8 +95,8 @@ const Auth: FC = () => {
           <span className='absolute right-2'>
             <Puff
               visible={isFetch === 'fetch'}
-              height='80'
-              width='80'
+              height='24'
+              width='24'
               color='#4fa94d'
               ariaLabel='puff-loading'
               wrapperStyle={{}}
