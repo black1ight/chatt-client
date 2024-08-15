@@ -6,7 +6,6 @@ import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { RotatingLines } from 'react-loader-spinner'
 
 const Auth: FC = () => {
   const [isLogin, setIsLogin] = useState(true)
