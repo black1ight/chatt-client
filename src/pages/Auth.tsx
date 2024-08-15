@@ -6,7 +6,10 @@ import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
+<<<<<<< HEAD
 import { Puff } from 'react-loader-spinner'
+=======
+>>>>>>> 4c5d083d0c3cf0d154c1deb58b6c86836e2817cc
 
 const Auth: FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -92,6 +95,7 @@ const Auth: FC = () => {
           <span className={`${isFetch === 'success' && 'animate-bounce'}`}>
             Submit
           </span>
+<<<<<<< HEAD
           <span className='absolute right-2'>
             <Puff
               visible={isFetch === 'fetch'}
@@ -103,6 +107,8 @@ const Auth: FC = () => {
               wrapperClass=''
             />
           </span>
+=======
+>>>>>>> 4c5d083d0c3cf0d154c1deb58b6c86836e2817cc
         </button>
       </form>
       <div className='text-center pt-4'>
