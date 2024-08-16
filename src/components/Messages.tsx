@@ -52,7 +52,7 @@ const Messages: FC = () => {
                   {author && (
                     <div
                       onClick={() => openMenuHandler(idx)}
-                      className='relative '
+                      className='relative cursor-pointer'
                     >
                       <GoKebabHorizontal size={24} className='text-stone-500' />
                       {onOpenMenu === idx && <MenuList item={messages[idx]} />}
