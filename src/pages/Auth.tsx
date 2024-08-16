@@ -6,7 +6,7 @@ import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Puff } from 'react-loader-spinner'
+import { Oval, Puff } from 'react-loader-spinner'
 
 const Auth: FC = () => {
   const [isLogin, setIsLogin] = useState(true)
@@ -93,14 +93,15 @@ const Auth: FC = () => {
             Submit
           </span>
           <span className='absolute right-2'>
-            <Puff
+            <Oval
               visible={isFetch === 'fetch'}
               height='24'
               width='24'
               color='#4fa94d'
-              ariaLabel='puff-loading'
+              ariaLabel='oval-loading'
               wrapperStyle={{}}
               wrapperClass=''
+              strokeWidth='4'
             />
           </span>
         </button>
