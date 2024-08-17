@@ -34,16 +34,19 @@ export interface IResMessage {
   createdAt: Date
   updatedAt: Date
   userId: number
+  replyMessage: string
   user: IUser
 }
 
 export interface messengerState {
   messages: IResMessage[]
+  replyMessage: IResMessage | null
   status: Status
 }
 
 const initialState: messengerState = {
   messages: [],
+  replyMessage: null,
   status: Status.LOADING,
 }
 
@@ -70,6 +73,9 @@ export const messengerSlice = createSlice({
     removeMessages: (state) => {
       state.messages = []
     },
+    addReplayMessage: (state, action: PayloadAction<IResMessage | null>) => {
+      state.replyMessage = action.payload
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getMessages.fulfilled, (state, action) => {
@@ -84,7 +90,12 @@ export const messengerSlice = createSlice({
   },
 })
 
-export const { addMessage, updateMessage, removeMessages, deleteMessage } =
-  messengerSlice.actions
+export const {
+  addMessage,
+  updateMessage,
+  removeMessages,
+  deleteMessage,
+  addReplayMessage,
+} = messengerSlice.actions
 
 export default messengerSlice.reducer

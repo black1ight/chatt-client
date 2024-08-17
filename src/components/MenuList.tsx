@@ -4,12 +4,13 @@ import SocketApi from '../api/socket-api'
 import {
   addEditId,
   addText,
+  onReply,
   onStartWrite,
   removeText,
 } from '../store/form/formSlice'
 import { IResMessage } from '../store/messenger/messengerSlice'
-import { MdDelete, MdEdit } from 'react-icons/md'
-const messageMenuList = ['edit', 'delete']
+import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
+const messageMenuList = ['reply', 'edit', 'delete']
 
 interface IMenuListProps {
   item: IResMessage
@@ -34,6 +35,8 @@ const MenuList: FC<IMenuListProps> = ({ item }) => {
     } else if (elem === 'delete') {
       deleteMessageHandler()
       dispatch(removeText())
+    } else if (elem === 'reply') {
+      dispatch(onReply(item.id))
     }
   }
 
@@ -46,7 +49,15 @@ const MenuList: FC<IMenuListProps> = ({ item }) => {
             onClick={() => menuItemHandler(elem)}
             className='py-1 px-3 flex items-center gap-2 active:bg-stone-300 cursor-pointer'
           >
-            <span>{elem === 'edit' ? <MdEdit /> : <MdDelete />}</span>
+            <span>
+              {elem === 'edit' ? (
+                <MdEdit />
+              ) : elem === 'delete' ? (
+                <MdDelete />
+              ) : (
+                <MdOutlineReply />
+              )}
+            </span>
             <span>{elem}</span>
           </li>
         )

@@ -1,22 +1,22 @@
 import { FC, useEffect, useState } from 'react'
-import { useAppDispatch } from '../store/hooks'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { AuthService } from '../services/auth.service'
 import { toast } from 'react-toastify'
 import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
-import { Oval } from 'react-loader-spinner'
+import Loader from '../components/Loader'
+import { changeIsLoading } from '../store/helpers/helpersSlice'
 
 const Auth: FC = () => {
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
   const [isLogin, setIsLogin] = useState(true)
-  const [isFetch, setIsFetch] = useState<string | null>(null)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const isAuth = useAuth()
-
-  const dispatch = useAppDispatch()
-  const navigate = useNavigate()
+  const { isLoading } = useAppSelector((state) => state.helpers)
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value.toLowerCase())
@@ -28,38 +28,39 @@ const Auth: FC = () => {
 
   const registrationHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
-      setIsFetch('fetch')
+      dispatch(changeIsLoading('fetch'))
       e.preventDefault()
       const data = await AuthService.registration({ email, password })
       if (data) {
         toast.success('SUCCESS')
         setIsLogin(!isLogin)
-        setIsFetch('success')
+        dispatch(changeIsLoading('success'))
       }
     } catch (err: any) {
       const error = err.response?.data.message
       toast.error(error.toString())
-      setIsFetch(null)
+      dispatch(changeIsLoading(null))
     }
   }
 
   const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
-      setIsFetch('fetch')
+      dispatch(changeIsLoading('fetch'))
 
       e.preventDefault()
       const data = await AuthService.login({ email, password })
       if (data) {
         setTokenToLocalStorage('token', data.token)
         dispatch(logIn(data))
-        setIsFetch(null)
-        toast.success('Вхід успішний.')
+        dispatch(changeIsLoading(null))
+
+        toast.success('SUCCESS')
         navigate('/')
       }
     } catch (err: any) {
       const error = err.response?.data.message
       toast.error(error.toString())
-      setIsFetch(null)
+      dispatch(changeIsLoading(null))
     }
   }
 
@@ -89,20 +90,11 @@ const Auth: FC = () => {
           onChange={onChangePass}
         />
         <button className={`relative btn btn-grey `}>
-          <span className={`${isFetch === 'success' && 'animate-bounce'}`}>
+          <span className={`${isLoading === 'success' && 'animate-bounce'}`}>
             Submit
           </span>
           <span className='absolute right-2'>
-            <Oval
-              visible={isFetch === 'fetch'}
-              height='24'
-              width='24'
-              color='#4fa94d'
-              ariaLabel='oval-loading'
-              wrapperStyle={{}}
-              wrapperClass=''
-              strokeWidth='4'
-            />
+            <Loader />
           </span>
         </button>
       </form>
