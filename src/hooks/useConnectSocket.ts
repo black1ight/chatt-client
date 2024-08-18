@@ -20,7 +20,6 @@ export const useConnectSocket = () => {
 
     SocketApi.socket?.on('update-message', (dto) => {
       dispatch(updateMessage(dto))
-
       console.log(dto)
     })
 

@@ -28,13 +28,18 @@ export interface IUser {
   email: string
 }
 
+export interface IReply {
+  text: string
+  user: IUser
+}
+
 export interface IResMessage {
   id: number
   text: string
   createdAt: Date
   updatedAt: Date
   userId: number
-  replyMessage: string
+  reply: IReply
   user: IUser
 }
 

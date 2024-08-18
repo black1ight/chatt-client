@@ -16,7 +16,6 @@ import { changeIsLoading } from '../store/helpers/helpersSlice'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
-  const { replyMessage } = useAppSelector((state) => state.messenger)
   const { isLoading } = useAppSelector((state) => state.helpers)
   const { text, editId, onWrite, reply } = useAppSelector((state) => state.form)
 
@@ -45,7 +44,7 @@ const Form: FC = () => {
     } else {
       e.preventDefault()
       SocketApi.socket?.emit('server-path', {
-        replyMessage,
+        reply,
         type: 'new-message',
         text,
         userId: user?.id,
@@ -74,7 +73,7 @@ const Form: FC = () => {
   return (
     <form
       onSubmit={onSubmit}
-      className='relative flex w-full bg-white rounded-b-md max-sm:rounded-none '
+      className='relative flex items-center w-full bg-white rounded-b-md max-sm:rounded-none '
     >
       {reply && (
         <div className='absolute bg-slate-100 w-full -translate-y-full border'>
@@ -92,11 +91,16 @@ const Form: FC = () => {
         className='p-2 rounded-l-md max-sm:rounded-none resize-none w-full border-none outline-none'
         rows={2}
       />
+      {isLoading && (
+        <div className='absolute right-3'>
+          <Loader />
+        </div>
+      )}
+
       <button
         disabled={!text}
         className={`flex relative ${text ? 'translate-x-0' : 'translate-x-20'} items-center px-4 rounded-r-md max-sm:rounded-none transition-transform`}
       >
-        {isLoading && <Loader />}
         <LuSendHorizonal className=' text-slate-700' size={28} />
       </button>
     </form>
