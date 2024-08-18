@@ -11,13 +11,13 @@ import {
 } from '../store/form/formSlice'
 import SocketApi from '../api/socket-api'
 import Reply from './Reply'
-import Loader from './Loader'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
+import { addReplayMessage } from '../store/messenger/messengerSlice'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
-  const { isLoading } = useAppSelector((state) => state.helpers)
   const { text, editId, onWrite, reply } = useAppSelector((state) => state.form)
+  const { replyMessage } = useAppSelector((state) => state.messenger)
 
   const { user } = useAppSelector((state) => state.user)
   const areaRef = useRef<HTMLTextAreaElement>(null)
@@ -32,6 +32,8 @@ const Form: FC = () => {
       id: editId,
       text,
     })
+    dispatch(addReplayMessage(null))
+    dispatch(onReply(null))
     dispatch(removeText())
     dispatch(removeEditId())
   }
@@ -49,6 +51,7 @@ const Form: FC = () => {
         text,
         userId: user?.id,
       })
+      dispatch(addReplayMessage(null))
       dispatch(onReply(null))
       dispatch(removeText())
     }
@@ -75,10 +78,16 @@ const Form: FC = () => {
       onSubmit={onSubmit}
       className='relative flex items-center w-full bg-white rounded-b-md max-sm:rounded-none '
     >
-      {reply && (
+      {reply ? (
         <div className='absolute bg-slate-100 w-full -translate-y-full border'>
           <Reply />
         </div>
+      ) : replyMessage ? (
+        <div className='absolute bg-slate-100 w-full -translate-y-full border'>
+          <Reply />
+        </div>
+      ) : (
+        ''
       )}
 
       <textarea
@@ -91,11 +100,11 @@ const Form: FC = () => {
         className='p-2 rounded-l-md max-sm:rounded-none resize-none w-full border-none outline-none'
         rows={2}
       />
-      {isLoading && (
+      {/* {isLoading && (
         <div className='absolute right-3'>
           <Loader />
         </div>
-      )}
+      )} */}
 
       <button
         disabled={!text}

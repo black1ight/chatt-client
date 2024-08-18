@@ -13,8 +13,18 @@ const Reply: FC = () => {
   const findMessage = () => {
     if (reply) {
       const message = messages.find((item) => item.id === reply)
+      console.log(reply)
+
       message
-        ? dispatch(addReplayMessage(message))
+        ? dispatch(
+            addReplayMessage({
+              text: message.text,
+              user: {
+                email: message.user.email,
+                user_name: message.user.user_name,
+              },
+            }),
+          )
         : dispatch(addReplayMessage(null))
     }
   }

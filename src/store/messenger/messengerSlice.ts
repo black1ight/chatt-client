@@ -23,8 +23,8 @@ enum Status {
 }
 
 export interface IUser {
-  id: number
-  user_name: string
+  id?: number
+  user_name?: string
   email: string
 }
 
@@ -45,7 +45,7 @@ export interface IResMessage {
 
 export interface messengerState {
   messages: IResMessage[]
-  replyMessage: IResMessage | null
+  replyMessage: IReply | null
   status: Status
 }
 
@@ -78,7 +78,7 @@ export const messengerSlice = createSlice({
     removeMessages: (state) => {
       state.messages = []
     },
-    addReplayMessage: (state, action: PayloadAction<IResMessage | null>) => {
+    addReplayMessage: (state, action: PayloadAction<IReply | null>) => {
       state.replyMessage = action.payload
     },
   },

@@ -8,7 +8,10 @@ import {
   onStartWrite,
   removeText,
 } from '../store/form/formSlice'
-import { IResMessage } from '../store/messenger/messengerSlice'
+import {
+  addReplayMessage,
+  IResMessage,
+} from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
 const messageMenuList = ['reply', 'edit', 'delete']
 
@@ -28,6 +31,17 @@ const MenuList: FC<IMenuListProps> = ({ item }) => {
 
   const menuItemHandler = (elem: string) => {
     if (elem === 'edit') {
+      item.reply &&
+        dispatch(
+          addReplayMessage({
+            text: item.reply.text,
+            user: {
+              email: item.reply.user.email,
+              user_name: item.reply.user.user_name,
+            },
+          }),
+        )
+
       dispatch(addText(item.text))
       dispatch(onStartWrite())
 
