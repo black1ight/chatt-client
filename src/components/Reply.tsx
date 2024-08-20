@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addReplayMessage } from '../store/messenger/messengerSlice'
 import { IoMdClose } from 'react-icons/io'
