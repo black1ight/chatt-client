@@ -9,7 +9,9 @@ import {
 
 const TextArea: FC = () => {
   const dispatch = useAppDispatch()
-  const { text, onWrite, reply } = useAppSelector((state) => state.form)
+  const { text, onWrite, reply, areaHeight } = useAppSelector(
+    (state) => state.form,
+  )
 
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -33,7 +35,8 @@ const TextArea: FC = () => {
     if (areaRef.current !== null && areaRef.current.scrollHeight < 200) {
       areaRef.current.style.height = `48px`
       areaRef.current.style.height = `${areaRef.current.scrollHeight}px`
-      dispatch(addAreaHeight(areaRef.current.scrollHeight))
+      areaRef.current.scrollHeight !== areaHeight &&
+        dispatch(addAreaHeight(areaRef.current.scrollHeight))
     }
   }, [text])
 

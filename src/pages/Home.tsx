@@ -19,7 +19,7 @@ const Home: FC = () => {
   }, [reply])
 
   return (
-    <div className='h-[100dvh] overflow-hidden flex flex-col mt-[2px]'>
+    <div className='h-[100dvh] overflow-hidden flex flex-col mt-[2px] shadow-outer'>
       <Header />
 
       <Messages />

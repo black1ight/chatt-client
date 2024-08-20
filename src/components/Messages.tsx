@@ -48,7 +48,7 @@ const Messages: FC = () => {
   }, [])
   return (
     <div
-      className={`flex flex-grow-[3] w-full overflow-y-auto bg-blue-300 rounded-md max-sm:rounded-none p-4`}
+      className={`flex flex-grow-[3] w-full overflow-y-auto bg-slate-200  p-4`}
     >
       <ul className='flex w-full flex-col gap-2'>
         {messages?.map((item, idx) => {
@@ -60,7 +60,7 @@ const Messages: FC = () => {
               className={`flex relative ${author && 'justify-end'}`}
             >
               <div
-                className={`flex relative flex-col max-w-[80%] ${author ? 'bg-white' : 'bg-blue-50'} rounded-md px-3 py-1`}
+                className={`flex relative flex-col max-w-[80%] ${author ? 'bg-white' : 'bg-blue-50'} rounded-md px-3 py-1 shadow-outer`}
               >
                 <div className='flex gap-4 justify-between'>
                   <span className='text-cyan-700'>
