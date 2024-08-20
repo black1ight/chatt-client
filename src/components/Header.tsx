@@ -22,7 +22,7 @@ const Header: FC = () => {
   }
 
   return (
-    <div className='w-full bg-white p-4 flex items-center'>
+    <div className='w-full bg-white p-4 flex items-center border-b border-stone-300'>
       <Link to={'/'} className='font-black text-3xl text-stone-900/70'>
         chatt
       </Link>

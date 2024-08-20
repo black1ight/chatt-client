@@ -5,6 +5,7 @@ export interface formState {
   editId: number | null
   onWrite: boolean
   reply: number | null
+  areaHeight: number
 }
 
 const initialState: formState = {
@@ -12,6 +13,7 @@ const initialState: formState = {
   editId: null,
   onWrite: false,
   reply: null,
+  areaHeight: 48,
 }
 
 export const formSlice = createSlice({
@@ -39,6 +41,9 @@ export const formSlice = createSlice({
     onReply: (state, action: PayloadAction<number | null>) => {
       state.reply = action.payload
     },
+    addAreaHeight: (state, action: PayloadAction<number>) => {
+      state.areaHeight = action.payload
+    },
   },
 })
 
@@ -50,6 +55,7 @@ export const {
   addEditId,
   removeEditId,
   onReply,
+  addAreaHeight,
 } = formSlice.actions
 
 export default formSlice.reducer

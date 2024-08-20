@@ -9,11 +9,12 @@ import { onReply } from '../store/form/formSlice'
 const Messages: FC = () => {
   const dispatch = useAppDispatch()
   const { messages } = useAppSelector((state) => state.messenger)
-  const { onWrite } = useAppSelector((state) => state.form)
+  const { onWrite, reply, areaHeight } = useAppSelector((state) => state.form)
   const { user } = useAppSelector((state) => state.user)
   const [onOpenMenu, setOnOpenMenu] = useState<number | null>(null)
 
   const messagesRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
 
   const scrollToElement = () => {
     const { current } = messagesRef
@@ -32,9 +33,23 @@ const Messages: FC = () => {
 
   useEffect(() => {
     scrollToElement()
-  }, [messages, onWrite])
+  }, [messages, onWrite, reply, areaHeight])
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !event.composedPath().includes(menuRef.current)) {
+        setOnOpenMenu(null)
+      }
+    }
+    document.body.addEventListener('click', handleClickOutside)
+    return () => {
+      document.body.removeEventListener('click', handleClickOutside)
+    }
+  }, [])
   return (
-    <div className='flex bg-white h-full overflow-y-scroll w-full rounded-md max-sm:rounded-none p-4'>
+    <div
+      className={`flex flex-grow-[3] w-full overflow-y-auto bg-blue-300 rounded-md max-sm:rounded-none p-4`}
+    >
       <ul className='flex w-full flex-col gap-2'>
         {messages?.map((item, idx) => {
           const author = user?.id === item.userId
@@ -45,7 +60,7 @@ const Messages: FC = () => {
               className={`flex relative ${author && 'justify-end'}`}
             >
               <div
-                className={`flex relative flex-col max-w-[80%] ${author ? 'bg-slate-200' : 'bg-stone-200'} rounded-md px-3 py-1`}
+                className={`flex relative flex-col max-w-[80%] ${author ? 'bg-white' : 'bg-blue-50'} rounded-md px-3 py-1`}
               >
                 <div className='flex gap-4 justify-between'>
                   <span className='text-cyan-700'>
@@ -54,6 +69,7 @@ const Messages: FC = () => {
 
                   {author ? (
                     <div
+                      ref={menuRef}
                       onClick={() => openMenuHandler(idx)}
                       className='relative cursor-pointer'
                     >
@@ -69,7 +85,7 @@ const Messages: FC = () => {
                 </div>
                 {reply && (
                   <div
-                    className={`w-full bg-slate-300 px-3 rounded-r-md border-l-[3px] border-slate-400 text-sm mb-1`}
+                    className={`w-full bg-blue-100 px-3 rounded-r-md border-l-[3px] border-slate-400 text-sm mb-1`}
                   >
                     <span className='text-cyan-700'>
                       {item.reply.user.email.split('@')[0]}
@@ -99,7 +115,7 @@ const Messages: FC = () => {
               </div>
               {/* decore (rectangle) */}
               <span
-                className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-slate-200' : 'border-stone-200'} `}
+                className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-white' : 'border-blue-50'} `}
               ></span>
             </li>
           )

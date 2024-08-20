@@ -69,13 +69,13 @@ const Auth: FC = () => {
   }, [isAuth])
 
   return (
-    <div className='pt-[100px] text-center'>
+    <div className='flex h-[100dvh] flex-col justify-center text-center'>
       <h1 className='text-center text-xl font-medium pb-6'>
         {isLogin ? 'Log In' : 'Registration'}
       </h1>
       <form
         onSubmit={isLogin ? loginHandler : registrationHandler}
-        className='flex flex-col gap-4 max-w-[250px] mx-auto'
+        className='flex flex-col gap-4 w-full max-w-[25     0px] mx-auto'
       >
         <input
           className='input'

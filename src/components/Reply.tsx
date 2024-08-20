@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addReplayMessage } from '../store/messenger/messengerSlice'
 import { IoMdClose } from 'react-icons/io'
@@ -13,7 +13,6 @@ const Reply: FC = () => {
   const findMessage = () => {
     if (reply) {
       const message = messages.find((item) => item.id === reply)
-      console.log(reply)
 
       message
         ? dispatch(
