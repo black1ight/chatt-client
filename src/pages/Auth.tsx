@@ -75,7 +75,7 @@ const Auth: FC = () => {
       </h1>
       <form
         onSubmit={isLogin ? loginHandler : registrationHandler}
-        className='flex flex-col gap-4 w-full max-w-[25     0px] mx-auto'
+        className='flex flex-col gap-4 w-full max-w-[250px] mx-auto'
       >
         <input
           className='input'
