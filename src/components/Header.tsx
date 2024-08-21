@@ -34,7 +34,7 @@ const Header: FC = () => {
           </button>
         </Link>
       ) : (
-        <div className='flex items-center gap-2 ml-auto'>
+        <div className='flex items-end gap-2 ml-auto'>
           <span className='text-cyan-700'>{user?.email.split('@')[0]}</span>
           <button
             onClick={logoutHandler}
