@@ -9,7 +9,7 @@ import { onReply } from '../store/form/formSlice'
 const Messages: FC = () => {
   const dispatch = useAppDispatch()
   const { messages } = useAppSelector((state) => state.messenger)
-  const { onWrite, reply } = useAppSelector((state) => state.form)
+  const { reply } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
   const { user } = useAppSelector((state) => state.user)
   const [onOpenMenu, setOnOpenMenu] = useState<number | null>(null)
