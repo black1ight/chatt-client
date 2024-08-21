@@ -101,7 +101,7 @@ const Messages: FC = () => {
                   </div>
                 )}
                 <div className=''>
-                  <span className=''>{item.text}</span>
+                  <span className='break-words'>{item.text}</span>
                   <span className={`ml-auto opacity-0 pl-3 text-sm`}>
                     {item.updatedAt &&
                       item.createdAt !== item.updatedAt &&
