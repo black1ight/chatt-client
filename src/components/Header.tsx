@@ -38,7 +38,7 @@ const Header: FC = () => {
           <span className='text-cyan-700'>{user?.email.split('@')[0]}</span>
           <button
             onClick={logoutHandler}
-            className='btn-sm shadow-outer text-stone-900/70'
+            className='btn-sm shadow-outer text-stone-900/70 px-1'
           >
             <CiLogout size={24} className='text-rose-700' />
           </button>
