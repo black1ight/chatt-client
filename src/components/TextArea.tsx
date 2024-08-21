@@ -1,30 +1,27 @@
-import { FC, SyntheticEvent, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import {
-  addAreaHeight,
-  addText,
-  onEndWrite,
-  onStartWrite,
-} from '../store/form/formSlice'
+import { addEditId, addOnWrite } from '../store/form/formSlice'
+import { addText } from '../store/form/textSlise'
+import { addAreaHeight } from '../store/form/areaSlice'
 
 const TextArea: FC = () => {
   const dispatch = useAppDispatch()
-  const { text, onWrite, reply, areaHeight } = useAppSelector(
-    (state) => state.form,
-  )
+  const { onWrite, reply } = useAppSelector((state) => state.form)
+  const { text } = useAppSelector((state) => state.text)
+  const { areaHeight } = useAppSelector((state) => state.area)
 
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
-  const onChangeText = (event: SyntheticEvent) => {
-    const target = event.target as HTMLTextAreaElement
+  const onChangeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const target = event.currentTarget
     dispatch(addText(target.value))
   }
 
   const areaOnFocus = () => {
-    dispatch(onStartWrite())
+    dispatch(addOnWrite(true))
   }
   const areaOnBlur = () => {
-    dispatch(onEndWrite())
+    dispatch(addOnWrite(false))
   }
   useEffect(() => {
     onWrite && areaRef.current?.focus()
@@ -32,6 +29,7 @@ const TextArea: FC = () => {
   }, [onWrite, reply])
 
   useEffect(() => {
+    !text && dispatch(addEditId(null))
     if (areaRef.current !== null && areaRef.current.scrollHeight < 200) {
       areaRef.current.style.height = `48px`
       areaRef.current.style.height = `${areaRef.current.scrollHeight}px`

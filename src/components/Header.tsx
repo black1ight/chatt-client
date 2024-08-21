@@ -34,13 +34,15 @@ const Header: FC = () => {
           </button>
         </Link>
       ) : (
-        <button
-          onClick={logoutHandler}
-          className='btn bg-slate-300 ml-auto text-stone-900/70'
-        >
-          {user?.email.split('@')[0]}
-          <CiLogout size={24} />
-        </button>
+        <div className='flex items-center gap-2 ml-auto'>
+          <span className='text-cyan-700'>{user?.email.split('@')[0]}</span>
+          <button
+            onClick={logoutHandler}
+            className='btn-sm shadow-outer text-stone-900/70'
+          >
+            <CiLogout size={24} className='text-rose-700' />
+          </button>
+        </div>
       )}
     </div>
   )

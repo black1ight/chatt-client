@@ -1,18 +1,13 @@
 import { FC } from 'react'
 import { useAppDispatch } from '../store/hooks'
 import SocketApi from '../api/socket-api'
-import {
-  addEditId,
-  addText,
-  onReply,
-  onStartWrite,
-  removeText,
-} from '../store/form/formSlice'
+import { addEditId, addOnWrite, onReply } from '../store/form/formSlice'
 import {
   addReplayMessage,
   IResMessage,
 } from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
+import { addText, removeText } from '../store/form/textSlise'
 const messageMenuList = ['reply', 'edit', 'delete']
 
 interface IMenuListProps {
@@ -43,7 +38,7 @@ const MenuList: FC<IMenuListProps> = ({ item }) => {
         )
 
       dispatch(addText(item.text))
-      dispatch(onStartWrite())
+      dispatch(addOnWrite(true))
 
       dispatch(addEditId(item.id))
     } else if (elem === 'delete') {

@@ -75,7 +75,7 @@ const Auth: FC = () => {
       </h1>
       <form
         onSubmit={isLogin ? loginHandler : registrationHandler}
-        className='flex flex-col gap-4 w-full max-w-[250px] mx-auto'
+        className='flex flex-col gap-4 w-full max-w-[300px] mx-auto'
       >
         <input
           className='input'
@@ -89,7 +89,7 @@ const Auth: FC = () => {
           type='password'
           onChange={onChangePass}
         />
-        <button className={`relative btn btn-grey `}>
+        <button className={`relative btn btn-grey`}>
           <span className={`${isLoading === 'success' && 'animate-bounce'}`}>
             Submit
           </span>

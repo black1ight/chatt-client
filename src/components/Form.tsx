@@ -1,15 +1,17 @@
 import { FC, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { LuSendHorizonal } from 'react-icons/lu'
-import { onReply, removeEditId, removeText } from '../store/form/formSlice'
+import { addEditId, onReply } from '../store/form/formSlice'
 import SocketApi from '../api/socket-api'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
 import { addReplayMessage } from '../store/messenger/messengerSlice'
 import TextArea from './TextArea'
+import { removeText } from '../store/form/textSlise'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
-  const { text, editId, onWrite, reply } = useAppSelector((state) => state.form)
+  const { editId, onWrite, reply } = useAppSelector((state) => state.form)
+  const { text } = useAppSelector((state) => state.text)
 
   const { user } = useAppSelector((state) => state.user)
   const areaRef = useRef<HTMLTextAreaElement>(null)
@@ -23,7 +25,7 @@ const Form: FC = () => {
     dispatch(addReplayMessage(null))
     dispatch(onReply(null))
     dispatch(removeText())
-    dispatch(removeEditId())
+    dispatch(addEditId(null))
   }
 
   const sendMail = async (e: React.FormEvent<HTMLFormElement>) => {
