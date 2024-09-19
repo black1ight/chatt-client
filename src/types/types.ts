@@ -1,4 +1,3 @@
-import { Socket } from 'socket.io-client'
 import { IRoomColors } from '../components/sidebar/CreateForm'
 import { IResMessage } from '../store/messenger/messengerSlice'
 
