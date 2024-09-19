@@ -1,13 +1,18 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useCallback, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addEditId, addOnWrite } from '../store/form/formSlice'
 import { addText } from '../store/form/textSlise'
 import { addAreaHeight } from '../store/form/areaSlice'
+import SocketApi from '../api/socket-api'
+import debounce from 'lodash.debounce'
+import { getUserName } from './sidebar/Sidebar'
 
 const TextArea: FC = () => {
   const dispatch = useAppDispatch()
   const { onWrite, reply } = useAppSelector((state) => state.form)
   const { text } = useAppSelector((state) => state.text)
+  const { user } = useAppSelector((state) => state.user)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
   const { areaHeight } = useAppSelector((state) => state.area)
 
   const areaRef = useRef<HTMLTextAreaElement>(null)
@@ -15,6 +20,7 @@ const TextArea: FC = () => {
   const onChangeText = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const target = event.currentTarget
     dispatch(addText(target.value))
+    onTyping()
   }
 
   const areaOnFocus = () => {
@@ -23,6 +29,19 @@ const TextArea: FC = () => {
   const areaOnBlur = () => {
     dispatch(addOnWrite(false))
   }
+
+  const onTyping = useCallback(
+    debounce(async () => {
+      SocketApi.socket?.emit('typing', {
+        userId: user?.id,
+        userName: getUserName(user?.email!),
+        roomId: activeRoom?.id,
+      })
+      console.log('write')
+    }, 500),
+    [],
+  )
+
   useEffect(() => {
     onWrite && areaRef.current?.focus()
     reply && areaRef.current?.focus()

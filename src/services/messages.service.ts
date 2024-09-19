@@ -3,8 +3,17 @@ import { IResMessage } from '../store/messenger/messengerSlice'
 import { IPatchData } from '../types/types'
 
 export const MessagesService = {
-  async getMessages(): Promise<IResMessage[] | undefined> {
-    const { data } = await instance.get<IResMessage[]>('messages')
+  async getMessages(property: string): Promise<IResMessage[] | undefined> {
+    const { data } = await instance.get<IResMessage[]>(`messages?${property}`)
+    if (data) return data
+  },
+
+  async getMessagesByFilter(
+    property: string,
+  ): Promise<IResMessage[] | undefined> {
+    const { data } = await instance.get<IResMessage[]>(
+      `messages?sortBy=${property}`,
+    )
     if (data) return data
   },
 
@@ -13,6 +22,11 @@ export const MessagesService = {
       text: patchData.text,
     }
     const { data } = await instance.patch<any>(`messages/${patchData.id}`, text)
+    return data
+  },
+
+  async readMessage(id: number): Promise<IResMessage> {
+    const { data } = await instance.patch<IResMessage>(`messages/read/${id}`)
     return data
   },
 

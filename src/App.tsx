@@ -5,9 +5,12 @@ import { useAppDispatch } from './store/hooks'
 import { getTokenFromLocalStorage } from './helpers/localstorage.helper'
 import { AuthService } from './services/auth.service'
 import { logIn, logOut } from './store/user/userSlice'
+import useModal from './hooks/useModal'
+import Modal from './components/modal'
 
 const App: FC = () => {
   const dispatch = useAppDispatch()
+  const modalProps = useModal()
 
   const checkAuth = async () => {
     const token = getTokenFromLocalStorage()
@@ -31,7 +34,12 @@ const App: FC = () => {
     checkAuth()
   }, [])
 
-  return <RouterProvider router={router} />
+  return (
+    <>
+      <RouterProvider router={router} />
+      <Modal {...modalProps} />
+    </>
+  )
 }
 
 export default App

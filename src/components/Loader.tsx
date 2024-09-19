@@ -4,7 +4,6 @@ import { useAppSelector } from '../store/hooks'
 
 const Loader: FC = () => {
   const { isLoading } = useAppSelector((state) => state.helpers)
-  console.log(isLoading)
 
   return (
     <Oval

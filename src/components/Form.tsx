@@ -12,8 +12,9 @@ const Form: FC = () => {
   const dispatch = useAppDispatch()
   const { editId, onWrite, reply } = useAppSelector((state) => state.form)
   const { text } = useAppSelector((state) => state.text)
-
   const { user } = useAppSelector((state) => state.user)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
+
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
   const patchMessageHandler = async () => {
@@ -21,6 +22,8 @@ const Form: FC = () => {
       type: 'update-message',
       id: editId,
       text,
+      roomId: activeRoom?.id,
+      userId: user?.id,
     })
     dispatch(addReplayMessage(null))
     dispatch(onReply(null))
@@ -40,6 +43,7 @@ const Form: FC = () => {
         type: 'new-message',
         text,
         userId: user?.id,
+        roomId: activeRoom?.id,
       })
       dispatch(addReplayMessage(null))
       dispatch(onReply(null))
@@ -53,7 +57,9 @@ const Form: FC = () => {
   }
 
   useEffect(() => {
-    onWrite && areaRef.current?.focus()
+    if (onWrite) {
+      areaRef.current?.focus()
+    }
     reply && areaRef.current?.focus()
   }, [onWrite, reply])
   return (

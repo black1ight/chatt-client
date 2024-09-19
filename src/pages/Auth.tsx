@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Loader from '../components/Loader'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
+import { iconColors } from '../components/sidebar/CreateForm'
 
 const Auth: FC = () => {
   const navigate = useNavigate()
@@ -17,6 +18,11 @@ const Auth: FC = () => {
   const [password, setPassword] = useState<string>('')
   const isAuth = useAuth()
   const { isLoading } = useAppSelector((state) => state.helpers)
+
+  const getRandomColor = () => {
+    const color = iconColors[Math.floor(Math.random() * iconColors.length)]
+    return color
+  }
 
   const onChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.target.value.toLowerCase())
@@ -30,7 +36,11 @@ const Auth: FC = () => {
     try {
       dispatch(changeIsLoading('fetch'))
       e.preventDefault()
-      const data = await AuthService.registration({ email, password })
+      const data = await AuthService.registration({
+        email,
+        password,
+        color: getRandomColor(),
+      })
       if (data) {
         toast.success('SUCCESS')
         setIsLogin(!isLogin)

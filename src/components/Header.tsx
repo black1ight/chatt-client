@@ -6,11 +6,23 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { logOut } from '../store/user/userSlice'
 import { removeTokenFromLocalStorage } from '../helpers/localstorage.helper'
 import { toast } from 'react-toastify'
+import { addActiveRoom } from '../store/rooms/roomsSlice'
+
+import { GoArrowLeft } from 'react-icons/go'
+import { getMessages } from '../store/messenger/messengerSlice'
+import { useGetUnreadChats } from '../hooks/useGetUnreadChats'
+import useModal from '../hooks/useModal'
+import RoomProfile from './room/RoomProfile'
+import RoomLabel from './room/RoomLabel'
 const Header: FC = () => {
   const isAuth = useAuth()
   const { user } = useAppSelector((state) => state.user)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
+
+  const { dialogCount } = useGetUnreadChats()
+  const props = useModal()
 
   const logoutHandler = () => {
     if (window.confirm('Log out of your account?')) {
@@ -21,11 +33,31 @@ const Header: FC = () => {
     }
   }
 
+  const backToSideBar = () => {
+    dispatch(addActiveRoom(null))
+    dispatch(getMessages(''))
+  }
+
   return (
-    <div className='w-full bg-white p-4 flex items-center border-b border-stone-300'>
-      <Link to={'/'} className='font-black text-3xl text-stone-900/70'>
-        chatt
-      </Link>
+    <div className={`w-full h-20 bg-white p-2 flex items-center border-b`}>
+      {activeRoom && (
+        <div className='hidden max-sm:flex items-center gap-1 bg-white'>
+          <div
+            onClick={backToSideBar}
+            className='flex relative justify-center items-center w-10 h-10 border rounded-full'
+          >
+            {dialogCount > 0 && (
+              <span className='w-6 h-6 absolute -left-1 -top-1 flex justify-center items-center rounded-full text-xs bg-blue-400 shadow-md text-white'>
+                {dialogCount}
+              </span>
+            )}
+            <GoArrowLeft size={24} />
+          </div>
+        </div>
+      )}
+
+      {activeRoom && <RoomLabel {...props} />}
+
       {!isAuth ? (
         <Link to='/auth' className='ml-auto'>
           <button className='btn bg-slate-300  text-stone-900/70'>
@@ -44,6 +76,7 @@ const Header: FC = () => {
           </button>
         </div>
       )}
+      {props.open && <RoomProfile {...props} />}
     </div>
   )
 }
