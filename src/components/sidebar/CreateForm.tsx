@@ -157,7 +157,10 @@ const CreateForm: FC<CreateFormProps> = (props) => {
           </ul>
         )}
         <div className='flex justify-center gap-2 text-slate-600'>
-          <button className='w-full btn-sm border-none hover:bg-slate-200 active:bg-slate-200'>
+          <button
+            disabled={nameValue.length === 0}
+            className='w-full btn-sm border-none hover:bg-slate-200 active:bg-slate-200'
+          >
             Create
           </button>
           <button
