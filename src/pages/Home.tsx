@@ -1,23 +1,72 @@
 import { FC, useEffect } from 'react'
 import Header from '../components/Header'
 import Room from '../components/room/Room'
-import Sidebar from '../components/sidebar/Sidebar'
+import Sidebar from '../components/Sidebar'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { getRooms } from '../store/rooms/roomsSlice'
-import { useConnectSocket } from '../hooks/useConnectSocket'
-import { getMessages } from '../store/messenger/messengerSlice'
+import Profile from '../components/sidebar/Profile'
+import { MessagesService } from '../services/messages.service'
+import db from '../helpers/db'
+import { toast } from 'react-toastify'
+import { RoomsService } from '../services/rooms.services'
 
 const Home: FC = () => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  useConnectSocket()
+  const { isOpen } = useAppSelector((state) => state.user)
+
+  const addMessagesToDb = async () => {
+    try {
+      const data = await MessagesService.getMessages('')
+      if (data) {
+        for (const message of data) {
+          const isExist = await db
+            .table('messages')
+            .where('id')
+            .equals(message.id)
+            .count()
+          if (!isExist) {
+            await db.table('messages').add(message)
+            console.log(message)
+          }
+        }
+        // await db.messages.bulkAdd(data)
+        console.log('messages have been updated!')
+      }
+    } catch (error) {
+      toast.error('error for add messages to db')
+    }
+  }
+  const addRoomsToDb = async () => {
+    try {
+      const data = await RoomsService.getRooms()
+      if (data) {
+        for (const room of data) {
+          const isExist = await db
+            .table('rooms')
+            .where('id')
+            .equals(room.id)
+            .count()
+          if (!isExist) {
+            await db.table('rooms').add(room)
+            console.log(room)
+          }
+        }
+        // await db.messages.bulkAdd(data)
+        console.log('rooms have been updated!')
+      }
+    } catch (error) {
+      toast.error('error for add messages to db')
+    }
+  }
 
   useEffect(() => {
-    dispatch(getMessages(''))
-    dispatch(getRooms())
+    addMessagesToDb()
+    addRoomsToDb()
   }, [])
+
   return (
-    <div className='h-[100dvh] overflow-hidden flex gap-1'>
+    <div className='relative h-[100dvh] overflow-hidden flex gap-1'>
+      {isOpen && <Profile />}
       <Sidebar />
       <div className={`${!activeRoom && 'max-sm:hidden'} w-full`}>
         <Header />

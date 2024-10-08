@@ -30,7 +30,8 @@ export const RoomsService = {
     if (data) return data
   },
 
-  async removeRoom(id: number): Promise<any> {
-    await instance.delete(`rooms/${id}`)
+  async removeRoom(id: string): Promise<any> {
+    const { data } = await instance.delete(`rooms/${id}`)
+    return data
   },
 }

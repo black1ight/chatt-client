@@ -19,11 +19,22 @@ export default {
         'scale-slow': 'scale 0.8s linear infinite ',
         'scale-middle': 'scale 0.8s linear infinite 0.2s',
         'scale-fast': 'scale 0.8s linear infinite 0.4s',
+
+        'open-menu': 'onOpen 0.3s cubic-bezier(0, 0, 0.2, 1)',
+        'close-menu': 'onClose 0.3s cubic-bezier(0, 0, 0.2, 1)',
       },
       keyframes: {
         scale: {
           '0%, 50%, 100%': { transform: 'scale(1)' },
           '25%': { transform: 'scale(1.5)' },
+        },
+        onOpen: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
+        onClose: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-100%)' },
         },
       },
     },

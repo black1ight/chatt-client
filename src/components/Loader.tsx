@@ -2,14 +2,18 @@ import { FC } from 'react'
 import { Oval } from 'react-loader-spinner'
 import { useAppSelector } from '../store/hooks'
 
-const Loader: FC = () => {
+interface LoaderProps {
+  size: string
+}
+
+const Loader: FC<LoaderProps> = ({ size }) => {
   const { isLoading } = useAppSelector((state) => state.helpers)
 
   return (
     <Oval
       visible={isLoading === 'fetch'}
-      height='24'
-      width='24'
+      height={size}
+      width={size}
       color='#4fa94d'
       ariaLabel='oval-loading'
       wrapperStyle={{}}

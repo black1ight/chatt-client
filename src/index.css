@@ -29,4 +29,12 @@
   .btn-grey {
     @apply bg-stone-600 active:bg-stone-700 hover:bg-stone-700 text-white;
   }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

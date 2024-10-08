@@ -7,6 +7,7 @@ import { changeIsLoading } from '../store/helpers/helpersSlice'
 import { addReplayMessage } from '../store/messenger/messengerSlice'
 import TextArea from './TextArea'
 import { removeText } from '../store/form/textSlise'
+import db from '../helpers/db'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
@@ -18,8 +19,7 @@ const Form: FC = () => {
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
   const patchMessageHandler = async () => {
-    SocketApi.socket?.emit('server-path', {
-      type: 'update-message',
+    SocketApi.socket?.emit('update-message', {
       id: editId,
       text,
       roomId: activeRoom?.id,
@@ -38,13 +38,21 @@ const Form: FC = () => {
       patchMessageHandler()
     } else {
       e.preventDefault()
-      SocketApi.socket?.emit('server-path', {
+      const newMessageDto = {
         reply,
-        type: 'new-message',
+        replyId: null,
         text,
         userId: user?.id,
+        user,
         roomId: activeRoom?.id,
-      })
+        readUsers: [user?.id],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: 'pending',
+      }
+      db.table('messages').add(newMessageDto)
+
+      SocketApi.socket?.emit('new-message', newMessageDto)
       dispatch(addReplayMessage(null))
       dispatch(onReply(null))
       dispatch(removeText())

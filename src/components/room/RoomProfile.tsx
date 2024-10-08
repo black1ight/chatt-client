@@ -1,13 +1,13 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import Modal from '../modal'
 import { ModalProps } from '../../hooks/useModal'
 import RoomLabel from './RoomLabel'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { getUserName } from '../sidebar/Sidebar'
+import { getUserName } from '../Sidebar'
 
 import { IResUser, IUser } from '../../types/types'
 import { RoomsService } from '../../services/rooms.services'
-import { addActiveRoom, getRooms } from '../../store/rooms/roomsSlice'
+import { addActiveRoom } from '../../store/rooms/roomsSlice'
 import { CiLogout } from 'react-icons/ci'
 
 import Subscribers from './Subscribers'
@@ -20,13 +20,6 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
   const myProfile = useAppSelector((state) => state.user.user)
 
   const roomOwner = myProfile?.id == activeRoom?.owner
-
-  const getRoomById = async (id: string) => {
-    const data = await RoomsService.getRoomById(id)
-    if (data) {
-      dispatch(addActiveRoom(data))
-    }
-  }
 
   const removeSubscriber = async (user: IResUser | IUser) => {
     if (
@@ -48,21 +41,16 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
         if (data) {
           dispatch(addActiveRoom(null))
           props.onClose()
-          dispatch(getRooms())
         }
       }
     }
   }
 
-  useEffect(() => {
-    getRoomById(activeRoom?.id!)
-  }, [])
-
   return (
     <Modal {...props}>
       <div className='w-[300px] py-3.5 flex flex-col gap-2'>
         <div className='p-2 bg-slate-200'>
-          <RoomLabel {...props} />
+          <RoomLabel {...props} room={activeRoom!} />
         </div>
         <Subscribers
           {...props}

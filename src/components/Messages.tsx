@@ -1,18 +1,12 @@
-import { FC, useEffect, useRef, useState } from 'react'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
-import {
-  addUnreadMessages,
-  IResMessage,
-  removeUnreadMessages,
-} from '../store/messenger/messengerSlice'
+import { act, FC, useEffect, useRef, useState } from 'react'
+import { useAppSelector } from '../store/hooks'
+import { IResMessage } from '../store/messenger/messengerSlice'
 import MessageItem from './messages/MessageItem'
 import SocketApi from '../api/socket-api'
+import db from '../helpers/db'
+import { useLiveQuery } from 'dexie-react-hooks'
 
 const Messages: FC = () => {
-  const dispatch = useAppDispatch()
-  const { messages, unreadMessages } = useAppSelector(
-    (state) => state.messenger,
-  )
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { reply, onWrite } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
@@ -20,6 +14,18 @@ const Messages: FC = () => {
   const [onOpenMenu, setOnOpenMenu] = useState<number | null>(null)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
+
+  const messages =
+    activeRoom &&
+    useLiveQuery(
+      async (): Promise<IResMessage[] | undefined> =>
+        await db
+          .table('messages')
+          .where('roomId')
+          .equals(activeRoom.id)
+          .toArray(),
+      [activeRoom],
+    )
 
   const scrollToBottom = () => {
     const { current } = messageBodyRef
@@ -36,12 +42,25 @@ const Messages: FC = () => {
     }
   }
 
-  const readMessage = async (message: IResMessage) => {
-    SocketApi.socket?.emit('server-path', {
-      ...message,
-      type: 'read-message',
-    })
-    dispatch(removeUnreadMessages(message.id))
+  const readMessage = async () => {
+    const array: IResMessage[] = []
+    onWrite &&
+      user &&
+      messages?.forEach((item) => {
+        if (item.readUsers.indexOf(user?.id) == -1) {
+          array.push(item)
+        }
+      })
+    try {
+      array.forEach((message) => {
+        SocketApi.socket?.emit('read-message', {
+          message,
+          user,
+        })
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   useEffect(() => {
@@ -49,21 +68,8 @@ const Messages: FC = () => {
   }, [messages, reply, areaHeight])
 
   useEffect(() => {
-    const array: IResMessage[] = []
-    user &&
-      messages.map((item) => {
-        if (item.readUsers.indexOf(user?.id) == -1) {
-          array.push(item)
-        }
-      })
-    dispatch(addUnreadMessages(array))
-  }, [messages, activeRoom])
-
-  useEffect(() => {
-    if (unreadMessages.length > 0 && onWrite) {
-      readMessage(unreadMessages[0])
-    }
-  }, [onWrite, unreadMessages])
+    onWrite && readMessage()
+  }, [onWrite])
 
   return (
     <div
@@ -71,13 +77,17 @@ const Messages: FC = () => {
       className={`flex flex-grow-[3] w-full overflow-y-auto bg-white/70 backdrop-blur-sm p-4`}
     >
       <ul className='flex w-full flex-col gap-2'>
-        {messages.length > 0 &&
+        {!messages && (
+          <div className='flex justify-center items-center'>
+            <h3>Loading...</h3>
+          </div>
+        )}
+        {messages &&
+          messages.length > 0 &&
           messages.map((item, idx) => {
             const author = user?.id === item.userId
             const reply = item.reply
-            const unread = unreadMessages.find(
-              (message) => message.id === item.id,
-            )
+            const unread = item.readUsers.indexOf(user?.id!) == -1
 
             return (
               <MessageItem

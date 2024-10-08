@@ -104,7 +104,7 @@ const Auth: FC = () => {
             Submit
           </span>
           <span className='absolute right-2'>
-            <Loader />
+            <Loader size='24' />
           </span>
         </button>
       </form>

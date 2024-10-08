@@ -1,53 +1,67 @@
 import { useEffect } from 'react'
 import SocketApi from '../api/socket-api'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import {
-  addChatCountTrigger,
-  addMessage,
-  deleteMessage,
-  IResMessage,
-  replaceMessage,
-  updateMessage,
-} from '../store/messenger/messengerSlice'
-import { TypingData } from '../types/types'
+import { IResMessage } from '../store/messenger/messengerSlice'
+import { IResRoom, IUser, TypingData } from '../types/types'
 import { addTypingData } from '../store/rooms/typingSlice'
+import { addSocketId } from '../store/socket/socketSlice'
+import db from '../helpers/db'
 
 export const useConnectSocket = () => {
   const dispatch = useAppDispatch()
-  const { rooms } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
 
-  const connectSocket = () => {
-    SocketApi.createConnection(rooms ?? null, user ?? null)
+  const connectSocket = (user: IUser) => {
+    SocketApi.createConnection(user.id)
 
-    SocketApi.socket?.on('new-message', (dto: IResMessage) => {
-      dispatch(addMessage(dto))
-      dispatch(addChatCountTrigger(true))
+    SocketApi.socket?.on('connect', () => {
+      const socketId = SocketApi.socket?.id
+      dispatch(addSocketId(socketId!))
+    })
+
+    SocketApi.socket?.on('new-message', async (dto: IResMessage) => {
+      db.table('messages').put(dto)
       console.log(dto)
     })
 
-    SocketApi.socket?.on('update-message', (dto: IResMessage) => {
-      dispatch(updateMessage(dto))
+    SocketApi.socket?.on('updated-message', (dto: IResMessage) => {
+      db.table('messages').put(dto)
       console.log(dto)
     })
 
-    SocketApi.socket?.on('delete-message', (dto: IResMessage) => {
-      dispatch(deleteMessage(dto))
+    SocketApi.socket?.on('deleted-message', (dto: IResMessage) => {
+      db.table('messages').delete(dto.id)
       console.log(dto)
     })
 
-    SocketApi.socket?.on('read-message', (dto: IResMessage) => {
-      dispatch(replaceMessage(dto))
-
+    SocketApi.socket?.on('readed-message', (dto: IResMessage) => {
+      db.table('messages').update(dto.id, { readUsers: dto.readUsers })
       console.log(dto)
     })
 
     SocketApi.socket?.on('typing', (dto: TypingData) => {
       dispatch(addTypingData(dto))
     })
+
+    SocketApi.socket?.on('joinedNewRoom', (dto: IResRoom) => {
+      db.table('rooms').add(dto)
+      console.log(dto)
+    })
+
+    SocketApi.socket?.on('clearedRoom', (messages: IResMessage[]) => {
+      if (messages.length > 0) {
+        messages.map((el) => db.table('messages').delete(el.id))
+      }
+    })
+
+    SocketApi.socket?.on('deletedRoom', (room: IResRoom) => {
+      if (room) {
+        db.table('rooms').delete(room.id)
+      }
+    })
   }
 
   useEffect(() => {
-    connectSocket()
-  }, [rooms])
+    user && connectSocket(user)
+  }, [user])
 }

@@ -16,7 +16,7 @@ const ModalLayout: FC<ModalLayoutProps> = ({
     <Portal target='modals-root'>
       <div
         onClick={onClose}
-        className={`w-full h-screen overscroll-none z-50 top-0 left-0 bg-black/30 fixed flex justify-center items-center ${animation === 'out' ? 'animate-fade-out' : 'animate-fade-in'}`}
+        className={`w-full h-screen overscroll-none z-[200] top-0 left-0 bg-black/30 fixed flex justify-center items-center ${animation === 'out' ? 'animate-fade-out' : 'animate-fade-in'}`}
       >
         <div
           onClick={(e) => e.stopPropagation()}

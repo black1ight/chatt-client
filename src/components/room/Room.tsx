@@ -1,23 +1,16 @@
 import { FC, useEffect } from 'react'
 import Messages from '../Messages'
 import Reply from '../Reply'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { getMessages } from '../../store/messenger/messengerSlice'
+import { useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 
 const Room: FC = () => {
-  const dispatch = useAppDispatch()
   const { replyMessage } = useAppSelector((state) => state.messenger)
   const { reply } = useAppSelector((state) => state.form)
   const { activeRoom } = useAppSelector((state) => state.rooms)
 
   useEffect(() => {}, [reply, activeRoom])
 
-  useEffect(() => {
-    if (activeRoom) {
-      dispatch(getMessages(`room=${activeRoom?.id}`))
-    }
-  }, [activeRoom])
   return (
     <div className={`h-[90dvh] w-full overflow-hidden flex flex-col`}>
       <Messages />

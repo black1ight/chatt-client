@@ -1,9 +1,10 @@
 import { FC } from 'react'
 import { useAppSelector } from '../../store/hooks'
 import { IResUser } from '../../types/types'
-import UserLabel from '../UserLabel'
+import UserLabel from '../user/UserLabel'
 import { IoRemoveCircleOutline } from 'react-icons/io5'
 import { SubscribersProps } from './Subscribers'
+import UserStatusInfo from '../user/UserStatusInfo'
 
 interface SubscribersListProps extends SubscribersProps {
   setOpenSubscriberProfile: (user: IResUser) => void
@@ -23,9 +24,10 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
             onClick={() => {
               props.setOpenSubscriberProfile(user)
             }}
-            className='grid grid-cols-8 gap-2 items-center py-[2px] cursor-pointer'
+            className='grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer'
           >
-            <UserLabel {...user} type='small' />
+            <UserLabel parent='room' {...user} size='small' />
+            <UserStatusInfo parent='room' {...user} size='small' />
 
             {props.roomOwner && !userOwner ? (
               <button className='opacity-50 hover:opacity-100 ml-auto col-span-2'>

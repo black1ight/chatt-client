@@ -34,4 +34,9 @@ export const MessagesService = {
     const { data } = await instance.delete(`messages/${id}`)
     return data
   },
+
+  async deleteMessagesByRoomId(id: string): Promise<any> {
+    const { data } = await instance.delete(`messages/byRoom/${id}`)
+    return data
+  },
 }

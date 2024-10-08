@@ -5,7 +5,7 @@ import { addText } from '../store/form/textSlise'
 import { addAreaHeight } from '../store/form/areaSlice'
 import SocketApi from '../api/socket-api'
 import debounce from 'lodash.debounce'
-import { getUserName } from './sidebar/Sidebar'
+import { getUserName } from './Sidebar'
 
 const TextArea: FC = () => {
   const dispatch = useAppDispatch()
@@ -39,7 +39,7 @@ const TextArea: FC = () => {
       })
       console.log('write')
     }, 500),
-    [],
+    [activeRoom],
   )
 
   useEffect(() => {

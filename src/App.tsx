@@ -1,15 +1,22 @@
 import { FC, useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router/router'
-import { useAppDispatch } from './store/hooks'
+import { useAppDispatch, useAppSelector } from './store/hooks'
 import { getTokenFromLocalStorage } from './helpers/localstorage.helper'
 import { AuthService } from './services/auth.service'
-import { logIn, logOut } from './store/user/userSlice'
+import { getMyProfile, logIn, logOut } from './store/user/userSlice'
 import useModal from './hooks/useModal'
 import Modal from './components/modal'
+import { useConnectSocket } from './hooks/useConnectSocket'
+import SocketApi from './api/socket-api'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { IResRoom } from './types/types'
+import db from './helpers/db'
 
 const App: FC = () => {
   const dispatch = useAppDispatch()
+  const { user } = useAppSelector((state) => state.user)
+  const { socketId } = useAppSelector((state) => state.socket)
   const modalProps = useModal()
 
   const checkAuth = async () => {
@@ -19,6 +26,7 @@ const App: FC = () => {
         const data = await AuthService.getProfile()
         if (data) {
           dispatch(logIn(data))
+          dispatch(getMyProfile(data.id))
         } else {
           dispatch(logOut())
         }
@@ -28,11 +36,24 @@ const App: FC = () => {
     }
   }
 
-  console.log('new user online')
+  const rooms = useLiveQuery(
+    async (): Promise<IResRoom[] | undefined> =>
+      await db.table('rooms').reverse().toArray(),
+    [],
+  )
+
+  useConnectSocket()
 
   useEffect(() => {
     checkAuth()
   }, [])
+
+  useEffect(() => {
+    rooms && rooms.length > 0 && SocketApi.joinRooms(rooms, user)
+    return () => {
+      SocketApi.leaveRooms(rooms, user)
+    }
+  }, [rooms, socketId])
 
   return (
     <>

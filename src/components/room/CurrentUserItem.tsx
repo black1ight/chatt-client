@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import { IUserData } from '../../types/types'
-import { getUserName } from '../sidebar/Sidebar'
+import { getUserName } from '../Sidebar'
 import { IoClose } from 'react-icons/io5'
 import { minusCurrentUser } from '../../store/search/searchSlice'
 import { useAppDispatch } from '../../store/hooks'

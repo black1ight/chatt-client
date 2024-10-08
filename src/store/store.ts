@@ -8,6 +8,7 @@ import area from './form/areaSlice'
 import search from './search/searchSlice'
 import rooms from './rooms/roomsSlice'
 import typing from './rooms/typingSlice'
+import socket from './socket/socketSlice'
 
 export const store = configureStore({
   reducer: {
@@ -20,6 +21,7 @@ export const store = configureStore({
     search,
     rooms,
     typing,
+    socket,
   },
 })
 

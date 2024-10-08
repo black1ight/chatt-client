@@ -8,9 +8,8 @@ import { toast } from 'react-toastify'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { addCurrentUser, addValue } from '../../store/search/searchSlice'
 import { MdClear } from 'react-icons/md'
-import { getUserName } from './Sidebar'
+import { getUserName } from '../Sidebar'
 import { RoomsService } from '../../services/rooms.services'
-import { addRooms, getRooms } from '../../store/rooms/roomsSlice'
 
 interface SearchFormProps {
   open: boolean
@@ -45,7 +44,7 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
     try {
       const data = await RoomsService.getRoomsBySearch(property)
       if (data) {
-        dispatch(addRooms(data))
+        // dispatch(addRooms(data))
       }
     } catch (err: any) {
       const error = err.response?.data.message
@@ -78,7 +77,7 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
       setUserValue('')
     } else if (!open) {
       setUserValue('')
-      dispatch(getRooms())
+      // dispatch(getRooms())
     }
     dispatch(addValue(null))
     inputRef.current?.focus()

@@ -26,11 +26,16 @@ export interface IResUser {
   user_name: string | null | undefined
   id: number | undefined
   color: IRoomColors
+  imageUrl: string
   online: Boolean
   lastSeen: Date
   socketId: string
   createdAt: string | undefined
   updatedAt: string | undefined
+}
+
+export interface IUserUpdate {
+  imageUrl?: string
 }
 
 export interface IResUserData {
@@ -46,8 +51,9 @@ export interface IPatchData {
 
 export interface IRoomData {
   roomId: string
-  users: number[] | undefined
+  users: number[]
   color: IRoomColors
+  owner: number
 }
 
 export interface IResRoom {

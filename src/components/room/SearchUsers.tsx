@@ -15,7 +15,7 @@ const SearchUsers: FC<SearchUsers> = ({ setOpenSearch }) => {
     <div>
       <ul>
         {currentUsers?.map((user, id) => (
-          <CurrentUserItem user={user} id={id} />
+          <CurrentUserItem key={user.email} user={user} id={id} />
         ))}
       </ul>
       <div className='flex justify-center gap-2 p-2'>

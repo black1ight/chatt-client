@@ -12,8 +12,7 @@ import {
 import { MdClear } from 'react-icons/md'
 import Modal from '../modal'
 import { ModalProps } from '../../hooks/useModal'
-import { RoomsService } from '../../services/rooms.services'
-import { getRooms } from '../../store/rooms/roomsSlice'
+
 import SearchForm from './SearchForm'
 import SocketApi from '../../api/socket-api'
 
@@ -90,20 +89,15 @@ const CreateForm: FC<CreateFormProps> = (props) => {
       roomId: nameValue,
       users: currentUsers?.map((user) => {
         return user.id
-      }),
+      }) ?? [user?.id!],
       color: iconColors[Math.floor(Math.random() * iconColors.length)],
+      owner: user?.id!,
     }
-    try {
+
+    if (roomData) {
       e.preventDefault()
-      const data = await RoomsService.createRoom(roomData)
-      if (data) {
-        invateUsersToChat(data)
-        dispatch(getRooms())
-        onCloseForm()
-      }
-    } catch (err: any) {
-      const error = err.response?.data.message
-      toast.error(error.toString())
+      SocketApi.socket?.emit('createRoom', roomData)
+      onCloseForm()
     }
   }
 

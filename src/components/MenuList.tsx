@@ -21,10 +21,10 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu }) => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
 
   const deleteMessageHandler = async () => {
-    SocketApi.socket?.emit('server-path', {
-      type: 'delete-message',
+    SocketApi.socket?.emit('delete-message', {
       id: item.id,
       roomId: activeRoom?.id,
+      userId: item.userId,
     })
   }
 
@@ -59,9 +59,9 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu }) => {
     }
   }
   useEffect(() => {
-    document.body.addEventListener('click', handleClickOutside)
+    document.body.addEventListener('mousedown', handleClickOutside)
     return () => {
-      document.body.removeEventListener('click', handleClickOutside)
+      document.body.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 

@@ -1,18 +1,37 @@
 import { FC, useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addReplayMessage } from '../store/messenger/messengerSlice'
+import {
+  addReplayMessage,
+  IResMessage,
+} from '../store/messenger/messengerSlice'
 import { IoMdClose } from 'react-icons/io'
 import { MdOutlineReply } from 'react-icons/md'
-import { onReply } from '../store/form/formSlice'
+import { addEditId, onReply } from '../store/form/formSlice'
+import { useLiveQuery } from 'dexie-react-hooks'
+import db from '../helpers/db'
 
 const Reply: FC = () => {
   const dispatch = useAppDispatch()
-  const { messages, replyMessage } = useAppSelector((state) => state.messenger)
+  const { replyMessage } = useAppSelector((state) => state.messenger)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
   const { reply } = useAppSelector((state) => state.form)
+
+  const messages =
+    activeRoom &&
+    useLiveQuery(
+      async (): Promise<IResMessage[] | undefined> =>
+        await db
+          .table('messages')
+          .where('roomId')
+          .equals(activeRoom.id)
+          .toArray(),
+      [activeRoom],
+    )
 
   const findMessage = () => {
     if (reply) {
-      const message = messages.find((item) => item.id === reply)
+      const message = messages?.find((item) => item.id === reply)
+      console.log(message)
 
       message
         ? dispatch(
@@ -31,11 +50,12 @@ const Reply: FC = () => {
   const closeReply = () => {
     dispatch(addReplayMessage(null))
     dispatch(onReply(null))
+    dispatch(addEditId(null))
   }
 
   useEffect(() => {
-    findMessage()
-  }, [reply])
+    messages && findMessage()
+  }, [messages, reply])
   return (
     <div className='relative flex gap-2 items-center px-2 py-1'>
       <span
