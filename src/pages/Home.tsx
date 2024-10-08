@@ -2,7 +2,7 @@ import { FC, useEffect } from 'react'
 import Header from '../components/Header'
 import Room from '../components/room/Room'
 import Sidebar from '../components/Sidebar'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { useAppSelector } from '../store/hooks'
 import Profile from '../components/sidebar/Profile'
 import { MessagesService } from '../services/messages.service'
 import db from '../helpers/db'
@@ -10,7 +10,6 @@ import { toast } from 'react-toastify'
 import { RoomsService } from '../services/rooms.services'
 
 const Home: FC = () => {
-  const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { isOpen } = useAppSelector((state) => state.user)
 
@@ -29,7 +28,6 @@ const Home: FC = () => {
             console.log(message)
           }
         }
-        // await db.messages.bulkAdd(data)
         console.log('messages have been updated!')
       }
     } catch (error) {
@@ -51,7 +49,6 @@ const Home: FC = () => {
             console.log(room)
           }
         }
-        // await db.messages.bulkAdd(data)
         console.log('rooms have been updated!')
       }
     } catch (error) {

@@ -77,7 +77,6 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
       setUserValue('')
     } else if (!open) {
       setUserValue('')
-      // dispatch(getRooms())
     }
     dispatch(addValue(null))
     inputRef.current?.focus()

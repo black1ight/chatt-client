@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react'
 import { UsersService } from '../../services/users.service'
-import { IResRoom, IRoomData } from '../../types/types'
+import { IRoomData } from '../../types/types'
 import { toast } from 'react-toastify'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import {
@@ -74,14 +74,6 @@ const CreateForm: FC<CreateFormProps> = (props) => {
     dispatch(addValue(null))
     dispatch(clearCurrentUser())
     props.onClose()
-  }
-
-  const invateUsersToChat = async (data: IResRoom) => {
-    SocketApi.socket?.emit('server-path', {
-      type: 'invate-users',
-      userId: currentUsers?.map((user) => user.id),
-      roomId: data.id,
-    })
   }
 
   const createHandler = async (e: React.FormEvent<HTMLFormElement>) => {

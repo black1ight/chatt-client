@@ -32,8 +32,8 @@ const SubscriberProfile: FC<SubscriberProfileProps> = (props) => {
   }
   return (
     <div className='group flex items-center gap-2 p-2 ml-1'>
-      <UserLabel type='' {...props} />
-      <UserStatusInfo {...props} />
+      <UserLabel size='' parent='' {...props} />
+      <UserStatusInfo size='' parent='' {...props} />
       {!ownerSubscriber && props.id !== activeRoom?.owner ? (
         <GrUserAdmin
           onClick={promoteUser}
