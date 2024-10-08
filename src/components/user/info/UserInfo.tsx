@@ -1,7 +1,5 @@
 import { FC } from 'react'
 import { useAppSelector } from '../../../store/hooks'
-import { MdAlternateEmail, MdOutlineLocalPhone } from 'react-icons/md'
-import { CgProfile } from 'react-icons/cg'
 import InfoItem from './InfoItem'
 import { IResUser } from '../../../types/types'
 
