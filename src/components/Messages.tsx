@@ -8,7 +8,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 
 const Messages: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { reply, onWrite } = useAppSelector((state) => state.form)
+  const { replyId, onWrite } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
   const { user } = useAppSelector((state) => state.user)
   const [onOpenMenu, setOnOpenMenu] = useState<number | null>(null)
@@ -65,7 +65,7 @@ const Messages: FC = () => {
 
   useEffect(() => {
     scrollToBottom()
-  }, [messages, reply, areaHeight])
+  }, [messages, replyId, areaHeight])
 
   useEffect(() => {
     onWrite && readMessage()

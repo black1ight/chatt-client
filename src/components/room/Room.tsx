@@ -6,15 +6,15 @@ import Form from '../Form'
 
 const Room: FC = () => {
   const { replyMessage } = useAppSelector((state) => state.messenger)
-  const { reply } = useAppSelector((state) => state.form)
+  const { replyId } = useAppSelector((state) => state.form)
   const { activeRoom } = useAppSelector((state) => state.rooms)
 
-  useEffect(() => {}, [reply, activeRoom])
+  useEffect(() => {}, [replyId, activeRoom])
 
   return (
     <div className={`h-[90dvh] w-full overflow-hidden flex flex-col`}>
       <Messages />
-      {reply ? (
+      {replyId ? (
         <div className='bg-slate-100 w-full border-t'>
           <Reply />
         </div>

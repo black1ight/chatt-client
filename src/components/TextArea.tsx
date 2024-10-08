@@ -9,7 +9,7 @@ import { getUserName } from './Sidebar'
 
 const TextArea: FC = () => {
   const dispatch = useAppDispatch()
-  const { onWrite, reply } = useAppSelector((state) => state.form)
+  const { onWrite, replyId } = useAppSelector((state) => state.form)
   const { text } = useAppSelector((state) => state.text)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
@@ -44,8 +44,8 @@ const TextArea: FC = () => {
 
   useEffect(() => {
     onWrite && areaRef.current?.focus()
-    reply && areaRef.current?.focus()
-  }, [onWrite, reply])
+    replyId && areaRef.current?.focus()
+  }, [onWrite, replyId])
 
   useEffect(() => {
     !text && dispatch(addEditId(null))

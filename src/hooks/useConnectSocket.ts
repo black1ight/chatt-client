@@ -19,7 +19,7 @@ export const useConnectSocket = () => {
       dispatch(addSocketId(socketId!))
     })
 
-    SocketApi.socket?.on('new-message', async (dto: IResMessage) => {
+    SocketApi.socket?.on('new-message', (dto: IResMessage) => {
       db.table('messages').put(dto)
       console.log(dto)
     })

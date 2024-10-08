@@ -3,13 +3,13 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export interface formState {
   editId: number | null
   onWrite: boolean
-  reply: number | null
+  replyId: number | null
 }
 
 const initialState: formState = {
   editId: null,
   onWrite: false,
-  reply: null,
+  replyId: null,
 }
 
 export const formSlice = createSlice({
@@ -23,7 +23,7 @@ export const formSlice = createSlice({
       state.onWrite = action.payload
     },
     onReply: (state, action: PayloadAction<number | null>) => {
-      state.reply = action.payload
+      state.replyId = action.payload
     },
   },
 })

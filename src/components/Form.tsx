@@ -4,14 +4,17 @@ import { LuSendHorizonal } from 'react-icons/lu'
 import { addEditId, onReply } from '../store/form/formSlice'
 import SocketApi from '../api/socket-api'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
-import { addReplayMessage } from '../store/messenger/messengerSlice'
+import {
+  addReplayMessage,
+  IResMessage,
+} from '../store/messenger/messengerSlice'
 import TextArea from './TextArea'
 import { removeText } from '../store/form/textSlise'
 import db from '../helpers/db'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
-  const { editId, onWrite, reply } = useAppSelector((state) => state.form)
+  const { editId, onWrite, replyId } = useAppSelector((state) => state.form)
   const { text } = useAppSelector((state) => state.text)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
@@ -31,6 +34,17 @@ const Form: FC = () => {
     dispatch(addEditId(null))
   }
 
+  const getReplyData = async (replyId: number | null) => {
+    if (replyId) {
+      const replyMessage: IResMessage = await db.table('messages').get(replyId)
+      if (replyMessage) {
+        const { text, user } = replyMessage
+        return { text, user }
+      }
+      return null
+    }
+  }
+
   const sendMail = async (e: React.FormEvent<HTMLFormElement>) => {
     dispatch(changeIsLoading('fetch'))
     if (editId && text) {
@@ -38,9 +52,10 @@ const Form: FC = () => {
       patchMessageHandler()
     } else {
       e.preventDefault()
+      const replyData = await getReplyData(replyId)
       const newMessageDto = {
-        reply,
-        replyId: null,
+        reply: replyData,
+        replyId,
         text,
         userId: user?.id,
         user,
@@ -50,7 +65,8 @@ const Form: FC = () => {
         updatedAt: new Date(),
         status: 'pending',
       }
-      db.table('messages').add(newMessageDto)
+
+      await db.table('messages').add(newMessageDto)
 
       SocketApi.socket?.emit('new-message', newMessageDto)
       dispatch(addReplayMessage(null))
@@ -68,20 +84,14 @@ const Form: FC = () => {
     if (onWrite) {
       areaRef.current?.focus()
     }
-    reply && areaRef.current?.focus()
-  }, [onWrite, reply])
+    replyId && areaRef.current?.focus()
+  }, [onWrite, replyId])
   return (
     <form
       onSubmit={onSubmit}
       className='relative flex items-end w-full bg-white rounded-b-md max-sm:rounded-none border-t border-stone-300 py-3'
     >
       <TextArea />
-
-      {/* {isLoading && (
-        <div className='absolute right-3'>
-          <Loader />
-        </div>
-      )} */}
 
       <button
         disabled={!text}

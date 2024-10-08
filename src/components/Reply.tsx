@@ -14,7 +14,7 @@ const Reply: FC = () => {
   const dispatch = useAppDispatch()
   const { replyMessage } = useAppSelector((state) => state.messenger)
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { reply } = useAppSelector((state) => state.form)
+  const { replyId } = useAppSelector((state) => state.form)
 
   const messages =
     activeRoom &&
@@ -29,9 +29,8 @@ const Reply: FC = () => {
     )
 
   const findMessage = () => {
-    if (reply) {
-      const message = messages?.find((item) => item.id === reply)
-      console.log(message)
+    if (replyId) {
+      const message = messages?.find((item) => item.id === replyId)
 
       message
         ? dispatch(
@@ -55,7 +54,7 @@ const Reply: FC = () => {
 
   useEffect(() => {
     messages && findMessage()
-  }, [messages, reply])
+  }, [messages, replyId])
   return (
     <div className='relative flex gap-2 items-center px-2 py-1'>
       <span
