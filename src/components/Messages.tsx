@@ -1,4 +1,4 @@
-import { act, FC, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useAppSelector } from '../store/hooks'
 import { IResMessage } from '../store/messenger/messengerSlice'
 import MessageItem from './messages/MessageItem'
