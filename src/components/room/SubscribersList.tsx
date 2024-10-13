@@ -1,30 +1,56 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { useAppSelector } from '../../store/hooks'
 import { IResUser } from '../../types/types'
 import UserLabel from '../user/UserLabel'
 import { IoRemoveCircleOutline } from 'react-icons/io5'
 import { SubscribersProps } from './Subscribers'
 import UserStatusInfo from '../user/UserStatusInfo'
+import { useLiveQuery } from 'dexie-react-hooks'
+import db from '../../helpers/db'
+import SubscriberProfile from './SubscriberProfile'
 
-interface SubscribersListProps extends SubscribersProps {
-  setOpenSubscriberProfile: (user: IResUser) => void
-}
+interface SubscribersListProps extends SubscribersProps {}
 
 const SubscribersList: FC<SubscribersListProps> = (props) => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const myProfile = useAppSelector((state) => state.user.user)
+  const [profile, setProfile] = useState<number | null>(null)
+
+  const roomUsers = activeRoom?.users
+    .map((user) => user.id)
+    .filter((id) => id !== undefined)
+
+  const users =
+    roomUsers &&
+    useLiveQuery(
+      async (): Promise<IResUser[] | undefined> =>
+        await db.table('users').bulkGet(roomUsers),
+      [roomUsers.length],
+    )
+
+  const profileHandler = (id: number) => {
+    if (profile === id) {
+      setProfile(null)
+    } else {
+      setProfile(id)
+    }
+  }
 
   return (
     <ul className='p-2'>
-      {activeRoom?.users.map((user) => {
-        const userOwner = myProfile?.id == user.id
+      {profile !== null && users && (
+        <SubscriberProfile
+          {...users[profile]}
+          setProfile={() => setProfile(null)}
+        />
+      )}
+      {users?.map((user, id) => {
+        const userOwner = myProfile?.id === user.id
         return (
           <li
             key={user.email}
-            onClick={() => {
-              props.setOpenSubscriberProfile(user)
-            }}
-            className='grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer'
+            onClick={() => profileHandler(id)}
+            className={`grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer ${profile !== null && users[profile].id === user.id && 'hidden'}`}
           >
             <UserLabel parent='room' {...user} size='small' />
             <UserStatusInfo parent='room' {...user} size='small' />
@@ -41,7 +67,7 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
                 />
               </button>
             ) : (
-              user.id == activeRoom.owner && (
+              user.id == activeRoom?.owner && (
                 <span className='text-stone-500 ml-auto col-span-2'>owner</span>
               )
             )}

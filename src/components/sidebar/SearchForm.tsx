@@ -119,7 +119,7 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
       )}
 
       {users.length > 0 && userValue && (
-        <ul className='absolute p-1 top-10 flex flex-col gap-1 bg-stone-100 w-full rounded-md'>
+        <ul className='absolute p-1 top-10 flex flex-col gap-1 bg-stone-100 w-full rounded-md z-[100]'>
           {users &&
             users.map((item) => {
               return (

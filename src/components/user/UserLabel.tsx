@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react'
+import { FC, useState } from 'react'
 import InputUrl from './InputUrl'
 import { useAppSelector } from '../../store/hooks'
 import { UserProfileProps } from './UserProfile'
@@ -18,13 +18,9 @@ const UserLabel: FC<IUserLabel> = (props) => {
     height: size === 'small' ? '40px' : size === 'big' ? '100px' : '56px',
   }
 
-  useEffect(() => {}, [isOpen])
-
   return (
     <div
-      onClick={() => {
-        setIsOpen(true)
-      }}
+      onClick={() => setIsOpen(true)}
       className='relative flex items-center gap-2 col-span-1'
     >
       <div
@@ -43,7 +39,11 @@ const UserLabel: FC<IUserLabel> = (props) => {
       </div>
 
       {id === user?.id && parent === 'profile' && (
-        <InputUrl isOpen={isOpen} setIsOpen={(flag) => setIsOpen(flag)} />
+        <InputUrl
+          isOpen={isOpen}
+          setIsOpen={() => setIsOpen(false)}
+          type='user'
+        />
       )}
     </div>
   )

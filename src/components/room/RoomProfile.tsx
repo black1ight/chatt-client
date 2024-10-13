@@ -1,16 +1,18 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import Modal from '../modal'
 import { ModalProps } from '../../hooks/useModal'
 import RoomLabel from './RoomLabel'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import { getUserName } from '../Sidebar'
 
-import { IResUser, IUser } from '../../types/types'
-import { RoomsService } from '../../services/rooms.services'
+import { IResRoom, IResUser, IUser } from '../../types/types'
 import { addActiveRoom } from '../../store/rooms/roomsSlice'
 import { CiLogout } from 'react-icons/ci'
 
 import Subscribers from './Subscribers'
+import { useLiveQuery } from 'dexie-react-hooks'
+import db from '../../helpers/db'
+import SocketApi from '../../api/socket-api'
 
 interface RoomProfileProps extends ModalProps {}
 
@@ -18,6 +20,16 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const myProfile = useAppSelector((state) => state.user.user)
+
+  const room = useLiveQuery(
+    async (): Promise<IResRoom | undefined> =>
+      await db.table('rooms').get(activeRoom?.id!),
+    [],
+  )
+
+  useEffect(() => {
+    room && dispatch(addActiveRoom(room))
+  }, [room])
 
   const roomOwner = myProfile?.id == activeRoom?.owner
 
@@ -28,29 +40,31 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
       )
     ) {
       if (activeRoom && user.id != myProfile?.id) {
-        const data = await RoomsService.updateRoom(activeRoom?.id, {
+        SocketApi.socket?.emit('excludeFromRoom', {
+          roomId: activeRoom.id,
           removeUser: user.id,
         })
-        if (data) {
-          dispatch(addActiveRoom(data))
-        }
       } else if (activeRoom && user.id == myProfile?.id) {
-        const data = await RoomsService.updateRoom(activeRoom?.id, {
+        SocketApi.socket?.emit('excludeFromRoom', {
+          roomId: activeRoom.id,
           removeUser: user.id,
         })
-        if (data) {
-          dispatch(addActiveRoom(null))
-          props.onClose()
-        }
+        dispatch(addActiveRoom(null))
       }
     }
   }
+
+  useEffect(() => {
+    return () => {
+      props.onClose()
+    }
+  }, [])
 
   return (
     <Modal {...props}>
       <div className='w-[300px] py-3.5 flex flex-col gap-2'>
         <div className='p-2 bg-slate-200'>
-          <RoomLabel {...props} room={activeRoom!} />
+          <RoomLabel {...props} room={activeRoom!} type='roomProfile' />
         </div>
         <Subscribers
           {...props}

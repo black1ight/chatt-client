@@ -1,17 +1,17 @@
 import { FC } from 'react'
 import UserLabel from '../user/UserLabel'
 import { getUserName } from '../Sidebar'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { useAppSelector } from '../../store/hooks'
 import { IResUser } from '../../types/types'
 import { GrUserAdmin } from 'react-icons/gr'
-import { addActiveRoom } from '../../store/rooms/roomsSlice'
-import { RoomsService } from '../../services/rooms.services'
 import UserStatusInfo from '../user/UserStatusInfo'
+import SocketApi from '../../api/socket-api'
 
-interface SubscriberProfileProps extends IResUser {}
+interface SubscriberProfileProps extends IResUser {
+  setProfile: () => void
+}
 
 const SubscriberProfile: FC<SubscriberProfileProps> = (props) => {
-  const dispatch = useAppDispatch()
   const myProfile = useAppSelector((state) => state.user.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
 
@@ -22,16 +22,20 @@ const SubscriberProfile: FC<SubscriberProfileProps> = (props) => {
       activeRoom &&
       window.confirm(`promote to owner ${getUserName(props.email!)}`)
     ) {
-      const data = await RoomsService.updateRoom(activeRoom.id, {
-        promoteUser: props.id,
+      SocketApi.socket?.emit('promoteUser', {
+        roomId: activeRoom.id,
+        dto: {
+          promoteUser: props.id,
+        },
       })
-      if (data) {
-        dispatch(addActiveRoom(data))
-      }
     }
   }
+
   return (
-    <div className='group flex items-center gap-2 p-2 ml-1'>
+    <div
+      onClick={() => props.setProfile()}
+      className='group flex items-center gap-2 py-2'
+    >
       <UserLabel size='' parent='' {...props} />
       <UserStatusInfo size='' parent='' {...props} />
       {!ownerSubscriber && props.id !== activeRoom?.owner ? (

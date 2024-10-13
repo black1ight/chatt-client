@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import SocketApi from '../api/socket-api'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { IResMessage } from '../store/messenger/messengerSlice'
+import { addLastId, IResMessage } from '../store/messenger/messengerSlice'
 import { IResRoom, IUser, TypingData } from '../types/types'
 import { addTypingData } from '../store/rooms/typingSlice'
 import { addSocketId } from '../store/socket/socketSlice'
@@ -17,10 +17,17 @@ export const useConnectSocket = () => {
     SocketApi.socket?.on('connect', () => {
       const socketId = SocketApi.socket?.id
       dispatch(addSocketId(socketId!))
+      db.table('users').update(user.id, { socketId })
+    })
+
+    SocketApi.socket?.on('updateUser', (dto) => {
+      db.table('users').put(dto)
+      console.log(`user ${dto.email} has been updated`)
     })
 
     SocketApi.socket?.on('new-message', (dto: IResMessage) => {
       db.table('messages').put(dto)
+      dispatch(addLastId(dto.id))
       console.log(dto)
     })
 
@@ -57,6 +64,32 @@ export const useConnectSocket = () => {
     SocketApi.socket?.on('deletedRoom', (room: IResRoom) => {
       if (room) {
         db.table('rooms').delete(room.id)
+      }
+    })
+
+    SocketApi.socket?.on('updateRoom', (room: IResRoom) => {
+      console.log(room)
+
+      if (room) {
+        db.table('rooms').put(room)
+      }
+    })
+
+    SocketApi.socket?.on('invatedRoom', async (room: IResRoom) => {
+      if (room) {
+        await db.table('rooms').put(room)
+        for (const user of room.users) {
+          const isExist = await db
+            .table('users')
+            .where('id')
+            .equals(user.id!)
+            .count()
+          if (!isExist) {
+            await db.table('users').add(user)
+            console.log(`user ${user.email} has been added!`)
+          }
+        }
+        console.log(`room ${room.id} has been updated`)
       }
     })
   }

@@ -21,15 +21,15 @@ export interface IAuthData {
 }
 
 export interface IResUser {
-  email: string | undefined
-  password: string | undefined
-  user_name: string | null | undefined
   id: number | undefined
+  socketId: string
+  email: string | undefined
+  // password: string | undefined
+  user_name: string | null | undefined
   color: IRoomColors
   imageUrl: string
   online: Boolean
   lastSeen: Date
-  socketId: string
   createdAt: string | undefined
   updatedAt: string | undefined
 }
@@ -63,6 +63,7 @@ export interface IResRoom {
   color: IRoomColors
   owner: number
   createdAt: Date
+  imageUrl: string
 }
 
 export interface TypingData {

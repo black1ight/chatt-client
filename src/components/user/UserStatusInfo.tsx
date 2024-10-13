@@ -1,16 +1,12 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { getUserName } from '../Sidebar'
 import { format } from 'date-fns'
 import { IUserLabel } from './UserLabel'
 
 interface UserStatusInfoProps extends IUserLabel {}
 
-const UserStatusInfo: FC<UserStatusInfoProps> = ({
-  email,
-  online,
-  lastSeen,
-  size,
-}) => {
+const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
+  const { email, online, lastSeen, size } = props
   const longAgo = new Date().getDate() - new Date(lastSeen!).getDate() > 1
   const today = new Date(lastSeen!).getDate() == new Date().getDate()
   const yesterday = new Date(lastSeen!).getDate() == new Date().getDate() - 1

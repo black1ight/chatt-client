@@ -8,7 +8,6 @@ import { ModalProps } from '../../hooks/useModal'
 
 import SearchUsers from './SearchUsers'
 import SubscribersList from './SubscribersList'
-import SubscriberProfile from './SubscriberProfile'
 
 export interface SubscribersProps extends ModalProps {
   roomOwner: boolean
@@ -20,14 +19,11 @@ const Subscribers: FC<SubscribersProps> = (props) => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const [openSearch, setOpenSearch] = useState(false)
   const [openSubscribers, setOpenSubscribers] = useState(false)
-  const [openSubscriberProfile, setOpenSubscriberProfile] =
-    useState<IResUser | null>(null)
 
   const subscribersHandler = () => {
     if (openSubscribers) {
       setOpenSubscribers(false)
       setOpenSearch(false)
-      setOpenSubscriberProfile(null)
     } else {
       setOpenSubscribers(true)
     }
@@ -50,17 +46,7 @@ const Subscribers: FC<SubscribersProps> = (props) => {
       </div>
       {openSearch && <SearchForm open={props.open} type='room-profile' />}
       {currentUsers && <SearchUsers setOpenSearch={setOpenSearch} />}
-      {openSubscribers && !openSubscriberProfile ? (
-        <SubscribersList
-          setOpenSubscriberProfile={setOpenSubscriberProfile}
-          {...props}
-        />
-      ) : (
-        openSubscribers &&
-        openSubscriberProfile && (
-          <SubscriberProfile {...openSubscriberProfile} />
-        )
-      )}
+      {openSubscribers && <SubscribersList {...props} />}
     </div>
   )
 }

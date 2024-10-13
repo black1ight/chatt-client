@@ -10,7 +10,7 @@ import Modal from './components/modal'
 import { useConnectSocket } from './hooks/useConnectSocket'
 import SocketApi from './api/socket-api'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { IResRoom } from './types/types'
+import { IResRoom, IResUser } from './types/types'
 import db from './helpers/db'
 
 const App: FC = () => {
@@ -41,6 +41,11 @@ const App: FC = () => {
       await db.table('rooms').reverse().toArray(),
     [],
   )
+  const users = useLiveQuery(
+    async (): Promise<IResUser[] | undefined> =>
+      await db.table('users').reverse().toArray(),
+    [],
+  )
 
   useConnectSocket()
 
@@ -51,9 +56,16 @@ const App: FC = () => {
   useEffect(() => {
     rooms && rooms.length > 0 && SocketApi.joinRooms(rooms, user)
     return () => {
-      SocketApi.leaveRooms(rooms, user)
+      user && rooms && SocketApi.leaveRooms(rooms, user)
     }
-  }, [rooms, socketId])
+  }, [rooms?.length, socketId])
+
+  useEffect(() => {
+    users && users.length > 0 && SocketApi.joinUsers(users, user)
+    return () => {
+      user && users && SocketApi.leaveUsers(users, user)
+    }
+  }, [users?.length, socketId])
 
   return (
     <>

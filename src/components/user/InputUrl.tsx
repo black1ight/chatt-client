@@ -7,29 +7,38 @@ import {
   useRef,
   useState,
 } from 'react'
-import { UsersService } from '../../services/users.service'
 import { useAppSelector } from '../../store/hooks'
-import { toast } from 'react-toastify'
+import SocketApi from '../../api/socket-api'
 
 interface InputUrlProps {
   isOpen: boolean
-  setIsOpen: (flag: boolean) => void
+  setIsOpen: () => void
+  type: string
 }
 
-const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen }) => {
+const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen, type }) => {
   const { user } = useAppSelector((state) => state.user)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
   const inputRef = useRef<HTMLDivElement>(null)
   const [value, setValue] = useState('')
 
-  const updateUserImage = async (value: string) => {
-    try {
-      const data = await UsersService.updateUser(user?.id!, { imageUrl: value })
-      console.log(data)
-      setIsOpen(false)
-    } catch (err: any) {
-      const error = err.response?.data.message
-      toast.error(error.toString())
+  const updateUserImage = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    value: string,
+  ) => {
+    e.stopPropagation()
+    if (type === 'user') {
+      SocketApi.socket?.emit('editUser', {
+        userId: user?.id,
+        dto: { imageUrl: value },
+      })
+    } else if (type === 'room') {
+      SocketApi.socket?.emit('editRoom', {
+        roomId: activeRoom?.id,
+        dto: { imageUrl: value },
+      })
     }
+    setIsOpen()
   }
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,7 +54,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen }) => {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !event.composedPath().includes(inputRef.current)) {
-      setIsOpen(false)
+      setIsOpen()
     }
   }
   useEffect(() => {
@@ -55,7 +64,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen }) => {
     return () => {
       document.body.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isOpen])
+  }, [])
 
   return (
     <div
@@ -68,7 +77,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen }) => {
           className='border border-stone-300 rounded-md outline-none px-2 py-1 shadow-xl'
         />
         <button
-          onClick={() => updateUserImage(value)}
+          onClick={(e) => updateUserImage(e, value)}
           className='btn-sm bg-stone-300 w-14 shadow-xl border border-stone-300'
         >
           add

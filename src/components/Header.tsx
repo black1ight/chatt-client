@@ -42,7 +42,7 @@ const Header: FC = () => {
 
       {activeRoom && <RoomLabel {...props} room={activeRoom} />}
 
-      {props.open && <RoomProfile {...props} />}
+      {props.open && activeRoom && <RoomProfile {...props} />}
       {activeRoom && (
         <div
           ref={settingRef}

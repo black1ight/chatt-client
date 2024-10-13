@@ -18,6 +18,7 @@ const Form: FC = () => {
   const { text } = useAppSelector((state) => state.text)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { lastId } = useAppSelector((state) => state.messenger)
 
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -54,6 +55,7 @@ const Form: FC = () => {
       e.preventDefault()
       const replyData = await getReplyData(replyId)
       const newMessageDto = {
+        id: lastId! + 1,
         reply: replyData,
         replyId,
         text,

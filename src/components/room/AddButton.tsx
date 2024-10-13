@@ -1,8 +1,7 @@
 import { FC } from 'react'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { RoomsService } from '../../services/rooms.services'
 import { clearCurrentUser } from '../../store/search/searchSlice'
-import { addActiveRoom } from '../../store/rooms/roomsSlice'
+import SocketApi from '../../api/socket-api'
 
 interface AddButtonProps {
   setOpenSearch: (arg: boolean) => void
@@ -18,12 +17,9 @@ const addButton: FC<AddButtonProps> = ({ setOpenSearch }) => {
       addUsers: currentUsers?.map((user) => user.id),
     }
     if (activeRoom) {
-      const data = await RoomsService.updateRoom(activeRoom?.id, dto)
-      if (data) {
-        dispatch(addActiveRoom(data))
-        dispatch(clearCurrentUser())
-        setOpenSearch(false)
-      }
+      SocketApi.socket?.emit('inviteToRoom', { roomId: activeRoom.id, dto })
+      dispatch(clearCurrentUser())
+      setOpenSearch(false)
     }
   }
   return (

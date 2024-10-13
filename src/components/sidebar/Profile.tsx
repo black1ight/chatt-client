@@ -9,6 +9,9 @@ import UserProfile from '../user/UserProfile'
 import LogOut from '../user/LogOut'
 import UserInfo from '../user/info/UserInfo'
 import ArrowToBack from '../ArrowToBack'
+import db from '../../helpers/db'
+import { IResUser } from '../../types/types'
+import { useLiveQuery } from 'dexie-react-hooks'
 
 interface UserProfileProps {}
 
@@ -16,7 +19,13 @@ const Profile: FC<UserProfileProps> = () => {
   const dispatch = useAppDispatch()
   const profileRef = useRef<HTMLDivElement>(null)
   const isAuth = useAuth()
-  const { profile, isOpen } = useAppSelector((state) => state.user)
+  const { user, isOpen } = useAppSelector((state) => state.user)
+
+  const profile = useLiveQuery(
+    async (): Promise<IResUser | undefined> =>
+      await db.table('users').get(user?.id!),
+    [],
+  )
 
   const handleClickOutside = (event: MouseEvent) => {
     if (

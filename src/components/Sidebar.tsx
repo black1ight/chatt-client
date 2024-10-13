@@ -44,6 +44,11 @@ const Sidebar: FC = () => {
     [],
   )
 
+  if (rooms && activeRoom) {
+    const isExist = rooms.find((room) => room.id === activeRoom.id)
+    !isExist && dispatch(addActiveRoom(null))
+  }
+
   const getTimeOfMessage = (data: Date) => {
     if (new Date().getDate() - new Date(data).getDate() > 1) return 'longAgo'
     if (new Date(data).getDate() == new Date().getDate()) return 'today'

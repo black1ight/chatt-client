@@ -27,11 +27,13 @@ export interface IResMessage {
 export interface messengerState {
   unreadDialogs: number | null
   replyMessage: IReply | null
+  lastId: number | null
 }
 
 const initialState: messengerState = {
   unreadDialogs: null,
   replyMessage: null,
+  lastId: null,
 }
 
 export const messengerSlice = createSlice({
@@ -44,9 +46,13 @@ export const messengerSlice = createSlice({
     addUnreadDialogs: (state, action: PayloadAction<number | null>) => {
       state.unreadDialogs = action.payload
     },
+    addLastId: (state, action: PayloadAction<number | null>) => {
+      state.lastId = action.payload
+    },
   },
 })
 
-export const { addReplayMessage, addUnreadDialogs } = messengerSlice.actions
+export const { addReplayMessage, addUnreadDialogs, addLastId } =
+  messengerSlice.actions
 
 export default messengerSlice.reducer
