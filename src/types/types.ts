@@ -18,6 +18,7 @@ export interface IAuthData {
   email: string
   password: string
   color?: IRoomColors
+  socketId?: string
 }
 
 export interface IResUser {
