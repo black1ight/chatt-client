@@ -1,15 +1,16 @@
-import { FC, useCallback, useEffect, useRef, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { CiSearch } from 'react-icons/ci'
-import { UsersService } from '../../services/users.service'
 import { IUserData } from '../../types/types'
-import debounce from 'lodash.debounce'
 
-import { toast } from 'react-toastify'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { addCurrentUser, addValue } from '../../store/search/searchSlice'
+import {
+  addCurrentUser,
+  addSearchType,
+  addValue,
+} from '../../store/search/searchSlice'
 import { MdClear } from 'react-icons/md'
 import { getUserName } from '../Sidebar'
-import { RoomsService } from '../../services/rooms.services'
+import db from '../../helpers/db'
 
 interface SearchFormProps {
   open: boolean
@@ -22,42 +23,26 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
 
   const { searchValue } = useAppSelector((state) => state.search)
   const [userValue, setUserValue] = useState('')
-  const [users, setUsers] = useState<IUserData[]>([])
+  const [userData, setUserData] = useState<IUserData[]>([])
 
-  const getUsersByName = async () => {
-    const property = `search=${searchValue}`
-
-    try {
-      const data = await UsersService.getUsersByFilter(property)
-      if (data) {
-        setUsers(data)
-      }
-    } catch (err: any) {
-      const error = err.response?.data.message
-      toast.error(error.toString())
+  const searchUsers = async (searchValue: string) => {
+    const users = await db
+      .table('users')
+      .filter((user) =>
+        user.email.toLowerCase().includes(searchValue.toLowerCase()),
+      )
+      .toArray()
+    if (users) {
+      setUserData(users)
     }
   }
 
-  const getRoomsByName = async () => {
-    const property = `search=${searchValue}`
-
-    try {
-      const data = await RoomsService.getRoomsBySearch(property)
-      if (data) {
-        // dispatch(addRooms(data))
-      }
-    } catch (err: any) {
-      const error = err.response?.data.message
-      toast.error(error.toString())
-    }
+  const updateSearchValue = (str: string) => {
+    dispatch(addValue(str))
+    type === 'sideBar'
+      ? dispatch(addSearchType('rooms'))
+      : dispatch(addSearchType('users'))
   }
-
-  const updateSearchValue = useCallback(
-    debounce((str: string) => {
-      dispatch(addValue(str))
-    }, 500),
-    [],
-  )
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserValue(event.target.value)
@@ -83,12 +68,7 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
   }
 
   useEffect(() => {
-    setUsers([])
-    if (open && searchValue) {
-      getUsersByName()
-    } else if (!open && searchValue !== null) {
-      getRoomsByName()
-    }
+    searchValue && searchUsers(searchValue)
   }, [searchValue])
 
   return (
@@ -118,13 +98,13 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
         </button>
       )}
 
-      {users.length > 0 && userValue && (
+      {type === 'modal' && userData?.length > 0 && userValue && (
         <ul className='absolute p-1 top-10 flex flex-col gap-1 bg-stone-100 w-full rounded-md z-[100]'>
-          {users &&
-            users.map((item) => {
+          {userData?.length > 0 &&
+            userData.map((item) => {
               return (
                 <li
-                  key={item.email}
+                  key={item.email ?? item.id}
                   onClick={() => onClickUser(item)}
                   className='p-1 bg-white cursor-pointer'
                 >

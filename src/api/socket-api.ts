@@ -6,13 +6,13 @@ class SocketApi {
 
   static createConnection(id: number) {
     if (!this.socket) {
-      this.socket = io('http://192.168.0.106:3001', {
-        query: { userId: id },
-      })
-
-      // this.socket = io('https://chatt-server.onrender.com', {
+      // this.socket = io('http://192.168.0.106:3001', {
       //   query: { userId: id },
       // })
+
+      this.socket = io('https://chatt-server.onrender.com', {
+        query: { userId: id },
+      })
     }
 
     this.socket.on('connect', () => {

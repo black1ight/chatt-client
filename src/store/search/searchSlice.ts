@@ -4,11 +4,13 @@ import { IUserData } from '../../types/types'
 export interface searchState {
   searchValue: string | null
   currentUsers: IUserData[] | null
+  searchType: string | null
 }
 
 const initialState: searchState = {
   searchValue: null,
   currentUsers: null,
+  searchType: null,
 }
 
 export const searchSlice = createSlice({
@@ -39,10 +41,18 @@ export const searchSlice = createSlice({
     clearCurrentUser: (state) => {
       state.currentUsers = null
     },
+    addSearchType: (state, action: PayloadAction<string | null>) => {
+      state.searchType = action.payload
+    },
   },
 })
 
-export const { addValue, addCurrentUser, clearCurrentUser, minusCurrentUser } =
-  searchSlice.actions
+export const {
+  addValue,
+  addCurrentUser,
+  clearCurrentUser,
+  minusCurrentUser,
+  addSearchType,
+} = searchSlice.actions
 
 export default searchSlice.reducer

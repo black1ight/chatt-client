@@ -23,6 +23,7 @@ export const getUserName = (email: string) => {
 const Sidebar: FC = () => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { searchType, searchValue } = useAppSelector((state) => state.search)
   const { unreadDialogs } = useAppSelector((state) => state.messenger)
   const { user } = useAppSelector((state) => state.user)
 
@@ -38,11 +39,15 @@ const Sidebar: FC = () => {
     [],
   )
 
-  const rooms = useLiveQuery(
-    async (): Promise<IResRoom[] | undefined> =>
-      await db.table('rooms').reverse().toArray(),
-    [],
-  )
+  const rooms = useLiveQuery(async (): Promise<IResRoom[] | undefined> => {
+    const data: IResRoom[] = await db.table('rooms').reverse().toArray()
+    if (searchValue && searchType === 'rooms') {
+      return data.filter((room) =>
+        room.id.toLowerCase().includes(searchValue.toLowerCase()),
+      )
+    }
+    return data
+  }, [searchValue])
 
   if (rooms && activeRoom) {
     const isExist = rooms.find((room) => room.id === activeRoom.id)
