@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC } from 'react'
 import { getUserName } from '../Sidebar'
 import { format } from 'date-fns'
 import { IUserLabel } from './UserLabel'
