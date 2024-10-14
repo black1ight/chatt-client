@@ -39,7 +39,7 @@ const Auth: FC = () => {
       const data = await AuthService.registration({
         email,
         password,
-        socketId: `${email}-${iconColors[2].first}`,
+        // socketId: `${email}-${iconColors[2].first}`,
         color: getRandomColor(),
       })
       if (data) {
