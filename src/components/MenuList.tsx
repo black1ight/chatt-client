@@ -13,9 +13,16 @@ const messageMenuList = ['reply', 'edit', 'delete']
 interface IMenuListProps {
   item: IResMessage
   setOnOpenMenu: (property: number | null) => void
+  clickPoint: {
+    rect: DOMRect
+    scrollHeight: number
+    scrollTop: number
+    x: number
+    y: number
+  } | null
 }
 
-const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu }) => {
+const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu, clickPoint }) => {
   const dispatch = useAppDispatch()
   const menuRef = useRef<HTMLUListElement>(null)
   const { activeRoom } = useAppSelector((state) => state.rooms)
@@ -51,6 +58,7 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu }) => {
     } else if (elem === 'reply') {
       dispatch(onReply(item.id))
     }
+    setOnOpenMenu(null)
   }
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -58,32 +66,91 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu }) => {
       setOnOpenMenu(null)
     }
   }
+
   useEffect(() => {
-    document.body.addEventListener('mousedown', handleClickOutside)
+    if (menuRef.current && clickPoint?.rect) {
+      const { rect, scrollTop } = clickPoint
+      const clientX = clickPoint.x - rect.left - 5
+      const clientY = clickPoint.y - rect.top - 5
+      if (rect.width > clientX - rect.left + menuRef.current.clientWidth) {
+        menuRef.current.style.setProperty(
+          'top',
+          `${scrollTop + clientY + 10}px`,
+          'important',
+        )
+        menuRef.current.style.setProperty(
+          'left',
+          `${clientX + 10}px`,
+          'important',
+        )
+      }
+      if (rect.width < clientX + menuRef.current.clientWidth) {
+        menuRef.current.style.setProperty(
+          'top',
+          `${scrollTop + clientY + 10}px`,
+          'important',
+        )
+        menuRef.current.style.setProperty(
+          'left',
+          `${clientX - menuRef.current.clientWidth + 5}px`,
+          'important',
+        )
+      }
+      if (rect.height < clientY + menuRef.current.clientHeight) {
+        menuRef.current.style.setProperty(
+          'top',
+          `${clientY + scrollTop - menuRef.current.clientHeight}px`,
+          'important',
+        )
+        menuRef.current.style.setProperty(
+          'left',
+          `${clientX + 10}px`,
+          'important',
+        )
+      }
+      if (
+        rect.height < clientY + menuRef.current.clientHeight &&
+        rect.width < clientX + menuRef.current.clientWidth
+      ) {
+        menuRef.current.style.setProperty(
+          'top',
+          `${clientY + scrollTop - menuRef.current.clientHeight}px`,
+          'important',
+        )
+        menuRef.current.style.setProperty(
+          'left',
+          `${clientX - menuRef.current.clientWidth}px`,
+          'important',
+        )
+      }
+    }
+    document.body.addEventListener('mouseup', handleClickOutside)
     return () => {
-      document.body.removeEventListener('mousedown', handleClickOutside)
+      document.body.removeEventListener('mouseup', handleClickOutside)
     }
   }, [])
 
   return (
     <ul
       ref={menuRef}
-      className='absolute z-[100] top-6 right-0 bg-white/70 backdrop-blur-sm rounded-md py-2 border border-slate-300'
+      className={`absolute z-[100] left-0 top-0 backdrop-blur-sm rounded-md border border-slate-300 text-stone-700 text-lg shadow-lg`}
     >
       {messageMenuList.map((elem) => {
+        const firstElem = messageMenuList[0] === elem
+        const lastElem = messageMenuList[messageMenuList.length - 1] === elem
         return (
           <li
             key={elem}
             onClick={() => menuItemHandler(elem)}
-            className='py-1 px-3 flex items-center gap-2 active:bg-stone-300 cursor-pointer'
+            className={`py-1 px-3 flex flex-row-reverse justify-between items-center gap-2 bg-white/70 active:bg-white/90 hover:bg-white/90 cursor-pointer ${!lastElem && 'border-b border-stone-300'} ${firstElem && 'rounded-t-md'} ${lastElem && 'rounded-b-md'}`}
           >
             <span>
               {elem === 'edit' ? (
-                <MdEdit />
+                <MdEdit size={20} />
               ) : elem === 'delete' ? (
-                <MdDelete />
+                <MdDelete size={20} />
               ) : (
-                <MdOutlineReply />
+                <MdOutlineReply size={20} />
               )}
             </span>
             <span>{elem}</span>

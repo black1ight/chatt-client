@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import {
   addReplayMessage,
@@ -10,8 +10,13 @@ import { addEditId, onReply } from '../store/form/formSlice'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../helpers/db'
 
-const Reply: FC = () => {
+interface ReplyProps {
+  roomRef: HTMLDivElement | null
+}
+
+const Reply: FC<ReplyProps> = ({ roomRef }) => {
   const dispatch = useAppDispatch()
+  const replyTextRef = useRef<HTMLParagraphElement | null>(null)
   const { replyMessage } = useAppSelector((state) => state.messenger)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { replyId } = useAppSelector((state) => state.form)
@@ -55,6 +60,18 @@ const Reply: FC = () => {
   useEffect(() => {
     messages && findMessage()
   }, [messages, replyId])
+
+  useEffect(() => {
+    if (roomRef && replyTextRef.current) {
+      console.log(roomRef)
+
+      replyTextRef.current.style.setProperty(
+        'width',
+        `${roomRef.clientWidth - 80}px`,
+      )
+    }
+  }, [roomRef])
+
   return (
     <div className='relative flex gap-2 items-center px-2 py-1'>
       <span
@@ -70,7 +87,11 @@ const Reply: FC = () => {
         <span className='text-cyan-700'>
           {replyMessage?.user.email.split('@')[0]}
         </span>
-        <p className='w-[90%] whitespace-nowrap overflow-hidden text-ellipsis'>
+
+        <p
+          ref={replyTextRef}
+          className='w-[90%] whitespace-nowrap overflow-hidden text-ellipsis'
+        >
           {replyMessage?.text}
         </p>
       </div>

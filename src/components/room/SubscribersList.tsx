@@ -37,7 +37,7 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
   }
 
   return (
-    <ul className='p-2'>
+    <ul className='p-2 max-h-[40vh] overflow-y-auto hide-scrollbar'>
       {profile !== null && users && (
         <SubscriberProfile
           {...users[profile]}
@@ -52,8 +52,8 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
             onClick={() => profileHandler(id)}
             className={`grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer ${profile !== null && users[profile].id === user.id && 'hidden'}`}
           >
-            <UserLabel parent='room' {...user} size='small' />
-            <UserStatusInfo parent='room' {...user} size='small' />
+            <UserLabel parent='room' {...user} size='sm' />
+            <UserStatusInfo parent='room' {...user} size='sm' />
 
             {props.roomOwner && !userOwner ? (
               <button className='opacity-50 hover:opacity-100 ml-auto col-span-2'>

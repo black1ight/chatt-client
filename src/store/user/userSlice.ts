@@ -3,13 +3,17 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 import { IResUser, IUser } from '../../types/types'
 import { UsersService } from '../../services/users.service'
 import { toast } from 'react-toastify'
+import db from '../../helpers/db'
 
 export const getMyProfile = createAsyncThunk<any, number>(
   'messenger/getMyProfileStatus',
   async (id: number) => {
     try {
       const data = await UsersService.getUserById(id)
-      if (data) return { data }
+      if (data) {
+        await db.table('users').put(data)
+        return { data }
+      }
     } catch (err: any) {
       const error = err.response?.data.message
       toast.error(error.toString())

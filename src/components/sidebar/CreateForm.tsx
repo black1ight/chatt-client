@@ -44,7 +44,7 @@ const CreateForm: FC<CreateFormProps> = (props) => {
   const inputUserRef = useRef<HTMLInputElement>(null)
   const inputNameRef = useRef<HTMLInputElement>(null)
   const { searchValue, currentUsers } = useAppSelector((state) => state.search)
-  const { user } = useAppSelector((state) => state.user)
+  const { user, profile } = useAppSelector((state) => state.user)
   const [userValue, setUserValue] = useState('')
   const [nameValue, setNameValue] = useState('')
 
@@ -79,9 +79,11 @@ const CreateForm: FC<CreateFormProps> = (props) => {
   const createHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     const roomData: IRoomData = {
       roomId: nameValue,
-      users: currentUsers?.map((user) => {
-        return user.id
-      }) ?? [user?.id!],
+      users: currentUsers
+        ?.map((user) => {
+          return user.id
+        })
+        .filter((id): id is number => id !== undefined) ?? [user?.id!],
       color: iconColors[Math.floor(Math.random() * iconColors.length)],
       owner: user?.id!,
     }
@@ -98,12 +100,15 @@ const CreateForm: FC<CreateFormProps> = (props) => {
   }, [searchValue])
 
   useEffect(() => {
-    user && dispatch(addCurrentUser(user))
+    profile && dispatch(addCurrentUser(profile))
   }, [])
 
   return (
     <Modal {...props}>
-      <form onSubmit={createHandler} className='p-4 flex flex-col gap-4'>
+      <form
+        onSubmit={createHandler}
+        className='p-4 flex flex-col gap-4 w-[400px] max-[480px]:w-[300px]'
+      >
         <h3 className='text-center text-slate-500'>New Group</h3>
         <div className='relative'>
           <input

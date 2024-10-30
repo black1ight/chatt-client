@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import UserLabel from '../user/UserLabel'
-import { getUserName } from '../Sidebar'
+import { getUserName } from '../sidebar/Sidebar'
 import { useAppSelector } from '../../store/hooks'
 import { IResUser } from '../../types/types'
 import { GrUserAdmin } from 'react-icons/gr'
@@ -20,6 +20,7 @@ const SubscriberProfile: FC<SubscriberProfileProps> = (props) => {
   const promoteUser = async () => {
     if (
       activeRoom &&
+      myProfile?.id === activeRoom.owner &&
       window.confirm(`promote to owner ${getUserName(props.email!)}`)
     ) {
       SocketApi.socket?.emit('promoteUser', {

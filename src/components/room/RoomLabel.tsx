@@ -26,9 +26,11 @@ const RoomLabel: FC<RoomLabelProps> = ({ room, type, size, ...props }) => {
     backgroundImage: `url(${room.imageUrl})`,
     backgroundSize: 'cover',
     backgroundPosition: 'center',
-    width: size === 'small' ? '40px' : size === 'big' ? '100px' : '56px',
-    height: size === 'small' ? '40px' : size === 'big' ? '100px' : '56px',
+    width: size === 'sm' ? '40px' : size === 'xl' ? '100px' : '56px',
+    height: size === 'sm' ? '40px' : size === 'xl' ? '100px' : '56px',
   }
+
+  const global = type === 'global'
 
   return (
     <div
@@ -43,11 +45,13 @@ const RoomLabel: FC<RoomLabelProps> = ({ room, type, size, ...props }) => {
                 backgroundImage: `linear-gradient(to bottom, ${room.color.first}, ${room.color.second})`,
               }
         }
-        className={`min-w-14 min-h-14 text-xl rounded-full flex justify-center items-center text-white`}
+        className={`min-w-14 min-h-14 ${global && 'min-w-[40px] min-h-[40px]'} text-xl rounded-full flex justify-center items-center text-white`}
       >
         {!room.imageUrl && room.id[0].toLocaleUpperCase()}
       </div>
-      <div className={`${type === 'sidebar' && 'hidden'}`}>
+      <div
+        className={`${(type === 'sideBar' || type === 'global') && 'hidden'}`}
+      >
         <div>{room.id}</div>
         {typingData?.userId !== user?.id &&
           typingData?.roomId === room.id &&

@@ -1,20 +1,21 @@
 import { FC, useEffect } from 'react'
 import Header from '../components/Header'
 import Room from '../components/room/Room'
-import Sidebar from '../components/Sidebar'
+import Sidebar from '../components/sidebar/Sidebar'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import Profile from '../components/sidebar/Profile'
 import { MessagesService } from '../services/messages.service'
 import db from '../helpers/db'
 import { RoomsService } from '../services/rooms.services'
 import { addLastId, IResMessage } from '../store/messenger/messengerSlice'
-import { IResRoom } from '../types/types'
+import { IResRoom, IUser } from '../types/types'
+import { UsersService } from '../services/users.service'
 
 const Home: FC = () => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { lastId } = useAppSelector((state) => state.messenger)
-  const { isOpen } = useAppSelector((state) => state.user)
+  const { isOpen, user } = useAppSelector((state) => state.user)
 
   const addMessagesToDb = async (serverMessages: IResMessage[]) => {
     if (serverMessages) {
@@ -52,19 +53,6 @@ const Home: FC = () => {
     console.log('messages has been removed from db!')
   }
 
-  const removeRoomsFromDb = async (
-    serverRooms: IResRoom[],
-    localRooms: IResRoom[],
-  ) => {
-    localRooms.forEach(async (room) => {
-      const isExist = serverRooms.find((item) => item.id === room.id)
-      if (!isExist) {
-        await db.table('rooms').delete(room.id)
-      }
-    })
-    console.log('rooms has been removed from db!')
-  }
-
   const addRoomsToDb = async (serverRooms: IResRoom[]) => {
     if (serverRooms) {
       for (const room of serverRooms) {
@@ -86,6 +74,19 @@ const Home: FC = () => {
       }
       console.log('rooms has been updated!')
     }
+  }
+
+  const removeRoomsFromDb = async (
+    serverRooms: IResRoom[],
+    localRooms: IResRoom[],
+  ) => {
+    localRooms.forEach(async (room) => {
+      const isExist = serverRooms.find((item) => item.id === room.id)
+      if (!isExist) {
+        await db.table('rooms').delete(room.id)
+      }
+    })
+    console.log('rooms has been removed from db!')
   }
 
   const addUsersToDb = async (serverRooms: IResRoom[]) => {
@@ -115,27 +116,39 @@ const Home: FC = () => {
     }
   }
 
+  const addProfileToDb = async (user: IUser) => {
+    const myProfile = await UsersService.getUserById(user.id)
+    if (myProfile) {
+      await db.table('users').put(myProfile)
+    }
+  }
+
   const syncLocalDb = async () => {
     const serverMessages = await MessagesService.getMessages('')
     const serverRooms = await RoomsService.getRooms()
     const localMessages = await db.table('messages').toArray()
     const localRooms = await db.table('rooms').toArray()
+    // const localUsers = await db.table('users').toArray()
 
-    if (
-      serverMessages !== undefined &&
-      serverMessages.length > 0 &&
-      serverRooms
-    ) {
+    if (serverMessages !== undefined && serverMessages.length > 0) {
       addMessagesToDb(serverMessages)
-      addRoomsToDb(serverRooms)
       dispatch(addLastId(serverMessages[serverMessages.length - 1].id))
+    }
+
+    if (serverRooms && serverRooms.length > 0) {
+      addRoomsToDb(serverRooms)
       addUsersToDb(serverRooms)
     }
 
     if (serverMessages && serverRooms && localMessages && localRooms) {
       removeMessagesFromDb(serverMessages, localMessages)
+    }
+
+    if (serverRooms && localRooms) {
       removeRoomsFromDb(serverRooms, localRooms)
     }
+
+    user && addProfileToDb(user)
   }
 
   useEffect(() => {
@@ -148,12 +161,12 @@ const Home: FC = () => {
     <div className='relative h-[100dvh] overflow-hidden flex gap-1'>
       {isOpen && <Profile />}
       <Sidebar />
-      <div className={`${!activeRoom && 'max-sm:hidden'} w-full`}>
+      <div className={`${!activeRoom && 'max-sm:hidden'} w-full flex flex-col`}>
         <Header />
         {activeRoom ? (
           <Room />
         ) : (
-          <div className='flex items-center max-sm:hidden justify-center h-[90dvh] col-span-3 overflow-hidden bg-stone-100'>
+          <div className='flex items-center max-sm:hidden justify-center h-[90dvh] overflow-hidden bg-stone-200'>
             <h3 className='bg-white p-2 rounded-md shadow-md'>
               Select to chat for start messaging
             </h3>

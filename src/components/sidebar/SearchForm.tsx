@@ -1,16 +1,23 @@
-import { FC, useEffect, useRef, useState } from 'react'
+import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { CiSearch } from 'react-icons/ci'
-import { IUserData } from '../../types/types'
+import { IResRoom, IResUser } from '../../types/types'
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import {
   addCurrentUser,
+  addGlobalRooms,
+  addGlobalUsers,
   addSearchType,
   addValue,
 } from '../../store/search/searchSlice'
 import { MdClear } from 'react-icons/md'
-import { getUserName } from '../Sidebar'
+import { getUserName } from './Sidebar'
 import db from '../../helpers/db'
+import UserLabel from '../user/UserLabel'
+import UserStatusInfo from '../user/UserStatusInfo'
+import { UsersService } from '../../services/users.service'
+import { RoomsService } from '../../services/rooms.services'
+import debounce from 'lodash.debounce'
 
 interface SearchFormProps {
   open: boolean
@@ -21,9 +28,12 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
   const dispatch = useAppDispatch()
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { searchValue } = useAppSelector((state) => state.search)
+  const { searchValue, globalUsers, searchType } = useAppSelector(
+    (state) => state.search,
+  )
+  const { user } = useAppSelector((state) => state.user)
   const [userValue, setUserValue] = useState('')
-  const [userData, setUserData] = useState<IUserData[]>([])
+  const [userData, setUserData] = useState<IResUser[]>([])
 
   const searchUsers = async (searchValue: string) => {
     const users = await db
@@ -37,19 +47,43 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
     }
   }
 
-  const updateSearchValue = (str: string) => {
-    dispatch(addValue(str))
-    type === 'sideBar'
-      ? dispatch(addSearchType('rooms'))
-      : dispatch(addSearchType('users'))
+  const searchUsersGlobal = async (searchValue: string) => {
+    const users: IResUser[] = await UsersService.getUsersByFilter(
+      `search=${searchValue}`,
+    )
+    dispatch(addGlobalUsers(users ?? null))
   }
+
+  const searchRoomsGlobal = async (searchValue: string) => {
+    const rooms: IResRoom[] | undefined = await RoomsService.getRoomsBySearch(
+      `search=${searchValue}`,
+    )
+    dispatch(addGlobalRooms(rooms ?? null))
+  }
+
+  const updateSearchValue = useCallback(
+    debounce((str: string) => {
+      if (str.length == 0) {
+        dispatch(addValue(null))
+        dispatch(addGlobalUsers(null))
+        dispatch(addGlobalRooms(null))
+      } else {
+        dispatch(addValue(str))
+      }
+
+      type === 'sideBar'
+        ? dispatch(addSearchType(null))
+        : dispatch(addSearchType('users'))
+    }, 300),
+    [],
+  )
 
   const onChangeInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserValue(event.target.value)
     updateSearchValue(event.target.value)
   }
 
-  const onClickUser = (item: IUserData) => {
+  const onClickUser = (item: IResUser) => {
     dispatch(addCurrentUser(item))
     setUserValue(getUserName(item.email!))
     dispatch(addValue(null))
@@ -62,6 +96,8 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
       setUserValue('')
     } else if (!open) {
       setUserValue('')
+      dispatch(addGlobalUsers(null))
+      dispatch(addGlobalRooms(null))
     }
     dispatch(addValue(null))
     inputRef.current?.focus()
@@ -69,6 +105,8 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
 
   useEffect(() => {
     searchValue && searchUsers(searchValue)
+    searchValue && searchUsersGlobal(searchValue)
+    searchValue && searchType == null && searchRoomsGlobal(searchValue)
   }, [searchValue])
 
   return (
@@ -98,20 +136,42 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
         </button>
       )}
 
-      {type === 'modal' && userData?.length > 0 && userValue && (
-        <ul className='absolute p-1 top-10 flex flex-col gap-1 bg-stone-100 w-full rounded-md z-[100]'>
+      {type !== 'sideBar' && userValue && (
+        <ul className='absolute p-1 top-10 flex flex-col gap-1 bg-stone-100 w-full max-h-[300px] overflow-y-auto hide-scrollbar rounded-md z-[100]'>
           {userData?.length > 0 &&
             userData.map((item) => {
-              return (
-                <li
-                  key={item.email ?? item.id}
-                  onClick={() => onClickUser(item)}
-                  className='p-1 bg-white cursor-pointer'
-                >
-                  {item.user_name ?? item.email?.split('@')[0]}
-                </li>
-              )
+              if (item.id !== user?.id) {
+                return (
+                  <li
+                    key={item.email ?? item.id}
+                    onClick={() => onClickUser(item)}
+                    className='p-1 bg-white cursor-pointer flex gap-2 rounded-md'
+                  >
+                    <UserLabel size='sm' parent='search' {...item} />
+                    <UserStatusInfo size='sm' parent='search' {...item} />
+                  </li>
+                )
+              }
             })}
+          {globalUsers &&
+            globalUsers?.length > 0 &&
+            globalUsers
+              .filter((item) => !userData.some((el) => el.id === item.id))
+              .map((item) => {
+                if (item.id !== user?.id) {
+                  const firstItem = globalUsers[0]
+                  return (
+                    <li
+                      key={item.email ?? item.id}
+                      onClick={() => onClickUser(item)}
+                      className={`p-1 bg-stone-100 cursor-pointer flex gap-2 rounded-md ${firstItem && 'border-top'}`}
+                    >
+                      <UserLabel size='sm' parent='search' {...item} />
+                      <UserStatusInfo size='sm' parent='search' {...item} />
+                    </li>
+                  )
+                }
+              })}
         </ul>
       )}
     </div>

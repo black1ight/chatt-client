@@ -1,15 +1,15 @@
 import { FC } from 'react'
-import { useAppSelector } from '../../../store/hooks'
 import InfoItem from './InfoItem'
 import { IResUser } from '../../../types/types'
 
-const UserInfo: FC = () => {
-  const { profile } = useAppSelector((state) => state.user)
+interface UserInfoProps extends IResUser {}
+
+const UserInfo: FC<UserInfoProps> = (props) => {
   const keysToExtract: (keyof IResUser)[] = ['email', 'user_name']
   const profileArray =
-    profile &&
+    props &&
     keysToExtract.map((key) => {
-      return { [key]: profile[key as keyof IResUser] }
+      return { [key]: props[key as keyof IResUser] }
     })
 
   return (

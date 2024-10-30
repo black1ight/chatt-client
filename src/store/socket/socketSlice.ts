@@ -12,7 +12,7 @@ export const socketSlice = createSlice({
   name: 'socket',
   initialState,
   reducers: {
-    addSocketId: (state, action: PayloadAction<string>) => {
+    addSocketId: (state, action: PayloadAction<string | null>) => {
       state.socketId = action.payload
     },
   },

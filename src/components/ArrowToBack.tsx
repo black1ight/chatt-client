@@ -4,14 +4,16 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addActiveRoom } from '../store/rooms/roomsSlice'
 import { setIsOpen } from '../store/user/userSlice'
 
-interface ArrowProps {}
+interface ArrowProps {
+  type: string
+}
 
-const ArrowToBack: FC<ArrowProps> = () => {
+const ArrowToBack: FC<ArrowProps> = ({ type }) => {
   const dispatch = useAppDispatch()
   const { unreadDialogs } = useAppSelector((state) => state.messenger)
 
   const backToSideBar = () => {
-    dispatch(addActiveRoom(null))
+    type === 'header' && dispatch(addActiveRoom(null))
     dispatch(setIsOpen(false))
   }
   return (

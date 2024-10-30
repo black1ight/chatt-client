@@ -1,16 +1,16 @@
 import { FC } from 'react'
-import { getUserName } from '../Sidebar'
+import { getUserName } from '../sidebar/Sidebar'
 import { format } from 'date-fns'
 import { IUserLabel } from './UserLabel'
 
 interface UserStatusInfoProps extends IUserLabel {}
 
 const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
-  const { email, online, lastSeen, size } = props
+  const { email, online, lastSeen, parent } = props
   const longAgo = new Date().getDate() - new Date(lastSeen!).getDate() > 1
   const today = new Date(lastSeen!).getDate() == new Date().getDate()
   const yesterday = new Date(lastSeen!).getDate() == new Date().getDate() - 1
-  const small = size === 'small'
+  const room = parent === 'room'
   const getlastSeenDay = () => {
     if (today) {
       return 'today'
@@ -26,7 +26,7 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   return (
     <div className={`flex flex-col col-span-3`}>
       <span>{getUserName(email!)}</span>
-      <div className={`${small && 'hidden'}`}>
+      <div className={`${room && 'hidden'} flex gap-1`}>
         {online ? (
           <span className='text-sm text-stone-500'>online</span>
         ) : (

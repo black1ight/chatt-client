@@ -2,9 +2,11 @@ import { FC } from 'react'
 import { CiLogout } from 'react-icons/ci'
 import { removeTokenFromLocalStorage } from '../../helpers/localstorage.helper'
 import { toast } from 'react-toastify'
-import { logOut } from '../../store/user/userSlice'
+import { addProfile, logOut, setIsOpen } from '../../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { addSocketId } from '../../store/socket/socketSlice'
+import SocketApi from '../../api/socket-api'
 
 const LogOut: FC = () => {
   const dispatch = useAppDispatch()
@@ -14,6 +16,10 @@ const LogOut: FC = () => {
   const logoutHandler = () => {
     if (window.confirm('Log out of your account?')) {
       dispatch(logOut())
+      dispatch(addProfile(null))
+      dispatch(setIsOpen(false))
+      dispatch(addSocketId(null))
+      SocketApi.socket?.disconnect()
       removeTokenFromLocalStorage('token')
       toast.success('You are logged Out.')
       navigate('/')

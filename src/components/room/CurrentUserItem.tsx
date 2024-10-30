@@ -1,17 +1,17 @@
 import { FC } from 'react'
-import { IUserData } from '../../types/types'
-import { getUserName } from '../Sidebar'
+import { IResUser, IUserData } from '../../types/types'
+import { getUserName } from '../sidebar/Sidebar'
 import { IoClose } from 'react-icons/io5'
 import { minusCurrentUser } from '../../store/search/searchSlice'
 import { useAppDispatch } from '../../store/hooks'
 interface SubscriberItemProps {
-  user: IUserData
+  user: IResUser
   id: number
 }
 const CurrentUserItem: FC<SubscriberItemProps> = ({ user, id }) => {
   const dispatch = useAppDispatch()
 
-  const removeSearchUser = (user: IUserData) => {
+  const removeSearchUser = (user: IResUser) => {
     dispatch(minusCurrentUser(user))
   }
   return (

@@ -3,18 +3,23 @@ import Modal from '../modal'
 import { ModalProps } from '../../hooks/useModal'
 import RoomLabel from './RoomLabel'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { getUserName } from '../Sidebar'
-
+import { getUserName } from '../sidebar/Sidebar'
 import { IResRoom, IResUser, IUser } from '../../types/types'
 import { addActiveRoom } from '../../store/rooms/roomsSlice'
-import { CiLogout } from 'react-icons/ci'
-
 import Subscribers from './Subscribers'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../../helpers/db'
 import SocketApi from '../../api/socket-api'
+import Join from './Join'
+import Leave from './Leave'
 
 interface RoomProfileProps extends ModalProps {}
+
+export const checkSubscribe = (room: IResRoom, id: number) => {
+  const find = room.users.find((user) => user.id === id)
+  if (find) return true
+  return false
+}
 
 const RoomProfile: FC<RoomProfileProps> = (props) => {
   const dispatch = useAppDispatch()
@@ -32,9 +37,11 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
   }, [room])
 
   const roomOwner = myProfile?.id == activeRoom?.owner
+  const isSubscribe = checkSubscribe(activeRoom!, myProfile!.id)
 
   const removeSubscriber = async (user: IResUser | IUser) => {
     if (
+      isSubscribe &&
       window.confirm(
         `${user.id == myProfile?.id ? 'Leave from ' + activeRoom?.id : `Remove ${user.email && getUserName(user.email)}`}`,
       )
@@ -71,14 +78,16 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
           roomOwner={roomOwner}
           removeSubscriber={removeSubscriber}
         />
-        <button
-          disabled={roomOwner}
-          onClick={() => removeSubscriber(myProfile!)}
-          className={`bg-slate-200 py-1 px-2 flex gap-4 hover:bg-slate-300 cursor-pointer ${roomOwner && 'opacity-50'}`}
-        >
-          <CiLogout size={24} className={`${!roomOwner && 'text-rose-700'}`} />
-          <span className='col-span-6'>Leave</span>
-        </button>
+        {isSubscribe ? (
+          <Leave
+            roomOwner={roomOwner}
+            removeSubscriber={(user: IResUser | IUser) =>
+              removeSubscriber(user)
+            }
+          />
+        ) : (
+          <Join />
+        )}
       </div>
     </Modal>
   )

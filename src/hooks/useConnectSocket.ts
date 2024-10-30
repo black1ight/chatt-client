@@ -21,7 +21,11 @@ export const useConnectSocket = () => {
     })
 
     SocketApi.socket?.on('updateUser', (dto) => {
-      db.table('users').put(dto)
+      if (Array.isArray(dto)) {
+        db.table('users').bulkPut(dto)
+      } else {
+        db.table('users').put(dto)
+      }
       console.log(`user ${dto.email} has been updated`)
     })
 
@@ -95,6 +99,9 @@ export const useConnectSocket = () => {
   }
 
   useEffect(() => {
-    user && connectSocket(user)
+    if (user) {
+      connectSocket(user)
+      console.log(`${user?.email} connect`)
+    }
   }, [user])
 }

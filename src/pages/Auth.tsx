@@ -2,7 +2,10 @@ import { FC, useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { AuthService } from '../services/auth.service'
 import { toast } from 'react-toastify'
-import { setTokenToLocalStorage } from '../helpers/localstorage.helper'
+import {
+  setTokenExpiryToLocalStorage,
+  setTokenToLocalStorage,
+} from '../helpers/localstorage.helper'
 import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
@@ -39,7 +42,6 @@ const Auth: FC = () => {
       const data = await AuthService.registration({
         email,
         password,
-        // socketId: `${email}-${iconColors[2].first}`,
         color: getRandomColor(),
       })
       if (data) {
@@ -57,11 +59,12 @@ const Auth: FC = () => {
   const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     try {
       dispatch(changeIsLoading('fetch'))
-
       e.preventDefault()
       const data = await AuthService.login({ email, password })
       if (data) {
+        const expiry = new Date().getTime() + 7 * 24 * 60 * 60 * 1000
         setTokenToLocalStorage('token', data.token)
+        setTokenExpiryToLocalStorage('tokenExpiry', expiry.toString())
         dispatch(logIn(data))
         dispatch(changeIsLoading(null))
 

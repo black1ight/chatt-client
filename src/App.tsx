@@ -2,7 +2,12 @@ import { FC, useEffect } from 'react'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router/router'
 import { useAppDispatch, useAppSelector } from './store/hooks'
-import { getTokenFromLocalStorage } from './helpers/localstorage.helper'
+import {
+  getTokenExpiryFromLocalStorage,
+  getTokenFromLocalStorage,
+  removeTokenExpiryFromLocalStorage,
+  removeTokenFromLocalStorage,
+} from './helpers/localstorage.helper'
 import { AuthService } from './services/auth.service'
 import { getMyProfile, logIn, logOut } from './store/user/userSlice'
 import useModal from './hooks/useModal'
@@ -21,14 +26,18 @@ const App: FC = () => {
 
   const checkAuth = async () => {
     const token = getTokenFromLocalStorage()
+    const tokenExpiry = getTokenExpiryFromLocalStorage()
+    const nowDate = new Date().getTime()
     try {
-      if (token) {
+      if (token && Number(tokenExpiry) > nowDate) {
         const data = await AuthService.getProfile()
         if (data) {
           dispatch(logIn(data))
           dispatch(getMyProfile(data.id))
         } else {
           dispatch(logOut())
+          removeTokenFromLocalStorage('token')
+          removeTokenExpiryFromLocalStorage('tokenExpiry')
         }
       }
     } catch (error) {
@@ -46,7 +55,6 @@ const App: FC = () => {
       await db.table('users').reverse().toArray(),
     [],
   )
-
   useConnectSocket()
 
   useEffect(() => {
@@ -54,14 +62,14 @@ const App: FC = () => {
   }, [])
 
   useEffect(() => {
-    rooms && rooms.length > 0 && SocketApi.joinRooms(rooms, user)
+    rooms && rooms.length > 0 && socketId && SocketApi.joinRooms(rooms, user)
     return () => {
       user && rooms && SocketApi.leaveRooms(rooms, user)
     }
   }, [rooms?.length, socketId])
 
   useEffect(() => {
-    users && users.length > 0 && SocketApi.joinUsers(users, user)
+    users && users.length > 0 && socketId && SocketApi.joinUsers(users, user)
     return () => {
       user && users && SocketApi.leaveUsers(users, user)
     }

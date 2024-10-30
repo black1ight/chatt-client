@@ -36,7 +36,7 @@ const Header: FC = () => {
     <div className={`w-full h-20 bg-white p-2 flex items-center border-b`}>
       {activeRoom && (
         <div className='hidden max-sm:flex items-center gap-1 bg-white'>
-          <ArrowToBack />
+          <ArrowToBack type='header' />
         </div>
       )}
 
