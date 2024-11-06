@@ -1,15 +1,31 @@
 import { CgProfile } from 'react-icons/cg'
-import { MdAlternateEmail, MdOutlineLocalPhone } from 'react-icons/md'
+import { MdAlternateEmail } from 'react-icons/md'
+import { FiPhone } from 'react-icons/fi'
+import { useAppDispatch, useAppSelector } from '../../../store/hooks'
+import Input from '../Input'
+import { addEditField, addEditValue } from '../../../store/profile/profileSlice'
 
 interface RenderProps<T> {
   data: T
 }
 
 const InfoItem = <T,>({ data }: RenderProps<T>) => {
+  const dispatch = useAppDispatch()
+  const { editField } = useAppSelector((state) => state.profile)
   const dataKey = data && Object.keys(data)[0].replace(/[^a-zA-Zа-яА-Я]/g, '')
 
+  const itemClickHandler = () => {
+    dispatch(addEditField(dataKey))
+    dispatch(
+      addEditValue(Object.values(data as Record<string, unknown>).toString()),
+    )
+  }
+
   return (
-    <div className='grid grid-cols-8 items-center gap-2 cursor-pointer py-1'>
+    <div
+      onClick={itemClickHandler}
+      className='grid grid-cols-8 items-center gap-2 cursor-pointer py-1'
+    >
       {data && (
         <>
           <span className='col-span-1'>
@@ -18,7 +34,7 @@ const InfoItem = <T,>({ data }: RenderProps<T>) => {
             ) : dataKey === 'username' ? (
               <CgProfile size={24} />
             ) : dataKey === 'phone' ? (
-              <MdOutlineLocalPhone size={24} />
+              <FiPhone size={24} />
             ) : (
               ''
             )}
@@ -26,8 +42,12 @@ const InfoItem = <T,>({ data }: RenderProps<T>) => {
           <span className='col-span-3 text-nowrap overflow-hidden text-ellipsis'>
             {dataKey}:
           </span>
-          <span className='flex-grow text-end col-span-4 text-nowrap overflow-hidden text-ellipsis'>
-            {Object.values(data)}
+          <span className='flex-grow col-span-4 text-nowrap overflow-hidden text-ellipsis'>
+            {editField && editField === dataKey ? (
+              <Input />
+            ) : (
+              Object.values(data)
+            )}
           </span>
         </>
       )}

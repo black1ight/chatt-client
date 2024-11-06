@@ -78,7 +78,8 @@ const CreateForm: FC<CreateFormProps> = (props) => {
 
   const createHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     const roomData: IRoomData = {
-      roomId: nameValue,
+      name: nameValue,
+      type: 'chat',
       users: currentUsers
         ?.map((user) => {
           return user.id

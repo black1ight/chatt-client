@@ -48,8 +48,8 @@ const RoomItem: FC<RoomItemProps> = ({
         className={`flex w-[calc(100%-64px)] flex-col justify-center ${!global && 'border-b'}`}
       >
         <div className='flex gap-2 justify-between'>
-          <span className='flex-grow text-stone-900 font-medium text-nowrap overflow-hidden text-ellipsis'>
-            {room.id}
+          <span className='flex-grow font-medium text-nowrap overflow-hidden text-ellipsis'>
+            {room.name}
           </span>
           {lastMessage && (
             <span className='text-sm opacity-70'>
@@ -65,7 +65,7 @@ const RoomItem: FC<RoomItemProps> = ({
           <span className='text-[15px] text-stone-900 leading-tight'>
             {lastMessage.user.id === user?.id
               ? 'you'
-              : (lastMessage?.user.user_name ??
+              : (lastMessage?.user.username ??
                 getUserName(lastMessage?.user.email))}
           </span>
         )}

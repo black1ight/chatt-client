@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export interface IUser {
   id?: number
-  user_name?: string
+  username?: string
   email: string
 }
 
@@ -19,7 +19,7 @@ export interface IResMessage {
   createdAt: Date
   updatedAt: Date
   userId: number
-  roomId: string
+  roomId: number
   reply: IReply
   user: IUser
 }
@@ -62,7 +62,10 @@ export const messengerSlice = createSlice({
         state.messagesRefs = []
         state.messagesRefs.push(action.payload)
       } else {
-        state.messagesRefs.push(action.payload)
+        const exist = state.messagesRefs.find(
+          (ref) => ref.messageId === action.payload.messageId,
+        )
+        !exist && state.messagesRefs.push(action.payload)
       }
     },
     removeRef: (state, action: PayloadAction<refObject>) => {

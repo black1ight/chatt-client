@@ -5,7 +5,7 @@ import { IResUser } from '../../../types/types'
 interface UserInfoProps extends IResUser {}
 
 const UserInfo: FC<UserInfoProps> = (props) => {
-  const keysToExtract: (keyof IResUser)[] = ['email', 'user_name']
+  const keysToExtract: (keyof IResUser)[] = ['username', 'phone', 'email']
   const profileArray =
     props &&
     keysToExtract.map((key) => {

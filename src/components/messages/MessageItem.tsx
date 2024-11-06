@@ -128,20 +128,22 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     <li key={itemIndex} className={`flex items-end gap-2`}>
       <div
         ref={(el) => setRef(el, groupIndex, itemIndex)}
-        className={`flex relative flex-col text-white' ${unread ? 'bg-blue-100' : author ? 'bg-sky-600' : 'bg-white'} ${author && 'ml-auto'} rounded-md ${firstItem === item.id && 'rounded-t-xl rounded-br-xl'} ${firstItem === item.id && 'rounded-l-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-br-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-bl-xl rounded-s-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-l-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-r-xl'} px-[10px] ${author ? 'py-2' : 'py-1'} shadow-outer ${unread && 'shadow-white'} group`}
+        className={`flex relative flex-col text-white' ${unread ? 'bg-unread_messages_bg' : author ? 'bg-message_bg_author/70' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${firstItem === item.id && 'rounded-t-xl rounded-br-xl'} ${firstItem === item.id && 'rounded-l-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-br-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-bl-xl rounded-s-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-l-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-r-xl'} px-[10px] ${author ? 'py-2' : 'py-1'} shadow-md ${unread && 'shadow-white'} group`}
       >
         <div className='flex gap-4 justify-between'>
           {!author && (
-            <span className={`${author ? 'text-white' : 'text-sky-600'}`}>
+            <span className={`text-message_username`}>
               {item.user?.email.split('@')[0]}
             </span>
           )}
         </div>
         {reply && (
           <div
-            className={`bg-sky-100 px-2 rounded-r-md border-l-[3px] border-sky-400 text-sm mb-1`}
+            className={`${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-r-md border-l-[3px] ${author ? 'border-reply_border_author/50' : 'border-reply_border'} text-sm mb-1`}
           >
-            <span className='text-cyan-700'>
+            <span
+              className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
+            >
               {item.reply.user.email.split('@')[0]}
             </span>
             <p
@@ -153,14 +155,12 @@ const MessageItem: FC<MessageItemProps> = (props) => {
           </div>
         )}
         <div className=''>
-          <span
-            className={`${isNotWords ? 'break-all' : 'break-words'} ${author && 'text-white'}`}
-          >
+          <span className={`${isNotWords ? 'break-all' : 'break-words'}`}>
             {item.text}
           </span>
           {/*start fake */}
           <span
-            className={`opacity-0 ${author ? 'pl-7' : 'pl-3'} text-sm float-right`}
+            className={`opacity-0 ${author ? 'pl-7' : 'pl-3'} text-xs float-right`}
           >
             {item.updatedAt &&
               item.status !== 'pending' &&
@@ -171,13 +171,15 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </div>
         {/* end fake */}
         <span
-          className={`absolute bottom-1 right-3 flex items-center gap-1 opacity-100 text-sm float-right ${author ? 'text-stone-200' : 'text-stone-500'}`}
+          className={`absolute ${author ? 'bottom-2 text-message_time/50' : 'bottom-1 text-message_time/50'} right-3 flex items-end gap-1 opacity-100 text-xs float-right`}
         >
-          {item.updatedAt &&
-            item.status !== 'pending' &&
-            item.createdAt !== item.updatedAt &&
-            'edit '}
-          {format(item.createdAt, 'HH:mm')}
+          <span className=''>
+            {item.updatedAt &&
+              item.status !== 'pending' &&
+              item.createdAt !== item.updatedAt &&
+              'edit '}
+            {format(item.createdAt, 'HH:mm')}
+          </span>
 
           {author && (
             <div>
@@ -186,9 +188,9 @@ const MessageItem: FC<MessageItemProps> = (props) => {
               ) : (
                 <span className={``}>
                   {item.readUsers.length > 1 ? (
-                    <MdDoneAll size={18} />
+                    <MdDoneAll size={16} />
                   ) : (
-                    <MdDone size={18} />
+                    <MdDone size={16} />
                   )}
                 </span>
               )}
@@ -197,7 +199,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </span>
         {/* decore (rectangle) */}
         <span
-          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${unread ? 'border-blue-100' : author ? 'border-sky-600' : 'border-white'} ${lastItem !== item.id && 'hidden'}`}
+          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${unread ? 'border-unread_messages_bg' : author ? 'border-message_bg_author' : 'border-message_bg'} ${lastItem !== item.id && 'hidden'}`}
         ></span>
       </div>
     </li>

@@ -4,15 +4,18 @@ import SocketApi from '../api/socket-api'
 import { addEditId, addOnWrite, onReply } from '../store/form/formSlice'
 import {
   addReplayMessage,
+  clearRefs,
   IResMessage,
+  removeRef,
 } from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
 import { addText, removeText } from '../store/form/textSlise'
-const messageMenuList = ['reply', 'edit', 'delete']
+
+const AuthorMessageMenuList = ['reply', 'edit', 'delete']
+const messageMenuList = ['reply']
 
 interface IMenuListProps {
   item: IResMessage
-  setOnOpenMenu: (property: number | null) => void
   clickPoint: {
     rect: DOMRect
     scrollHeight: number
@@ -20,12 +23,22 @@ interface IMenuListProps {
     x: number
     y: number
   } | null
+  onCloseMenu: () => void
+  getMenuRef: (el: HTMLUListElement | null) => void
 }
 
-const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu, clickPoint }) => {
+const MenuList: FC<IMenuListProps> = ({
+  item,
+  clickPoint,
+  onCloseMenu,
+  getMenuRef,
+}) => {
   const dispatch = useAppDispatch()
   const menuRef = useRef<HTMLUListElement>(null)
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { user } = useAppSelector((state) => state.user)
+  const author = item && item.userId === user?.id
+  const menuListCurrent = author ? AuthorMessageMenuList : messageMenuList
 
   const deleteMessageHandler = async () => {
     SocketApi.socket?.emit('delete-message', {
@@ -43,7 +56,7 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu, clickPoint }) => {
             text: item.reply.text,
             user: {
               email: item.reply.user.email,
-              user_name: item.reply.user.user_name,
+              username: item.reply.user.username,
             },
           }),
         )
@@ -55,16 +68,11 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu, clickPoint }) => {
     } else if (elem === 'delete') {
       deleteMessageHandler()
       dispatch(removeText())
+      // dispatch(removeRef(item.id))
     } else if (elem === 'reply') {
       dispatch(onReply(item.id))
     }
-    setOnOpenMenu(null)
-  }
-
-  const handleClickOutside = (event: MouseEvent) => {
-    if (menuRef.current && !event.composedPath().includes(menuRef.current)) {
-      setOnOpenMenu(null)
-    }
+    onCloseMenu()
   }
 
   useEffect(() => {
@@ -124,20 +132,26 @@ const MenuList: FC<IMenuListProps> = ({ item, setOnOpenMenu, clickPoint }) => {
         )
       }
     }
-    document.body.addEventListener('mouseup', handleClickOutside)
-    return () => {
-      document.body.removeEventListener('mouseup', handleClickOutside)
-    }
   }, [])
+
+  useEffect(() => {
+    if (menuRef.current) {
+      getMenuRef(menuRef.current)
+    }
+
+    return () => {
+      getMenuRef(null)
+    }
+  }, [menuRef])
 
   return (
     <ul
       ref={menuRef}
-      className={`absolute z-[100] left-0 top-0 backdrop-blur-sm rounded-md border border-slate-300 text-stone-700 text-lg shadow-lg`}
+      className={`absolute z-[100] left-0 top-0 backdrop-blur-md rounded-md border border-slate-300 text-stone-700 text-lg shadow-lg`}
     >
-      {messageMenuList.map((elem) => {
-        const firstElem = messageMenuList[0] === elem
-        const lastElem = messageMenuList[messageMenuList.length - 1] === elem
+      {menuListCurrent.map((elem) => {
+        const firstElem = menuListCurrent[0] === elem
+        const lastElem = menuListCurrent[menuListCurrent.length - 1] === elem
         return (
           <li
             key={elem}

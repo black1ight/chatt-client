@@ -24,7 +24,7 @@ const Sidebar: FC = () => {
     const data: IResRoom[] = await db.table('rooms').reverse().toArray()
     if (searchValue && searchType !== 'users') {
       return data.filter((room) =>
-        room.id.toLowerCase().includes(searchValue.toLowerCase()),
+        room.name.toLowerCase().includes(searchValue.toLowerCase()),
       )
     }
     return data
@@ -34,7 +34,7 @@ const Sidebar: FC = () => {
     const data: IResUser[] = await db.table('users').reverse().toArray()
     if (searchValue && searchType !== 'users') {
       return data.filter((user) =>
-        user.user_name?.toLowerCase().includes(searchValue.toLowerCase()),
+        user.username?.toLowerCase().includes(searchValue.toLowerCase()),
       )
     }
   }, [searchValue])

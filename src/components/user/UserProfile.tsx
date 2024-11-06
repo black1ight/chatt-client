@@ -7,7 +7,7 @@ export interface UserProfileProps extends IResUser {
 }
 const UserProfile: FC<UserProfileProps> = (props) => {
   return (
-    <div>
+    <div className='w-full'>
       <UserLabel {...props} />
     </div>
   )

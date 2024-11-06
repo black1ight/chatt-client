@@ -11,7 +11,7 @@ export interface IUserData {
   id: number
   email?: string
   password?: string
-  user_name?: string
+  username?: string
 }
 
 export interface IAuthData {
@@ -25,8 +25,10 @@ export interface IResUser {
   id: number | undefined
   socketId: string
   email: string | undefined
-  // password: string | undefined
-  user_name: string | null | undefined
+  password?: string | undefined
+  username: string | null | undefined
+  phone: string | null
+  bio: string | null
   color: IRoomColors
   imageUrl: string
   online: Boolean
@@ -51,14 +53,17 @@ export interface IPatchData {
 }
 
 export interface IRoomData {
-  roomId: string
+  name: string
+  type: string
   users: number[]
   color: IRoomColors
   owner: number
 }
 
 export interface IResRoom {
-  id: string
+  id: number
+  name: string
+  type: string
   users: IResUser[]
   messages: IResMessage[]
   color: IRoomColors
@@ -70,6 +75,6 @@ export interface IResRoom {
 export interface TypingData {
   userId: number
   userName: string
-  roomId: string
+  roomId: number
   typing: boolean
 }

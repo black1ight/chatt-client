@@ -13,6 +13,8 @@ import db from '../../helpers/db'
 import { IResUser } from '../../types/types'
 import { useLiveQuery } from 'dexie-react-hooks'
 import Loader from '../Loader'
+import Bio from '../user/info/Bio'
+import Buttons from '../user/Buttons'
 
 interface UserProfileProps {}
 
@@ -21,6 +23,7 @@ const Profile: FC<UserProfileProps> = () => {
   const profileRef = useRef<HTMLDivElement>(null)
   const isAuth = useAuth()
   const { user, isOpen, profile } = useAppSelector((state) => state.user)
+  const { editField } = useAppSelector((state) => state.profile)
 
   const myProfile = useLiveQuery(
     async (): Promise<IResUser | undefined> =>
@@ -66,7 +69,9 @@ const Profile: FC<UserProfileProps> = () => {
           <div className='bg-white flex justify-center items-center p-3'>
             <UserProfile {...myProfile} size='xl' parent='profile' />
           </div>
+          <Bio {...myProfile} />
           <UserInfo {...myProfile} />
+          {editField && <Buttons />}
         </div>
       )}
       {!myProfile && <Loader size='96' />}

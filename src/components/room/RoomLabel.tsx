@@ -47,12 +47,12 @@ const RoomLabel: FC<RoomLabelProps> = ({ room, type, size, ...props }) => {
         }
         className={`min-w-14 min-h-14 ${global && 'min-w-[40px] min-h-[40px]'} text-xl rounded-full flex justify-center items-center text-white`}
       >
-        {!room.imageUrl && room.id[0].toLocaleUpperCase()}
+        {!room.imageUrl && room.name[0].toLocaleUpperCase()}
       </div>
       <div
         className={`${(type === 'sideBar' || type === 'global') && 'hidden'}`}
       >
-        <div>{room.id}</div>
+        <div>{room.name}</div>
         {typingData?.userId !== user?.id &&
           typingData?.roomId === room.id &&
           typingData?.typing && <Typing />}

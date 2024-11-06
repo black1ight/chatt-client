@@ -10,17 +10,18 @@ import { logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Loader from '../components/Loader'
-import { changeIsLoading } from '../store/helpers/helpersSlice'
 import { iconColors } from '../components/sidebar/CreateForm'
+import { changeIsLoading } from '../store/helpers/helpersSlice'
 
 const Auth: FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
+  const { isLoading } = useAppSelector((state) => state.helpers)
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const isAuth = useAuth()
-  const { isLoading } = useAppSelector((state) => state.helpers)
+  // const { isLoading } = useAppSelector((state) => state.helpers)
 
   const getRandomColor = () => {
     const color = iconColors[Math.floor(Math.random() * iconColors.length)]

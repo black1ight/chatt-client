@@ -30,6 +30,8 @@ export const useConnectSocket = () => {
     })
 
     SocketApi.socket?.on('new-message', (dto: IResMessage) => {
+      console.log(dto)
+
       db.table('messages').put(dto)
       dispatch(addLastId(dto.id))
       console.log(dto)

@@ -28,12 +28,15 @@ const Messages: FC = () => {
   const { replyId } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
   const { user } = useAppSelector((state) => state.user)
-  const [onOpenMenu, setOnOpenMenu] = useState<IResMessage | null>(null)
+  const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
   const groupRefs = useRef<(HTMLDivElement | null)[][]>([])
+  const menuRef = useRef<HTMLUListElement | null>(null)
+
+  console.log(groupRefs)
 
   const setRef = (
     el: HTMLDivElement | null,
@@ -83,15 +86,6 @@ const Messages: FC = () => {
     }
   }
 
-  // const onOpenMenuList = () => {
-
-  //     if (onOpenMenu === idx) {
-  //       setOnOpenMenu(null)
-  //     } else {
-  //       setOnOpenMenu(idx)
-  //     }
-  // }
-
   const onClickMessage = useCallback(
     (e: MouseEvent | TouchEvent) => {
       const target = e.currentTarget as HTMLDivElement
@@ -118,20 +112,42 @@ const Messages: FC = () => {
       setClickPoint(clickData)
 
       if (groupRefs && entryItems) {
-        entryItems?.map((item) => {
+        entryItems?.forEach((item) => {
           const itemRef = groupRefs.current[item.groupIndex][item.itemIndex]
           if (itemRef && e.composedPath().includes(itemRef)) {
             const message = messages?.find((el) => el.id === item.messageId)
 
-            if (message) {
-              setOnOpenMenu(message)
+            if (onOpenMenu.current) {
+              onOpenMenu.current = null
+            } else if (message && !onOpenMenu.current) {
+              onOpenMenu.current = message
             }
           }
         })
+        if (
+          onOpenMenu.current &&
+          !entryItems.some((item) => {
+            const group = groupRefs.current[item.groupIndex]
+            const itemRef = group ? group[item.itemIndex] : null
+            return itemRef && e.composedPath().includes(itemRef)
+          }) &&
+          menuRef.current &&
+          !e.composedPath().includes(menuRef.current)
+        ) {
+          onOpenMenu.current = null
+        }
       }
     },
     [entryItems],
   )
+
+  const onCloseMenu = () => {
+    onOpenMenu.current = null
+  }
+
+  const getMenuRef = (el: HTMLUListElement | null) => {
+    el ? (menuRef.current = el) : (menuRef.current = null)
+  }
 
   useEffect(() => {
     scrollToBottom()
@@ -139,18 +155,12 @@ const Messages: FC = () => {
 
   useEffect(() => {
     unreadMessages?.length > 0 && readMessage(unreadMessages)
-    return () => {
-      dispatch(clearRefs())
-    }
   }, [unreadMessages])
 
   useEffect(() => {
     messageBodyRef.current?.addEventListener('click', onClickMessage)
-    // messageBodyRef.current?.addEventListener('touchstart', onClickMessage)
-
     return () => {
       messageBodyRef.current?.removeEventListener('click', onClickMessage)
-      // messageBodyRef.current?.removeEventListener('touchstart', onClickMessage)
     }
   }, [onClickMessage])
 
@@ -159,11 +169,12 @@ const Messages: FC = () => {
       ref={messageBodyRef}
       className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-neutral-200 p-2`}
     >
-      {onOpenMenu && (
+      {onOpenMenu.current && (
         <MenuList
-          setOnOpenMenu={() => setOnOpenMenu(null)}
-          item={onOpenMenu}
+          item={onOpenMenu.current}
           clickPoint={clickPoint}
+          onCloseMenu={onCloseMenu}
+          getMenuRef={getMenuRef}
         />
       )}
       <ul className='flex w-full flex-col gap-2'>

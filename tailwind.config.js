@@ -1,4 +1,5 @@
 import { transform } from 'typescript'
+const colors = require('tailwindcss/colors')
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -36,6 +37,19 @@ export default {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-100%)' },
         },
+      },
+      colors: {
+        message_bg_author: colors.yellow[100],
+        message_bg: colors.white,
+        unread_messages_bg: colors.blue[100],
+        message_username: colors.slate[500],
+        reply_bg_author: colors.stone[700],
+        reply_bg: colors.slate[200],
+        reply_border_author: colors.orange[950],
+        reply_border: colors.slate[400],
+        reply_username_author: colors.orange[950],
+        reply_username: colors.slate[700],
+        message_time: colors.stone[900],
       },
     },
   },
