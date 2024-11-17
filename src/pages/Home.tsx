@@ -2,19 +2,17 @@ import { FC, useEffect } from 'react'
 import Header from '../components/Header'
 import Room from '../components/room/Room'
 import Sidebar from '../components/sidebar/Sidebar'
-import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { useAppSelector } from '../store/hooks'
 import Profile from '../components/sidebar/Profile'
 import { MessagesService } from '../services/messages.service'
 import db from '../helpers/db'
 import { RoomsService } from '../services/rooms.services'
-import { addLastId, IResMessage } from '../store/messenger/messengerSlice'
+import { IResMessage } from '../store/messenger/messengerSlice'
 import { IResRoom, IUser } from '../types/types'
 import { UsersService } from '../services/users.service'
 
 const Home: FC = () => {
-  const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { lastId } = useAppSelector((state) => state.messenger)
   const { isOpen, user } = useAppSelector((state) => state.user)
 
   const addMessagesToDb = async (serverMessages: IResMessage[]) => {
@@ -128,11 +126,9 @@ const Home: FC = () => {
     const serverRooms = await RoomsService.getRooms()
     const localMessages = await db.table('messages').toArray()
     const localRooms = await db.table('rooms').toArray()
-    // const localUsers = await db.table('users').toArray()
 
     if (serverMessages !== undefined && serverMessages.length > 0) {
       addMessagesToDb(serverMessages)
-      dispatch(addLastId(serverMessages[serverMessages.length - 1].id))
     }
 
     if (serverRooms && serverRooms.length > 0) {
@@ -155,8 +151,6 @@ const Home: FC = () => {
     syncLocalDb()
   }, [])
 
-  useEffect(() => {}, [lastId])
-
   return (
     <div className='relative h-[100dvh] overflow-hidden flex gap-1'>
       {isOpen && <Profile />}
@@ -166,7 +160,7 @@ const Home: FC = () => {
         {activeRoom ? (
           <Room />
         ) : (
-          <div className='flex items-center max-sm:hidden justify-center h-[90dvh] overflow-hidden bg-stone-200'>
+          <div className='flex items-center max-sm:hidden justify-center h-[100dvh] overflow-hidden bg-stone-200'>
             <h3 className='bg-white p-2 rounded-md shadow-md'>
               Select to chat for start messaging
             </h3>

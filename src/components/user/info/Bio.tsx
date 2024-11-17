@@ -11,7 +11,6 @@ const Bio: FC<BioProps> = ({ bio }) => {
   const { editValue, editField } = useAppSelector((state) => state.profile)
   const onClickHandler = () => {
     dispatch(addEditField('bio'))
-    dispatch(addEditValue(bio))
     setTimeout(() => {
       if (textareaRef.current) {
         const length = textareaRef.current.value.length
@@ -19,6 +18,11 @@ const Bio: FC<BioProps> = ({ bio }) => {
         textareaRef.current.setSelectionRange(length, length)
       }
     }, 0)
+  }
+
+  const onFocus = () => {
+    dispatch(addEditValue(bio))
+    dispatch(addEditField('bio'))
   }
 
   useEffect(() => {}, [textareaRef])
@@ -32,10 +36,10 @@ const Bio: FC<BioProps> = ({ bio }) => {
             onChange={(e) => dispatch(addEditValue(e.currentTarget.value))}
             placeholder='Bio'
             className='w-full outline-none resize-none'
-            onFocus={() => dispatch(addEditField('bio'))}
+            onFocus={onFocus}
           />
         ) : (
-          <p className='text-stone-500'>{bio}</p>
+          <p className='text-stone-500'>{bio || 'Bio'}</p>
         )}
       </div>
     </div>

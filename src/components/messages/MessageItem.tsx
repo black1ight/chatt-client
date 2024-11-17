@@ -11,50 +11,53 @@ import { format } from 'date-fns'
 import Loader from '../Loader'
 import { MdDone, MdDoneAll } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { IResUser } from '../../types/types'
+import db from '../../helpers/db'
+import UserLabel from '../user/UserLabel'
 
 export interface MessageItemProps {
-  key: number
+  key: string
   author: boolean
   reply: IReply
   unread: boolean
   item: IResMessage
   itemIndex: number
-  groupIndex: number
-  lastItem: number
-  firstItem: number
-  setRef: (
-    el: HTMLDivElement | null,
-    groupIndex: number,
-    itemIndex: number,
-  ) => void
-  groupRefs: (HTMLDivElement | null)[][]
+  isLast: boolean | undefined
+  isFirst: boolean | undefined
+  isJoined: boolean | undefined
+  setRef: (el: HTMLDivElement | null, itemIndex: number) => void
+  messagesRefs: (HTMLDivElement | null)[]
   messageBodyRef: HTMLDivElement | null
 }
 
 const MessageItem: FC<MessageItemProps> = (props) => {
   const {
     author,
-    firstItem,
+    isFirst,
     reply,
     unread,
-    lastItem,
-    groupIndex,
+    isLast,
     itemIndex,
     item,
-    groupRefs,
+    messagesRefs,
     setRef,
     messageBodyRef,
+    isJoined,
   } = props
   const isNotWords = item.text.split(' ').some((el) => el.length > 20)
 
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.user)
+  const { activeRoom } = useAppSelector((state) => state.rooms)
   const replyTextRef = useRef<HTMLParagraphElement>(null)
 
-  const itemRef =
-    groupRefs[groupIndex] && groupRefs[groupIndex][itemIndex]
-      ? groupRefs[groupIndex][itemIndex]
-      : null
+  const itemRef = messagesRefs[itemIndex] || null
+
+  let authorProfile = useLiveQuery(
+    async (): Promise<IResUser> => await db.table('users').get(item.userId),
+    [item],
+  )
 
   const updateItemSize = useCallback((newWidth: number) => {
     if (replyTextRef.current !== null) {
@@ -95,15 +98,14 @@ const MessageItem: FC<MessageItemProps> = (props) => {
       ([entry]) => {
         const itemData = {
           messageId: item.id,
-          groupIndex,
           itemIndex,
         }
         if (entry.isIntersecting) {
           dispatch(addRef(itemData))
-          updateVisionItems(item)
+          isJoined && updateVisionItems(item)
         }
         if (!entry.isIntersecting) {
-          dispatch(removeRef(itemData))
+          dispatch(removeRef(item.id))
         }
       },
       {
@@ -120,18 +122,27 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     return () => {
       if (itemRef) {
         intersectionObserver.unobserve(itemRef)
+        dispatch(removeRef(item.id))
       }
     }
   }, [itemRef])
 
   return (
-    <li key={itemIndex} className={`flex items-end gap-2`}>
+    <li
+      key={itemIndex}
+      className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'}`}
+    >
+      {activeRoom?.type === 'chat' && authorProfile && !author && isLast && (
+        <div className='absolute bottom-0 left-0 rounded-full shadow-md'>
+          <UserLabel size='sm' parent='message' {...authorProfile} />
+        </div>
+      )}
       <div
-        ref={(el) => setRef(el, groupIndex, itemIndex)}
-        className={`flex relative flex-col text-white' ${unread ? 'bg-unread_messages_bg' : author ? 'bg-message_bg_author/70' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${firstItem === item.id && 'rounded-t-xl rounded-br-xl'} ${firstItem === item.id && 'rounded-l-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-br-xl rounded-tr-xl'} ${lastItem === item.id && 'rounded-bl-xl rounded-s-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-l-xl'} ${lastItem !== item.id && firstItem !== item.id && 'rounded-r-xl'} px-[10px] ${author ? 'py-2' : 'py-1'} shadow-md ${unread && 'shadow-white'} group`}
+        ref={(el) => setRef(el, itemIndex)}
+        className={`flex relative flex-col text-white' ${unread && isJoined ? 'bg-unread_messages_bg' : author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} pl-[10px] pr-1 py-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md ${unread && isJoined && 'shadow-white'} group`}
       >
         <div className='flex gap-4 justify-between'>
-          {!author && (
+          {!author && activeRoom?.type === 'chat' && (
             <span className={`text-message_username`}>
               {item.user?.email.split('@')[0]}
             </span>
@@ -139,7 +150,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </div>
         {reply && (
           <div
-            className={`${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-r-md border-l-[3px] ${author ? 'border-reply_border_author/50' : 'border-reply_border'} text-sm mb-1`}
+            className={`${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md border-l-[3px] ${author ? 'border-reply_border_author/50' : 'border-reply_border'} text-sm mb-1 mr-1`}
           >
             <span
               className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
@@ -171,7 +182,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </div>
         {/* end fake */}
         <span
-          className={`absolute ${author ? 'bottom-2 text-message_time/50' : 'bottom-1 text-message_time/50'} right-3 flex items-end gap-1 opacity-100 text-xs float-right`}
+          className={`absolute z-50 bottom-2 text-message_time/50 ${author ? 'right-1' : 'right-2'} flex items-end gap-1 opacity-100 text-xs float-right`}
         >
           <span className=''>
             {item.updatedAt &&
@@ -199,7 +210,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </span>
         {/* decore (rectangle) */}
         <span
-          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${unread ? 'border-unread_messages_bg' : author ? 'border-message_bg_author' : 'border-message_bg'} ${lastItem !== item.id && 'hidden'}`}
+          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${unread && isJoined ? 'border-unread_messages_bg' : author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
         ></span>
       </div>
     </li>

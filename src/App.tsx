@@ -50,6 +50,7 @@ const App: FC = () => {
       await db.table('rooms').reverse().toArray(),
     [],
   )
+
   const users = useLiveQuery(
     async (): Promise<IResUser[] | undefined> =>
       await db.table('users').reverse().toArray(),

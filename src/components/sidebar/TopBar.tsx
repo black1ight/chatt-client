@@ -20,11 +20,12 @@ const TopBar: FC = () => {
           onClick={() => {
             dispatch(setIsOpen(true))
           }}
+          className='text-stone-500'
         >
           <IoSettingsOutline size={24} />
         </div>
         <SearchForm open={open} type='sideBar' />
-        <div>
+        <div className='text-stone-500'>
           <IoCreateOutline size={24} onClick={onOpen} />
         </div>
       </div>

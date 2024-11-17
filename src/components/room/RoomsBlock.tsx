@@ -41,7 +41,7 @@ const RoomsBlock: FC<RoomBlockProps> = ({ rooms, type }) => {
 
         return (
           <RoomItem
-            key={`${room.id}-${room.color.first}`}
+            key={`${room.id}-${room.name}`}
             room={room}
             onChangeRoom={(_room) => onChangeRoom(_room)}
             lastMessage={lastMessage}

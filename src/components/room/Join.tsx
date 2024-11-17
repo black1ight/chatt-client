@@ -2,6 +2,7 @@ import { FC } from 'react'
 import SocketApi from '../../api/socket-api'
 import { HiUserAdd } from 'react-icons/hi'
 import { useAppSelector } from '../../store/hooks'
+import { getGlobalRoomMessages } from '../../helpers/db.helper'
 
 interface JoinProps {
   position?: string
@@ -15,6 +16,7 @@ const Join: FC<JoinProps> = ({ position }) => {
       addUsers: [user?.id],
     }
     SocketApi.socket?.emit('inviteToRoom', { roomId: activeRoom?.id, dto })
+    activeRoom && getGlobalRoomMessages(activeRoom.id)
   }
   return (
     <button

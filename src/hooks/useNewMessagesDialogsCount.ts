@@ -4,8 +4,8 @@ import {
 } from '../store/messenger/messengerSlice'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { useLiveQuery } from 'dexie-react-hooks'
-import db from './db'
 import { useEffect } from 'react'
+import db from '../helpers/db'
 
 export const useNewMessagesDialogsCount = () => {
   const { user } = useAppSelector((state) => state.user)
@@ -17,10 +17,18 @@ export const useNewMessagesDialogsCount = () => {
     [],
   )
 
+  const myRooms = useLiveQuery(async (): Promise<number[] | undefined> => {
+    const data = await db.table('rooms').toArray()
+    return data.map(({ id }) => id)
+  }, [])
+
   const getDialogsCount = () => {
     let rooms: any = {}
     const unreadMessages = messages?.filter((item) => {
-      return item.readUsers.indexOf(user?.id!) == -1
+      return (
+        item.readUsers.indexOf(user?.id!) == -1 &&
+        myRooms?.some((id) => id === item.roomId)
+      )
     })
 
     if (unreadMessages) {

@@ -43,7 +43,7 @@ const Reply: FC<ReplyProps> = ({ roomRef }) => {
               text: message.text,
               user: {
                 email: message.user.email,
-                user_name: message.user.user_name,
+                username: message.user.username,
               },
             }),
           )
@@ -63,8 +63,6 @@ const Reply: FC<ReplyProps> = ({ roomRef }) => {
 
   useEffect(() => {
     if (roomRef && replyTextRef.current) {
-      console.log(roomRef)
-
       replyTextRef.current.style.setProperty(
         'width',
         `${roomRef.clientWidth - 80}px`,

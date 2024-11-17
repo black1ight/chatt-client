@@ -8,12 +8,23 @@ import RoomProfile from './room/RoomProfile'
 import RoomLabel from './room/RoomLabel'
 import RoomSetting from './RoomSetting'
 import ArrowToBack from './ArrowToBack'
+import UserLabel from './user/UserLabel'
+import UserStatusInfo from './user/UserStatusInfo'
+import { useLiveQuery } from 'dexie-react-hooks'
+import { IResUser } from '../types/types'
+import db from '../helpers/db'
+
 const Header: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { user } = useAppSelector((state) => state.user)
   const [openSetting, setOpenSetting] = useState(false)
   const settingRef = useRef<HTMLDivElement>(null)
 
   const props = useModal()
+  const companioinGlobal = activeRoom?.users.find((el) => el.id !== user?.id)
+  const companion = useLiveQuery(async (): Promise<IResUser | undefined> => {
+    return await db.table('users').get(companioinGlobal?.id || 0)
+  }, [activeRoom])
 
   const handleClickOutside = (event: MouseEvent) => {
     if (
@@ -33,14 +44,33 @@ const Header: FC = () => {
   }, [openSetting])
 
   return (
-    <div className={`w-full h-20 bg-white p-2 flex items-center border-b`}>
+    <div className={`w-full h-[72px] bg-white p-2 flex items-center border-b`}>
       {activeRoom && (
-        <div className='hidden max-sm:flex items-center gap-1 bg-white'>
+        <div className='hidden max-sm:flex items-center gap-1 bg-white mr-1'>
           <ArrowToBack type='header' />
         </div>
       )}
 
-      {activeRoom && <RoomLabel {...props} room={activeRoom} />}
+      {activeRoom && activeRoom.type === 'chat' && (
+        <RoomLabel {...props} room={activeRoom} />
+      )}
+      {activeRoom &&
+        activeRoom.type === 'dialog' &&
+        (companion || companioinGlobal) && (
+          <div className='flex gap-2 items-center'>
+            <UserLabel
+              size=''
+              parent='header'
+              {...props}
+              {...(companion || companioinGlobal!)}
+            />
+            <UserStatusInfo
+              size=''
+              parent=''
+              {...(companion || companioinGlobal!)}
+            />
+          </div>
+        )}
 
       {props.open && activeRoom && <RoomProfile {...props} />}
       {activeRoom && (

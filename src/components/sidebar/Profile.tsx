@@ -15,6 +15,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import Loader from '../Loader'
 import Bio from '../user/info/Bio'
 import Buttons from '../user/Buttons'
+import { scrollToBottom } from '../Messages'
 
 interface UserProfileProps {}
 
@@ -47,10 +48,14 @@ const Profile: FC<UserProfileProps> = () => {
       document.body.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isOpen])
+
+  useEffect(() => {
+    editField && profileRef.current && scrollToBottom(profileRef.current)
+  }, [editField])
   return (
     <div
       ref={profileRef}
-      className={`absolute top-0 left-0 z-[100] h-full bg-stone-100 w-full max-w-[300px] max-sm:max-w-full ${isOpen ? 'animate-open-menu' : 'animate-close-menu'}`}
+      className={`absolute top-0 left-0 z-[100] h-full overflow-y-auto bg-stone-100 w-full max-w-[300px] max-sm:max-w-full pb-4 ${isOpen ? 'animate-open-menu' : 'animate-close-menu'}`}
     >
       {!isAuth && (
         <Link to='/auth' className='ml-auto'>

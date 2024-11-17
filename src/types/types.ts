@@ -56,20 +56,21 @@ export interface IRoomData {
   name: string
   type: string
   users: number[]
-  color: IRoomColors
-  owner: number
+  color: IRoomColors | null
+  owner: number | null
 }
 
 export interface IResRoom {
   id: number
   name: string
   type: string
+  isTemp: boolean
   users: IResUser[]
   messages: IResMessage[]
-  color: IRoomColors
-  owner: number
-  createdAt: Date
-  imageUrl: string
+  color: IRoomColors | null
+  owner: number | null
+  createdAt: Date | string
+  imageUrl: string | null
 }
 
 export interface TypingData {
@@ -77,4 +78,9 @@ export interface TypingData {
   userName: string
   roomId: number
   typing: boolean
+}
+
+export interface SyncMessage {
+  tempId: number
+  data: IResMessage
 }

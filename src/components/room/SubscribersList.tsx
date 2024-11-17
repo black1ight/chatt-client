@@ -56,7 +56,7 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
             <UserStatusInfo parent='room' {...user} size='sm' />
 
             {props.roomOwner && !userOwner ? (
-              <button className='opacity-50 hover:opacity-100 ml-auto col-span-2'>
+              <button className='opacity-50 hover:opacity-100 ml-auto col-span-1'>
                 <IoRemoveCircleOutline
                   onClick={(e) => {
                     e.stopPropagation()
@@ -68,7 +68,7 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
               </button>
             ) : (
               user.id == activeRoom?.owner && (
-                <span className='text-stone-500 ml-auto col-span-2'>owner</span>
+                <span className='text-stone-500 ml-auto col-span-1'>owner</span>
               )
             )}
           </li>

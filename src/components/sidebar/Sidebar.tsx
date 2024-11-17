@@ -3,10 +3,10 @@ import { useAppSelector } from '../../store/hooks'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../../helpers/db'
 import { IResRoom, IResUser } from '../../types/types'
-import { useNewMessagesDialogsCount } from '../../helpers/useNewMessagesDialogsCount'
 import TopBar from './TopBar'
 import RoomsBlock from '../room/RoomsBlock'
 import UsersBlock from '../user/UsersBlock'
+import { useNewMessagesDialogsCount } from '../../hooks/useNewMessagesDialogsCount'
 
 export const getUserName = (email: string) => {
   return email.split('@')[0]
@@ -14,6 +14,7 @@ export const getUserName = (email: string) => {
 
 const Sidebar: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { user } = useAppSelector((state) => state.user)
   const { searchType, searchValue, globalUsers, globalRooms } = useAppSelector(
     (state) => state.search,
   )
@@ -31,16 +32,30 @@ const Sidebar: FC = () => {
   }, [searchValue])
 
   const users = useLiveQuery(async (): Promise<IResUser[] | undefined> => {
-    const data: IResUser[] = await db.table('users').reverse().toArray()
+    const userData: IResUser[] = await db.table('users').reverse().toArray()
+    // const dialogData: IResRoom[] = await db
+    //   .table('rooms')
+    //   .where('type')
+    //   .equals('dialog')
+    //   .reverse()
+    //   .toArray()
+    // const searchDialogData = dialogData.filter((d) =>
+    //   d.users
+    //     .find((u) => u.id !== user?.id)
+    //     ?.username?.toLowerCase()
+    //     .includes(searchValue?.toLowerCase() || ''),
+    // )
+
     if (searchValue && searchType !== 'users') {
-      return data.filter((user) =>
+      return userData.filter((user) =>
         user.username?.toLowerCase().includes(searchValue.toLowerCase()),
       )
     }
   }, [searchValue])
 
   const globalRoomsSearchResult = globalRooms?.filter(
-    (room) => !rooms?.some((item) => item.id === room.id),
+    (room) =>
+      room.type === 'chat' && !rooms?.some((item) => item.id === room.id),
   )
 
   const globalUsersSearchResult = globalUsers?.filter(

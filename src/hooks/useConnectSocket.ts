@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import SocketApi from '../api/socket-api'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { addLastId, IResMessage } from '../store/messenger/messengerSlice'
-import { IResRoom, IUser, TypingData } from '../types/types'
+import { IResMessage } from '../store/messenger/messengerSlice'
+import { IResRoom, IUser, SyncMessage, TypingData } from '../types/types'
 import { addTypingData } from '../store/rooms/typingSlice'
 import { addSocketId } from '../store/socket/socketSlice'
 import db from '../helpers/db'
@@ -29,11 +29,13 @@ export const useConnectSocket = () => {
       console.log(`user ${dto.email} has been updated`)
     })
 
-    SocketApi.socket?.on('new-message', (dto: IResMessage) => {
-      console.log(dto)
-
-      db.table('messages').put(dto)
-      dispatch(addLastId(dto.id))
+    SocketApi.socket?.on('new-message', async (dto: SyncMessage) => {
+      const isExist = await db.table('messages').get(dto.tempId)
+      if (isExist) {
+        db.table('messages').update(dto.tempId, { ...dto.data })
+      } else {
+        db.table('messages').add(dto.data)
+      }
       console.log(dto)
     })
 

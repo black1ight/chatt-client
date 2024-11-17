@@ -35,14 +35,14 @@ const RoomLabel: FC<RoomLabelProps> = ({ room, type, size, ...props }) => {
   return (
     <div
       onClick={labelHandler}
-      className='relative flex gap-2 items-center pl-1 cursor-pointer'
+      className='relative flex gap-2 items-center cursor-pointer'
     >
       <div
         style={
           room.imageUrl
             ? backgroundStyle
             : {
-                backgroundImage: `linear-gradient(to bottom, ${room.color.first}, ${room.color.second})`,
+                backgroundImage: `linear-gradient(to bottom, ${room.color?.first}, ${room.color?.second})`,
               }
         }
         className={`min-w-14 min-h-14 ${global && 'min-w-[40px] min-h-[40px]'} text-xl rounded-full flex justify-center items-center text-white`}

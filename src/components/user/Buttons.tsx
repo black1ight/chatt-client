@@ -13,6 +13,8 @@ const Buttons: FC = () => {
       const patchData = {
         [editField]: editValue,
       }
+      console.log(patchData)
+
       SocketApi.socket?.emit('editUser', {
         userId: user?.id,
         dto: patchData,

@@ -1,16 +1,27 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import {
-  clearRefs,
   IResMessage,
   removeUnreadMessages,
 } from '../store/messenger/messengerSlice'
 import SocketApi from '../api/socket-api'
 import db from '../helpers/db'
 import { useLiveQuery } from 'dexie-react-hooks'
-import useLastMessages from '../hooks/useMessagesGroup'
-import MessagesGroup from './messages/MessagesGroup'
 import MenuList from './MenuList'
+import MessageItem from './messages/MessageItem'
+import useFirstLast from '../hooks/useFirstLast'
+import {
+  getGlobalRoomMessages,
+  removeGlobalRoomMessages,
+} from '../helpers/db.helper'
+
+export const scrollToBottom = (ref: HTMLDivElement) => {
+  if (ref !== null) {
+    setTimeout(() => {
+      ref.scrollTop = ref.scrollHeight - ref.clientHeight
+    }, 0)
+  }
+}
 
 interface ClickPointData {
   scrollHeight: number
@@ -33,20 +44,26 @@ const Messages: FC = () => {
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
-  const groupRefs = useRef<(HTMLDivElement | null)[][]>([])
+  const messagesRefs = useRef<(HTMLDivElement | null)[]>([])
   const menuRef = useRef<HTMLUListElement | null>(null)
+  const isJoined = activeRoom?.users.some((el) => el.id === user?.id)
 
-  console.log(groupRefs)
+  const setRef = (el: HTMLDivElement | null, itemIndex: number) => {
+    messagesRefs.current[itemIndex] = el
+  }
 
-  const setRef = (
-    el: HTMLDivElement | null,
-    groupIndex: number,
-    itemIndex: number,
-  ) => {
-    if (!groupRefs.current[groupIndex]) {
-      groupRefs.current[groupIndex] = []
+  const getUnsubRoomMessages = async (roomId: number) => {
+    const findRoom = await db.table('rooms').get(roomId)
+    if (!findRoom) {
+      getGlobalRoomMessages(roomId)
     }
-    groupRefs.current[groupIndex][itemIndex] = el
+  }
+
+  const removeUnsubRoomMessages = async (roomId: number) => {
+    const findRoom = await db.table('rooms').get(roomId)
+    if (!findRoom) {
+      removeGlobalRoomMessages(roomId)
+    }
   }
 
   const messages =
@@ -55,22 +72,13 @@ const Messages: FC = () => {
       const data = await db
         .table('messages')
         .where('roomId')
-        .equals(activeRoom.id)
+        .equals(activeRoom?.id)
         .toArray()
 
       return data
     }, [activeRoom])
 
-  const { messagesGroups } = useLastMessages(messages)
-
-  const scrollToBottom = () => {
-    const { current } = messageBodyRef
-    if (current !== null) {
-      setTimeout(() => {
-        current.scrollTop = current.scrollHeight - current.clientHeight
-      }, 0)
-    }
-  }
+  const { firstItems, lastItems } = useFirstLast(messages)
 
   const readMessage = async (messages: IResMessage[]) => {
     try {
@@ -111,9 +119,9 @@ const Messages: FC = () => {
 
       setClickPoint(clickData)
 
-      if (groupRefs && entryItems) {
+      if (messagesRefs && entryItems) {
         entryItems?.forEach((item) => {
-          const itemRef = groupRefs.current[item.groupIndex][item.itemIndex]
+          const itemRef = messagesRefs.current[item.itemIndex]
           if (itemRef && e.composedPath().includes(itemRef)) {
             const message = messages?.find((el) => el.id === item.messageId)
 
@@ -127,8 +135,7 @@ const Messages: FC = () => {
         if (
           onOpenMenu.current &&
           !entryItems.some((item) => {
-            const group = groupRefs.current[item.groupIndex]
-            const itemRef = group ? group[item.itemIndex] : null
+            const itemRef = messagesRefs.current[item.itemIndex] || null
             return itemRef && e.composedPath().includes(itemRef)
           }) &&
           menuRef.current &&
@@ -150,8 +157,17 @@ const Messages: FC = () => {
   }
 
   useEffect(() => {
-    scrollToBottom()
+    messageBodyRef.current && scrollToBottom(messageBodyRef.current)
   }, [messages, replyId, areaHeight])
+
+  useEffect(() => {
+    activeRoom &&
+      activeRoom.type === 'chat' &&
+      getUnsubRoomMessages(activeRoom.id)
+    return () => {
+      activeRoom && removeUnsubRoomMessages(activeRoom.id)
+    }
+  }, [activeRoom])
 
   useEffect(() => {
     unreadMessages?.length > 0 && readMessage(unreadMessages)
@@ -160,6 +176,7 @@ const Messages: FC = () => {
   useEffect(() => {
     messageBodyRef.current?.addEventListener('click', onClickMessage)
     return () => {
+      onCloseMenu()
       messageBodyRef.current?.removeEventListener('click', onClickMessage)
     }
   }, [onClickMessage])
@@ -175,24 +192,38 @@ const Messages: FC = () => {
           clickPoint={clickPoint}
           onCloseMenu={onCloseMenu}
           getMenuRef={getMenuRef}
+          isJoined={isJoined}
         />
       )}
-      <ul className='flex w-full flex-col gap-2'>
+      <ul className='flex w-full flex-col gap-[3px]'>
         {!messages && (
           <div className='flex justify-center items-center'>
             <h3>Loading...</h3>
           </div>
         )}
-        {messagesGroups?.map((group, groupIndex) => (
-          <MessagesGroup
-            key={`${groupIndex}-${group.length}`}
-            setRef={setRef}
-            messages={group}
-            groupRefs={groupRefs.current}
-            groupIndex={groupIndex}
-            messageBodyRef={messageBodyRef.current}
-          />
-        ))}
+        {messages?.map((item, itemIndex) => {
+          const author = item.userId === user?.id
+          const reply = item.reply
+          const unread = item.readUsers.indexOf(user?.id!) == -1
+          const isfirst = firstItems?.some((el) => el.id === item.id)
+          const islast = lastItems?.some((el) => el.id === item.id)
+          return (
+            <MessageItem
+              key={`${item.createdAt}`}
+              messagesRefs={messagesRefs.current}
+              messageBodyRef={messageBodyRef.current}
+              itemIndex={itemIndex}
+              author={author}
+              reply={reply}
+              unread={unread}
+              item={item}
+              setRef={setRef}
+              isFirst={isfirst}
+              isLast={islast}
+              isJoined={isJoined}
+            />
+          )
+        })}
         <div className='opacity-0 leading-none text-[2px]'>0</div>
       </ul>
     </div>

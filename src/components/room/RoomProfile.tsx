@@ -12,6 +12,7 @@ import db from '../../helpers/db'
 import SocketApi from '../../api/socket-api'
 import Join from './Join'
 import Leave from './Leave'
+import { removeGlobalRoomMessages } from '../../helpers/db.helper'
 
 interface RoomProfileProps extends ModalProps {}
 
@@ -56,6 +57,7 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
           roomId: activeRoom.id,
           removeUser: user.id,
         })
+        removeGlobalRoomMessages(activeRoom.id)
         dispatch(addActiveRoom(null))
       }
     }

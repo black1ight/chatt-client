@@ -11,6 +11,9 @@ import {
 import TextArea from './TextArea'
 import { removeText } from '../store/form/textSlise'
 import db from '../helpers/db'
+import { RoomsService } from '../services/rooms.services'
+import { IResRoom, IRoomData } from '../types/types'
+import { addActiveRoom } from '../store/rooms/roomsSlice'
 
 const Form: FC = () => {
   const dispatch = useAppDispatch()
@@ -18,7 +21,6 @@ const Form: FC = () => {
   const { text } = useAppSelector((state) => state.text)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { lastId } = useAppSelector((state) => state.messenger)
 
   const areaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -46,6 +48,22 @@ const Form: FC = () => {
     }
   }
 
+  const createRoom = async (room: IResRoom) => {
+    const roomData: IRoomData = {
+      name: room.name,
+      type: room.type,
+      users: room.users
+        .map((user) => user.id)
+        .filter((id): id is number => id !== undefined),
+      color: room.color,
+      owner: room.owner,
+    }
+    SocketApi.socket?.emit('createRoom', roomData)
+    // const data = await RoomsService.createRoom(roomData)
+
+    // if (data) return data
+  }
+
   const sendMail = async (e: React.FormEvent<HTMLFormElement>) => {
     dispatch(changeIsLoading('fetch'))
     if (editId && text) {
@@ -53,9 +71,10 @@ const Form: FC = () => {
       patchMessageHandler()
     } else {
       e.preventDefault()
+
       const replyData = await getReplyData(replyId)
       const newMessageDto = {
-        id: lastId! + 1,
+        id: Date.now(),
         reply: replyData,
         replyId,
         text,
@@ -67,10 +86,21 @@ const Form: FC = () => {
         updatedAt: new Date(),
         status: 'pending',
       }
+      if (activeRoom?.isTemp) {
+        createRoom(activeRoom)
+        SocketApi.socket?.on('joinedNewRoom', (dto: IResRoom) => {
+          db.table('messages').add({ ...newMessageDto, roomId: dto?.id })
+          dispatch(addActiveRoom(dto))
+          SocketApi.socket?.emit('new-message', {
+            ...newMessageDto,
+            roomId: dto?.id,
+          })
+        })
+      }
 
       await db.table('messages').add(newMessageDto)
-
       SocketApi.socket?.emit('new-message', newMessageDto)
+
       dispatch(addReplayMessage(null))
       dispatch(onReply(null))
       dispatch(removeText())
@@ -91,7 +121,7 @@ const Form: FC = () => {
   return (
     <form
       onSubmit={onSubmit}
-      className='relative flex items-end w-full bg-white rounded-b-md max-sm:rounded-none border-t border-stone-300 py-3'
+      className='relative flex items-end w-full bg-white  max-sm:rounded-none border-t border-stone-300 py-3'
     >
       <TextArea />
 

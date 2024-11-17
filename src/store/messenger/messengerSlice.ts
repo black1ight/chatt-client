@@ -26,7 +26,6 @@ export interface IResMessage {
 
 type refObject = {
   messageId: number
-  groupIndex: number
   itemIndex: number
 }
 
@@ -35,7 +34,6 @@ export interface messengerState {
   unreadMessages: IResMessage[]
   messagesRefs: refObject[] | null
   replyMessage: IReply | null
-  lastId: number | null
 }
 
 const initialState: messengerState = {
@@ -43,7 +41,6 @@ const initialState: messengerState = {
   unreadMessages: [],
   messagesRefs: null,
   replyMessage: null,
-  lastId: null,
 }
 
 export const messengerSlice = createSlice({
@@ -68,13 +65,13 @@ export const messengerSlice = createSlice({
         !exist && state.messagesRefs.push(action.payload)
       }
     },
-    removeRef: (state, action: PayloadAction<refObject>) => {
+    removeRef: (state, action: PayloadAction<number>) => {
       const ref = state.messagesRefs?.find(
-        (obj) => JSON.stringify(obj) === JSON.stringify(action.payload),
+        (obj) => obj.messageId === action.payload,
       )
       if (ref && state.messagesRefs) {
         state.messagesRefs = state.messagesRefs?.filter(
-          (obj) => JSON.stringify(obj) !== JSON.stringify(ref),
+          (obj) => obj.messageId !== ref.messageId,
         )
       }
     },
@@ -92,16 +89,12 @@ export const messengerSlice = createSlice({
     removeUnreadMessages: (state) => {
       state.unreadMessages = []
     },
-    addLastId: (state, action: PayloadAction<number | null>) => {
-      state.lastId = action.payload
-    },
   },
 })
 
 export const {
   addReplayMessage,
   addUnreadDialogs,
-  addLastId,
   addUnreadMessages,
   removeUnreadMessages,
   addRef,
