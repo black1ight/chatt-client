@@ -33,10 +33,6 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
     [],
   )
 
-  useEffect(() => {
-    room && dispatch(addActiveRoom(room))
-  }, [room])
-
   const roomOwner = myProfile?.id == activeRoom?.owner
   const isSubscribe = checkSubscribe(activeRoom!, myProfile!.id)
 
@@ -62,6 +58,10 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
       }
     }
   }
+
+  useEffect(() => {
+    room && dispatch(addActiveRoom(room))
+  }, [room])
 
   useEffect(() => {
     return () => {

@@ -43,7 +43,7 @@ const RoomsBlock: FC<RoomBlockProps> = ({ rooms, type }) => {
           <RoomItem
             key={`${room.id}-${room.name}`}
             room={room}
-            onChangeRoom={(_room) => onChangeRoom(_room)}
+            onChangeRoom={(room: IResRoom) => onChangeRoom(room)}
             lastMessage={lastMessage}
             unreadMessages={unreadMessages}
             type={type}

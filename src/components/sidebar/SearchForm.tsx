@@ -107,6 +107,7 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
     searchValue && searchUsers(searchValue)
     searchValue && searchUsersGlobal(searchValue)
     searchValue && searchType == null && searchRoomsGlobal(searchValue)
+    !searchValue && setUserValue('')
   }, [searchValue])
 
   return (

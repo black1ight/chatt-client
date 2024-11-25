@@ -20,7 +20,7 @@ const Header: FC = () => {
   const [openSetting, setOpenSetting] = useState(false)
   const settingRef = useRef<HTMLDivElement>(null)
 
-  const props = useModal()
+  const modalProps = useModal()
   const companioinGlobal = activeRoom?.users.find((el) => el.id !== user?.id)
   const companion = useLiveQuery(async (): Promise<IResUser | undefined> => {
     return await db.table('users').get(companioinGlobal?.id || 0)
@@ -52,7 +52,7 @@ const Header: FC = () => {
       )}
 
       {activeRoom && activeRoom.type === 'chat' && (
-        <RoomLabel {...props} room={activeRoom} />
+        <RoomLabel {...modalProps} room={activeRoom} />
       )}
       {activeRoom &&
         activeRoom.type === 'dialog' &&
@@ -61,7 +61,7 @@ const Header: FC = () => {
             <UserLabel
               size=''
               parent='header'
-              {...props}
+              modalProps={modalProps}
               {...(companion || companioinGlobal!)}
             />
             <UserStatusInfo
@@ -72,7 +72,9 @@ const Header: FC = () => {
           </div>
         )}
 
-      {props.open && activeRoom && <RoomProfile {...props} />}
+      {modalProps.open && activeRoom && activeRoom.type === 'chat' && (
+        <RoomProfile {...modalProps} />
+      )}
       {activeRoom && (
         <div
           ref={settingRef}

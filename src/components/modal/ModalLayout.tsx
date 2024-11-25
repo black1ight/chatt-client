@@ -20,7 +20,7 @@ const ModalLayout: FC<ModalLayoutProps> = ({
       >
         <div
           onClick={(e) => e.stopPropagation()}
-          className='absolute top-[15%] bg-white rounded-2xl shadow-xl'
+          className='absolute top-[15%] bg-white rounded-2xl shadow-xl overflow-hidden'
         >
           {children}
         </div>

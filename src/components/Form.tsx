@@ -59,9 +59,6 @@ const Form: FC = () => {
       owner: room.owner,
     }
     SocketApi.socket?.emit('createRoom', roomData)
-    // const data = await RoomsService.createRoom(roomData)
-
-    // if (data) return data
   }
 
   const sendMail = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -73,7 +70,7 @@ const Form: FC = () => {
       e.preventDefault()
 
       const replyData = await getReplyData(replyId)
-      const newMessageDto = {
+      let newMessageDto = {
         id: Date.now(),
         reply: replyData,
         replyId,
@@ -88,12 +85,12 @@ const Form: FC = () => {
       }
       if (activeRoom?.isTemp) {
         createRoom(activeRoom)
-        SocketApi.socket?.on('joinedNewRoom', (dto: IResRoom) => {
-          db.table('messages').add({ ...newMessageDto, roomId: dto?.id })
-          dispatch(addActiveRoom(dto))
+        SocketApi.socket?.once('newDialog', (newDialog: IResRoom) => {
+          db.table('messages').add({ ...newMessageDto, roomId: newDialog.id })
+          dispatch(addActiveRoom(newDialog))
           SocketApi.socket?.emit('new-message', {
             ...newMessageDto,
-            roomId: dto?.id,
+            roomId: newDialog.id,
           })
         })
       }

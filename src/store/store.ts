@@ -10,6 +10,7 @@ import typing from './rooms/typingSlice'
 import socket from './socket/socketSlice'
 import helpers from './helpers/helpersSlice'
 import profile from './profile/profileSlice'
+import userProfile from './user/userProfileSlice'
 
 export const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ export const store = configureStore({
     typing,
     socket,
     profile,
+    userProfile,
   },
 })
 

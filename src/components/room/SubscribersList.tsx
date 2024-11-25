@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC } from 'react'
 import { useAppSelector } from '../../store/hooks'
 import { IResUser } from '../../types/types'
 import UserLabel from '../user/UserLabel'
@@ -7,14 +7,12 @@ import { SubscribersProps } from './Subscribers'
 import UserStatusInfo from '../user/UserStatusInfo'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../../helpers/db'
-import SubscriberProfile from './SubscriberProfile'
 
 interface SubscribersListProps extends SubscribersProps {}
 
 const SubscribersList: FC<SubscribersListProps> = (props) => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const myProfile = useAppSelector((state) => state.user.user)
-  const [profile, setProfile] = useState<number | null>(null)
 
   const roomUsers = activeRoom?.users
     .map((user) => user.id)
@@ -28,29 +26,14 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
       [roomUsers.length],
     )
 
-  const profileHandler = (id: number) => {
-    if (profile === id) {
-      setProfile(null)
-    } else {
-      setProfile(id)
-    }
-  }
-
   return (
     <ul className='p-2 max-h-[40vh] overflow-y-auto hide-scrollbar'>
-      {profile !== null && users && (
-        <SubscriberProfile
-          {...users[profile]}
-          setProfile={() => setProfile(null)}
-        />
-      )}
-      {users?.map((user, id) => {
+      {users?.map((user) => {
         const userOwner = myProfile?.id === user.id
         return (
           <li
             key={user.email}
-            onClick={() => profileHandler(id)}
-            className={`grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer ${profile !== null && users[profile].id === user.id && 'hidden'}`}
+            className={`grid grid-cols-6 gap-1 items-center py-[2px] cursor-pointer`}
           >
             <UserLabel parent='room' {...user} size='sm' />
             <UserStatusInfo parent='room' {...user} size='sm' />

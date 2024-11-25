@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, MouseEvent } from 'react'
 import { IResRoom, IResUser } from '../../types/types'
 import RoomLabel from './RoomLabel'
 import { IResMessage } from '../../store/messenger/messengerSlice'
@@ -46,10 +46,13 @@ const RoomItem: FC<RoomItemProps> = ({
   const isChat = room.type === 'chat'
   const isDialog = room.type === 'dialog'
 
-  const companionGlobal = room.users.find((el) => el.id !== user?.id)
-  const companion = useLiveQuery(async (): Promise<IResUser | undefined> => {
+  const companion = room.users.find((el) => el.id !== user?.id)
+  const companionGlobal = useLiveQuery(async (): Promise<
+    IResUser | undefined
+  > => {
     return await db.table('users').get(companionGlobal?.id || 0)
   }, [activeRoom])
+
   return (
     <li
       onClick={() => onChangeRoom(room)}
@@ -59,7 +62,7 @@ const RoomItem: FC<RoomItemProps> = ({
       {isDialog && (companion || companionGlobal) && (
         <UserLabel
           size=''
-          parent='sidebar'
+          parent='dialog'
           {...(companion || companionGlobal!)}
         />
       )}

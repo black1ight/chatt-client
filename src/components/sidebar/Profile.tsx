@@ -16,6 +16,7 @@ import Loader from '../Loader'
 import Bio from '../user/info/Bio'
 import Buttons from '../user/Buttons'
 import { scrollToBottom } from '../Messages'
+import UserLabel from '../user/UserLabel'
 
 interface UserProfileProps {}
 
@@ -72,7 +73,7 @@ const Profile: FC<UserProfileProps> = () => {
             <LogOut />
           </div>
           <div className='bg-white flex justify-center items-center p-3'>
-            <UserProfile {...myProfile} size='xl' parent='profile' />
+            <UserLabel {...myProfile} size='xl' parent='profile' />
           </div>
           <Bio {...myProfile} />
           <UserInfo {...myProfile} />

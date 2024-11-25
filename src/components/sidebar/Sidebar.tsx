@@ -14,7 +14,6 @@ export const getUserName = (email: string) => {
 
 const Sidebar: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { user } = useAppSelector((state) => state.user)
   const { searchType, searchValue, globalUsers, globalRooms } = useAppSelector(
     (state) => state.search,
   )
@@ -80,12 +79,18 @@ const Sidebar: FC = () => {
               Global search result:
             </h3>
           )}
-          {searchType == null && globalRooms && globalRooms.length > 0 && (
-            <RoomsBlock rooms={globalRoomsSearchResult} type='global' />
-          )}
-          {searchType == null && globalUsers && globalUsers.length > 0 && (
-            <UsersBlock users={globalUsersSearchResult} />
-          )}
+          {searchType == null &&
+            searchValue &&
+            globalRooms &&
+            globalRooms.length > 0 && (
+              <RoomsBlock rooms={globalRoomsSearchResult} type='global' />
+            )}
+          {searchType == null &&
+            searchValue &&
+            globalUsers &&
+            globalUsers.length > 0 && (
+              <UsersBlock users={globalUsersSearchResult} />
+            )}
         </ul>
       </div>
     </div>

@@ -3,12 +3,12 @@ import CreateForm from './CreateForm'
 import { IoCreateOutline, IoSettingsOutline } from 'react-icons/io5'
 import SearchForm from './SearchForm'
 import useModal from '../../hooks/useModal'
-import { useAppDispatch, useAppSelector } from '../../store/hooks'
+import { useAppDispatch } from '../../store/hooks'
 import { setIsOpen } from '../../store/user/userSlice'
 
 const TopBar: FC = () => {
   const dispatch = useAppDispatch()
-  const { unreadDialogs } = useAppSelector((state) => state.messenger)
+
   const modalProps = useModal()
   const { open, onOpen } = modalProps
 
@@ -30,14 +30,13 @@ const TopBar: FC = () => {
         </div>
       </div>
 
-      <div className='w-full flex items-center justify-between p-2'>
-        <h3 className='px-2'>Your chats</h3>
+      {/* <div className='w-full flex items-center justify-between p-2'>
         {unreadDialogs !== null && unreadDialogs > 0 && (
           <span className='text-sm leading-tight w-[22px] h-[22px] shadow-md bg-blue-400 text-white rounded-full flex justify-center items-center'>
             {unreadDialogs}
           </span>
         )}
-      </div>
+      </div> */}
     </>
   )
 }

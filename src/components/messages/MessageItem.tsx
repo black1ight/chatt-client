@@ -36,7 +36,6 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     author,
     isFirst,
     reply,
-    unread,
     isLast,
     itemIndex,
     item,
@@ -139,7 +138,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
       )}
       <div
         ref={(el) => setRef(el, itemIndex)}
-        className={`flex relative flex-col text-white' ${unread && isJoined ? 'bg-unread_messages_bg' : author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} pl-[10px] pr-1 py-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md ${unread && isJoined && 'shadow-white'} group`}
+        className={`flex relative flex-col text-white' ${author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} p-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md group`}
       >
         <div className='flex gap-4 justify-between'>
           {!author && activeRoom?.type === 'chat' && (
@@ -150,7 +149,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </div>
         {reply && (
           <div
-            className={`${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md border-l-[3px] ${author ? 'border-reply_border_author/50' : 'border-reply_border'} text-sm mb-1 mr-1`}
+            className={`relative ${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md ${isFirst && author && 'rounded-tr-xl'} ${isFirst && !author && 'rounded-tl-xl'} text-sm before:content-[''] before:w-[3px] before:h-full ${author ? 'before:bg-reply_border_author/50' : 'before:bg-reply_border'} before:absolute before:left-0 before:z-100 overflow-hidden mb-1`}
           >
             <span
               className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
@@ -210,7 +209,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         </span>
         {/* decore (rectangle) */}
         <span
-          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${unread && isJoined ? 'border-unread_messages_bg' : author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
+          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
         ></span>
       </div>
     </li>

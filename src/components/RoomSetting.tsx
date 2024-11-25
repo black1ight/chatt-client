@@ -10,6 +10,7 @@ const RoomSetting: FC = () => {
   const { user } = useAppSelector((state) => state.user)
 
   const roomOwner = activeRoom?.owner === user?.id
+  const isDialog = activeRoom?.type === 'dialog'
 
   const clearHistory = async () => {
     if (window.confirm('Clear history?')) {
@@ -30,9 +31,9 @@ const RoomSetting: FC = () => {
         <MdDelete />
         <span>Clear history</span>
       </div>
-      {roomOwner && (
+      {(roomOwner || isDialog) && (
         <button
-          disabled={!roomOwner}
+          disabled={!roomOwner && !isDialog}
           onClick={deleteChat}
           className='flex gap-2 items-center'
         >
