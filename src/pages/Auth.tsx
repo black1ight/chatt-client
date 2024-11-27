@@ -6,7 +6,7 @@ import {
   setTokenExpiryToLocalStorage,
   setTokenToLocalStorage,
 } from '../helpers/localstorage.helper'
-import { logIn } from '../store/user/userSlice'
+import { getMyProfile, logIn } from '../store/user/userSlice'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import Loader from '../components/Loader'
@@ -17,11 +17,11 @@ const Auth: FC = () => {
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
   const { isLoading } = useAppSelector((state) => state.helpers)
+  const { user } = useAppSelector((state) => state.user)
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const isAuth = useAuth()
-  // const { isLoading } = useAppSelector((state) => state.helpers)
 
   const getRandomColor = () => {
     const color = iconColors[Math.floor(Math.random() * iconColors.length)]
@@ -81,6 +81,7 @@ const Auth: FC = () => {
 
   useEffect(() => {
     isAuth && navigate('/')
+    isAuth && dispatch(getMyProfile(user?.id!))
   }, [isAuth])
 
   return (
