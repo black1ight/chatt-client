@@ -4,9 +4,7 @@ import SocketApi from '../api/socket-api'
 import { addEditId, addOnWrite, onReply } from '../store/form/formSlice'
 import {
   addReplayMessage,
-  clearRefs,
   IResMessage,
-  removeRef,
 } from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
 import { addText, removeText } from '../store/form/textSlise'
@@ -14,7 +12,6 @@ import { IoCopy } from 'react-icons/io5'
 
 const AuthorMessageMenuList = ['reply', 'edit', 'delete']
 const messageMenuList = ['reply']
-const unjoinedMenuList = ['forward', 'copy']
 
 interface IMenuListProps {
   item: IResMessage
@@ -35,7 +32,6 @@ const MenuList: FC<IMenuListProps> = ({
   clickPoint,
   onCloseMenu,
   getMenuRef,
-  isJoined,
 }) => {
   const dispatch = useAppDispatch()
   const menuRef = useRef<HTMLUListElement>(null)

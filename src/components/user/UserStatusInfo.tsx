@@ -11,11 +11,10 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   const { typingData } = useAppSelector((state) => state.typing)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { email, online, lastSeen, parent } = props
+  const { email, online, lastSeen } = props
   const longAgo = new Date().getDate() - new Date(lastSeen!).getDate() > 1
   const today = new Date(lastSeen!).getDate() == new Date().getDate()
   const yesterday = new Date(lastSeen!).getDate() == new Date().getDate() - 1
-  const room = parent === 'room'
   const getlastSeenDay = () => {
     if (today) {
       return 'today'

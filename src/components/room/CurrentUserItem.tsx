@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IResUser, IUserData } from '../../types/types'
+import { IResUser } from '../../types/types'
 import { getUserName } from '../sidebar/Sidebar'
 import { IoClose } from 'react-icons/io5'
 import { minusCurrentUser } from '../../store/search/searchSlice'
@@ -21,7 +21,7 @@ const CurrentUserItem: FC<SubscriberItemProps> = ({ user, id }) => {
     >
       <span className='mx-auto'>{id + 1}.</span>
       <span className='col-span-6'>
-        {user.user_name ?? getUserName(user.email!)}
+        {user.username ?? getUserName(user.email!)}
       </span>
       <span
         onClick={() => removeSearchUser(user)}

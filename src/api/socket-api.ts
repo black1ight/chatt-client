@@ -1,5 +1,5 @@
 import io, { Socket } from 'socket.io-client'
-import { IResDialog, IResRoom, IResUser, IUser } from '../types/types'
+import { IResRoom, IResUser, IUser } from '../types/types'
 
 class SocketApi {
   static socket: null | Socket = null

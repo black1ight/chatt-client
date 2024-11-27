@@ -1,4 +1,4 @@
-import { FC, MouseEvent } from 'react'
+import { FC } from 'react'
 import { IResRoom, IResUser } from '../../types/types'
 import RoomLabel from './RoomLabel'
 import { IResMessage } from '../../store/messenger/messengerSlice'

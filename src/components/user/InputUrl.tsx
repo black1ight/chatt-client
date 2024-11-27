@@ -12,7 +12,7 @@ import SocketApi from '../../api/socket-api'
 
 interface InputUrlProps {
   isOpen: boolean
-  setIsOpen: () => void
+  setIsOpen: (flag: boolean) => void
   type: string
 }
 
@@ -38,7 +38,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen, type }) => {
         dto: { imageUrl: value },
       })
     }
-    setIsOpen()
+    setIsOpen(false)
   }
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +54,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen, type }) => {
 
   const handleClickOutside = (event: MouseEvent) => {
     if (inputRef.current && !event.composedPath().includes(inputRef.current)) {
-      setIsOpen()
+      setIsOpen(false)
     }
   }
   useEffect(() => {
@@ -64,7 +64,7 @@ const InputUrl: FC<InputUrlProps> = ({ isOpen, setIsOpen, type }) => {
     return () => {
       document.body.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [])
+  }, [isOpen, inputRef])
 
   return (
     <div

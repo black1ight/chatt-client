@@ -32,18 +32,6 @@ const Sidebar: FC = () => {
 
   const users = useLiveQuery(async (): Promise<IResUser[] | undefined> => {
     const userData: IResUser[] = await db.table('users').reverse().toArray()
-    // const dialogData: IResRoom[] = await db
-    //   .table('rooms')
-    //   .where('type')
-    //   .equals('dialog')
-    //   .reverse()
-    //   .toArray()
-    // const searchDialogData = dialogData.filter((d) =>
-    //   d.users
-    //     .find((u) => u.id !== user?.id)
-    //     ?.username?.toLowerCase()
-    //     .includes(searchValue?.toLowerCase() || ''),
-    // )
 
     if (searchValue && searchType !== 'users') {
       return userData.filter((user) =>

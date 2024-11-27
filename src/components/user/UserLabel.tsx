@@ -39,44 +39,41 @@ const UserLabel: FC<IUserLabel> = (props) => {
 
   const clickHandler = () => {
     setIsOpen(true)
-    if (currentUser.id !== user?.id) {
+    if (currentUser.id !== user?.id && parent !== 'dialog') {
       onSelectUser(currentUser)
     }
   }
 
   return (
-    <div
-      onClick={clickHandler}
-      className='relative flex items-center col-span-1 cursor-pointer'
-    >
+    <div className='relative'>
       <div
-        className={`absolute ${size === 'sm' ? 'w-3 h-3' : 'w-[14px] h-[14px]'} ${!online && 'hidden'} ${size === 'xl' && 'hidden'} ${(parent === 'header' || parent === 'room') && 'hidden'} ${size === 'sm' ? 'bottom-0 right-1' : 'bottom-2 right-0'} bg-green-500 rounded-full border-2 border-white`}
-      ></div>
-      {parent === 'profile' && imageUrl && (
-        <img src={`${imageUrl}`} className='mx-auto' />
-      )}
-
-      <div
-        style={
-          imageUrl
-            ? backgroundStyle
-            : color && {
-                backgroundImage: `linear-gradient(to bottom, ${color.first}, ${color.second})`,
-              }
-        }
-        className={`${size === 'sm' ? 'w-10 h-10' : size === 'xl' ? 'w-[100px] h-[100px] text-2xl' : 'w-14 h-14'} ${parent === 'profile' && imageUrl ? 'hidden' : 'rounded-full'} flex justify-center items-center text-white mx-auto`}
+        onClick={clickHandler}
+        className='relative flex items-center col-span-1 cursor-pointer'
       >
-        {!imageUrl && username
-          ? username[0].toLocaleUpperCase()
-          : !imageUrl && email && email[0].toLocaleUpperCase()}
-      </div>
+        <div
+          className={`absolute ${size === 'sm' ? 'w-3 h-3' : 'w-[14px] h-[14px]'} ${!online && 'hidden'} ${size === 'xl' && 'hidden'} ${(parent === 'header' || parent === 'room') && 'hidden'} ${size === 'sm' ? 'bottom-0 right-1' : 'bottom-2 right-0'} bg-green-500 rounded-full border-2 border-white`}
+        ></div>
+        {parent === 'profile' && imageUrl && (
+          <img src={`${imageUrl}`} className='mx-auto' />
+        )}
 
+        <div
+          style={
+            imageUrl
+              ? backgroundStyle
+              : color && {
+                  backgroundImage: `linear-gradient(to bottom, ${color.first}, ${color.second})`,
+                }
+          }
+          className={`${size === 'sm' ? 'w-10 h-10' : size === 'xl' ? 'w-[100px] h-[100px] text-2xl' : 'w-14 h-14'} ${parent === 'profile' && imageUrl ? 'hidden' : 'rounded-full'} flex justify-center items-center text-white mx-auto`}
+        >
+          {!imageUrl && username
+            ? username[0].toLocaleUpperCase()
+            : !imageUrl && email && email[0].toLocaleUpperCase()}
+        </div>
+      </div>
       {id === user?.id && parent === 'profile' && (
-        <InputUrl
-          isOpen={isOpen}
-          setIsOpen={() => setIsOpen(false)}
-          type='user'
-        />
+        <InputUrl isOpen={isOpen} setIsOpen={setIsOpen} type='user' />
       )}
     </div>
   )

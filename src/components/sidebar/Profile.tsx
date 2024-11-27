@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 import { CiLogin } from 'react-icons/ci'
 import { setIsOpen } from '../../store/user/userSlice'
 
-import UserProfile from '../user/UserProfile'
 import LogOut from '../user/LogOut'
 import UserInfo from '../user/info/UserInfo'
 import ArrowToBack from '../ArrowToBack'

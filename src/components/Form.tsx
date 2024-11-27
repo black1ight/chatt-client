@@ -11,7 +11,6 @@ import {
 import TextArea from './TextArea'
 import { removeText } from '../store/form/textSlise'
 import db from '../helpers/db'
-import { RoomsService } from '../services/rooms.services'
 import { IResRoom, IRoomData } from '../types/types'
 import { addActiveRoom } from '../store/rooms/roomsSlice'
 

@@ -5,7 +5,6 @@ import { useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 import { checkSubscribe } from './RoomProfile'
 import Join from './Join'
-import db from '../../helpers/db'
 
 const Room: FC = () => {
   const roomRef = useRef<HTMLDivElement | null>(null)
@@ -15,13 +14,13 @@ const Room: FC = () => {
   const { user } = useAppSelector((state) => state.user)
 
   useEffect(() => {
-    return () => {
-      if (activeRoom?.isTemp) {
-        const userId =
-          activeRoom.users.find((el) => el.id !== user?.id)?.id || 0
-        db.table('users').delete(userId)
-      }
-    }
+    // return () => {
+    //   if (activeRoom?.isTemp) {
+    //     const userId =
+    //       activeRoom.users.find((el) => el.id !== user?.id)?.id || 0
+    //     db.table('users').delete(userId)
+    //   }
+    // }
   }, [replyId, activeRoom])
 
   const isSubscribe = activeRoom ? checkSubscribe(activeRoom, user!.id) : null
