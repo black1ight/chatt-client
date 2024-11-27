@@ -26,7 +26,7 @@ const Room: FC = () => {
   const isSubscribe = activeRoom ? checkSubscribe(activeRoom, user!.id) : null
 
   return (
-    <div ref={roomRef} className={`flex-grow overflow-hidden flex flex-col`}>
+    <div ref={roomRef} className={`flex-grow overflow-hidden flex flex-col `}>
       <Messages />
       {(replyId || replyMessage) && roomRef.current && (
         <div className='bg-slate-100 w-full border-t'>
