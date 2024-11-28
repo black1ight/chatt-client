@@ -71,6 +71,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   const updateVisionItems = useCallback((item: IResMessage) => {
     const unread = item.readUsers.indexOf(user?.id!) == -1
     if (unread) {
+      debugger
       dispatch(addUnreadMessages(item))
     }
   }, [])
@@ -124,7 +125,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         dispatch(removeRef(item.id))
       }
     }
-  }, [itemRef])
+  }, [itemRef, item])
 
   return (
     <li
