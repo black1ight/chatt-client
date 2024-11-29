@@ -14,6 +14,7 @@ export const getUserName = (email: string) => {
 
 const Sidebar: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { profile } = useAppSelector((state) => state.user)
   const { searchType, searchValue, globalUsers, globalRooms } = useAppSelector(
     (state) => state.search,
   )
@@ -24,7 +25,13 @@ const Sidebar: FC = () => {
     const data: IResRoom[] = await db.table('rooms').reverse().toArray()
     if (searchValue && searchType !== 'users') {
       return data.filter((room) =>
-        room.name.toLowerCase().includes(searchValue.toLowerCase()),
+        room.type === 'chat'
+          ? room.name.toLowerCase().includes(searchValue.toLowerCase())
+          : room.name
+              .split(',')
+              .find((name) => name !== profile?.username)
+              ?.toLowerCase()
+              .includes(searchValue.toLowerCase()),
       )
     }
     return data

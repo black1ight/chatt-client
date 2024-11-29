@@ -46,7 +46,10 @@ const RoomItem: FC<RoomItemProps> = ({
   const isChat = room.type === 'chat'
   const isDialog = room.type === 'dialog'
 
-  const companion = room.users.find((el) => el.id !== user?.id)
+  const companionId = room.users.find((el) => el.id !== user?.id)?.id
+  const companion = useLiveQuery(async (): Promise<IResUser | undefined> => {
+    return await db.table('users').get(companionId || 0)
+  }, [])
   const companionGlobal = useLiveQuery(async (): Promise<
     IResUser | undefined
   > => {

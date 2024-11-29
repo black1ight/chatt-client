@@ -11,7 +11,7 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   const { typingData } = useAppSelector((state) => state.typing)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { email, online, lastSeen } = props
+  const { email, online, lastSeen, parent } = props
   const longAgo = new Date().getDate() - new Date(lastSeen!).getDate() > 1
   const today = new Date(lastSeen!).getDate() == new Date().getDate()
   const yesterday = new Date(lastSeen!).getDate() == new Date().getDate() - 1
@@ -31,6 +31,7 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
     <div className={`flex flex-col col-span-4`}>
       <span>{getUserName(email!)}</span>
       {typingData?.userId !== user?.id &&
+      parent !== 'userProfile' &&
       typingData?.roomId === activeRoom?.id &&
       typingData?.typing ? (
         <Typing />

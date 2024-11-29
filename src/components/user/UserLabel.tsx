@@ -45,7 +45,7 @@ const UserLabel: FC<IUserLabel> = (props) => {
   }
 
   return (
-    <div className='relative'>
+    <div className='relative flex items-center'>
       <div
         onClick={clickHandler}
         className='relative flex items-center col-span-1 cursor-pointer'

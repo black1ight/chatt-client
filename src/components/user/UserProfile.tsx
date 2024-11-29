@@ -44,7 +44,7 @@ const UserProfile: FC<UserProfileProps> = ({ modalProps, currentUser }) => {
 
     const newRoom: IResRoom = {
       id: Date.now(),
-      name: currentUser.username || getUserName(currentUser.email!),
+      name: `${currentUser.username},${profile?.username}`,
       type: 'dialog',
       isTemp: true,
       color: null,
@@ -60,12 +60,13 @@ const UserProfile: FC<UserProfileProps> = ({ modalProps, currentUser }) => {
     } else {
       dispatch(addActiveRoom(newRoom))
     }
+    onClose()
   }
-  useEffect(() => {
-    return () => {
-      dispatch(addActiveUser(null))
-    }
-  })
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(addActiveUser(null))
+  //   }
+  // })
   return (
     <Modal {...modalProps}>
       <div className='flex flex-col w-[300px] gap-2 bg-slate-200'>
@@ -81,8 +82,8 @@ const UserProfile: FC<UserProfileProps> = ({ modalProps, currentUser }) => {
           </span>
         </div>
         <div className='flex gap-2 p-4 bg-white'>
-          <UserLabel {...currentUser} parent='' size='' />
-          <UserStatusInfo {...currentUser} parent='' size='' />
+          <UserLabel {...currentUser} parent='userProfile' size='' />
+          <UserStatusInfo {...currentUser} parent='userProfile' size='' />
         </div>
         <div
           onClick={onSendMail}
