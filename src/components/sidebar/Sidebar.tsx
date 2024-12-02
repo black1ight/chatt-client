@@ -81,12 +81,12 @@ const Sidebar: FC = () => {
           )}
           {users && users.length > 0 && <UsersBlock users={users} />}
           {((globalUsersSearchResult && globalUsersSearchResult.length > 0) ||
-            (globalRoomsSearchResult &&
-              globalRoomsSearchResult.length > 0)) && (
-            <h3 className='text-center text-stone-500 text-sm bg-stone-100 my-1'>
-              Global search result:
-            </h3>
-          )}
+            (globalRoomsSearchResult && globalRoomsSearchResult.length > 0)) &&
+            searchValue && (
+              <h3 className='text-center text-stone-500 text-sm bg-stone-100 my-1'>
+                Global search result:
+              </h3>
+            )}
           {searchType == null &&
             searchValue &&
             globalRooms &&

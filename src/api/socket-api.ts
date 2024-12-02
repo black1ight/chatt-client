@@ -9,13 +9,13 @@ class SocketApi {
     if (typeof this.socket?.id !== 'string') {
       console.log('go connect')
 
-      // this.socket = io('http://192.168.0.104:3001', {
-      //   query: { userId: id },
-      // })
-
-      this.socket = io('https://chatt-server.onrender.com', {
+      this.socket = io('http://192.168.0.104:3001', {
         query: { userId: id },
       })
+
+      // this.socket = io('https://chatt-server.onrender.com', {
+      //   query: { userId: id },
+      // })
     }
 
     this.socket.on('connect', () => {

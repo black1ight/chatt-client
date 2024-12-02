@@ -51,14 +51,14 @@ const SearchForm: FC<SearchFormProps> = ({ open, type }) => {
     const users: IResUser[] = await UsersService.getUsersByFilter(
       `search=${searchValue}`,
     )
-    dispatch(addGlobalUsers(users ?? null))
+    dispatch(addGlobalUsers(users || null))
   }
 
   const searchRoomsGlobal = async (searchValue: string) => {
     const rooms: IResRoom[] | undefined = await RoomsService.getRoomsBySearch(
       `search=${searchValue}`,
     )
-    dispatch(addGlobalRooms(rooms ?? null))
+    dispatch(addGlobalRooms(rooms || null))
   }
 
   const updateSearchValue = useCallback(
