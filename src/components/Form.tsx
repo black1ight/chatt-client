@@ -57,6 +57,7 @@ const Form: FC = () => {
       color: room.color,
       owner: room.owner,
     }
+
     SocketApi.socket?.emit('createRoom', roomData)
   }
 
@@ -78,24 +79,27 @@ const Form: FC = () => {
         user,
         roomId: activeRoom?.id,
         readUsers: [user?.id],
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
         status: 'pending',
       }
       if (activeRoom?.isTemp) {
+        db.table('messages').add(newMessageDto)
         createRoom(activeRoom)
+
         SocketApi.socket?.once('newDialog', (newDialog: IResRoom) => {
-          db.table('messages').add({ ...newMessageDto, roomId: newDialog.id })
-          dispatch(addActiveRoom(newDialog))
           SocketApi.socket?.emit('new-message', {
             ...newMessageDto,
             roomId: newDialog.id,
           })
+          SocketApi.socket?.once('newMessage', () => {
+            dispatch(addActiveRoom(newDialog))
+          })
         })
+      } else {
+        await db.table('messages').add(newMessageDto)
+        SocketApi.socket?.emit('new-message', newMessageDto)
       }
-
-      await db.table('messages').add(newMessageDto)
-      SocketApi.socket?.emit('new-message', newMessageDto)
 
       dispatch(addReplayMessage(null))
       dispatch(onReply(null))

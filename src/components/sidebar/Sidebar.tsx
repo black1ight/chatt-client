@@ -39,13 +39,26 @@ const Sidebar: FC = () => {
 
   const users = useLiveQuery(async (): Promise<IResUser[] | undefined> => {
     const userData: IResUser[] = await db.table('users').reverse().toArray()
+    const roomsData: IResRoom[] = await db.table('rooms').toArray()
 
     if (searchValue && searchType !== 'users') {
-      return userData.filter((user) =>
-        user.username?.toLowerCase().includes(searchValue.toLowerCase()),
-      )
+      return userData.filter((user) => {
+        const hasRoom = roomsData.some((room) => {
+          if (room.type === 'chat') return false // Исключаем групповые чаты
+          const roomUsers = room.name.split(',').map((name) => name.trim())
+          return (
+            roomUsers.includes(profile?.username || '') &&
+            roomUsers.includes(user.username!)
+          )
+        })
+
+        return (
+          !hasRoom &&
+          user.username?.toLowerCase().includes(searchValue.toLowerCase())
+        )
+      })
     }
-  }, [searchValue])
+  }, [searchValue, profile?.username])
 
   const globalRoomsSearchResult = globalRooms?.filter(
     (room) =>

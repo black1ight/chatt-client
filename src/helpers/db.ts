@@ -1,7 +1,7 @@
 import { Dexie } from 'dexie'
 
 const db = new Dexie('chattApp')
-db.version(2).stores({
+db.version(1).stores({
   rooms: 'id, name, type, isTemp, users, messages, color, owner, createdAt',
 
   messages:

@@ -29,7 +29,7 @@ export const useConnectSocket = () => {
       console.log(`user ${dto.email} has been updated`)
     })
 
-    SocketApi.socket?.on('new-message', async (dto: SyncMessage) => {
+    SocketApi.socket?.on('newMessage', async (dto: SyncMessage) => {
       const isExist = await db.table('messages').get(dto.tempId)
       if (isExist) {
         db.table('messages').update(dto.tempId, { ...dto.data })
