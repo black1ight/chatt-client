@@ -25,6 +25,7 @@ export interface MessageItemProps {
   itemIndex: number
   isLast: boolean | undefined
   isFirst: boolean | undefined
+  isFirstOfDate: boolean | undefined
   isJoined: boolean | undefined
   setRef: (el: HTMLDivElement | null, itemIndex: number) => void
   messagesRefs: (HTMLDivElement | null)[]
@@ -37,6 +38,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     isFirst,
     reply,
     isLast,
+    isFirstOfDate,
     itemIndex,
     item,
     messagesRefs,
@@ -127,90 +129,97 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   }, [itemRef, item])
 
   return (
-    <li
-      key={itemIndex}
-      className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'}`}
-    >
-      {activeRoom?.type === 'chat' && authorProfile && !author && isLast && (
-        <div className='absolute bottom-0 left-0 rounded-full shadow-md'>
-          <UserLabel size='sm' parent='message' {...authorProfile} />
+    <li className='relative'>
+      {isFirstOfDate && (
+        <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl'>
+          {format(item.createdAt, 'MMMM')} {new Date(item.createdAt).getDate()}
         </div>
       )}
       <div
-        ref={(el) => setRef(el, itemIndex)}
-        className={`flex relative flex-col text-white' ${author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} p-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md group`}
+        key={itemIndex}
+        className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'} ${isFirstOfDate && 'pt-10'}`}
       >
-        <div className='flex gap-4 justify-between'>
-          {!author && activeRoom?.type === 'chat' && (
-            <span className={`text-message_username`}>
-              {item.user?.email.split('@')[0]}
-            </span>
-          )}
-        </div>
-        {reply && (
-          <div
-            className={`relative ${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md ${isFirst && author && 'rounded-tr-xl'} ${isFirst && !author && 'rounded-tl-xl'} text-sm before:content-[''] before:w-[3px] before:h-full ${author ? 'before:bg-reply_border_author/50' : 'before:bg-reply_border'} before:absolute before:left-0 before:z-100 overflow-hidden mb-1`}
-          >
-            <span
-              className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
-            >
-              {item.reply.user.email.split('@')[0]}
-            </span>
-            <p
-              ref={replyTextRef}
-              className='w-[0px] whitespace-nowrap overflow-hidden text-ellipsis'
-            >
-              {reply?.text}
-            </p>
+        {activeRoom?.type === 'chat' && authorProfile && !author && isLast && (
+          <div className='absolute bottom-0 left-0 rounded-full shadow-md'>
+            <UserLabel size='sm' parent='message' {...authorProfile} />
           </div>
         )}
-        <div className=''>
-          <span className={`${isNotWords ? 'break-all' : 'break-words'}`}>
-            {item.text}
-          </span>
-          {/*start fake */}
-          <span
-            className={`opacity-0 ${author ? 'pl-7' : 'pl-3'} text-xs float-right`}
-          >
-            {item.updatedAt &&
-              item.status !== 'pending' &&
-              item.createdAt !== item.updatedAt &&
-              'edit '}
-            {format(item.createdAt, 'HH:mm')}
-          </span>
-        </div>
-        {/* end fake */}
-        <span
-          className={`absolute z-50 bottom-2 text-message_time/50 ${author ? 'right-1' : 'right-2'} flex items-end gap-1 opacity-100 text-xs float-right`}
+        <div
+          ref={(el) => setRef(el, itemIndex)}
+          className={`flex relative flex-col text-white' ${author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} p-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md group`}
         >
-          <span className=''>
-            {item.updatedAt &&
-              item.status !== 'pending' &&
-              item.createdAt !== item.updatedAt &&
-              'edit '}
-            {format(item.createdAt, 'HH:mm')}
-          </span>
-
-          {author && (
-            <div>
-              {item.status === 'pending' ? (
-                <Loader size='16' />
-              ) : (
-                <span className={``}>
-                  {item.readUsers.length > 1 ? (
-                    <MdDoneAll size={16} />
-                  ) : (
-                    <MdDone size={16} />
-                  )}
-                </span>
-              )}
+          <div className='flex gap-4 justify-between'>
+            {!author && activeRoom?.type === 'chat' && (
+              <span className={`text-message_username`}>
+                {item.user?.email.split('@')[0]}
+              </span>
+            )}
+          </div>
+          {reply && (
+            <div
+              className={`relative ${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md ${isFirst && author && 'rounded-tr-xl'} ${isFirst && !author && 'rounded-tl-xl'} text-sm before:content-[''] before:w-[3px] before:h-full ${author ? 'before:bg-reply_border_author/50' : 'before:bg-reply_border'} before:absolute before:left-0 before:z-100 overflow-hidden mb-1`}
+            >
+              <span
+                className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
+              >
+                {item.reply.user.email.split('@')[0]}
+              </span>
+              <p
+                ref={replyTextRef}
+                className='w-[0px] whitespace-nowrap overflow-hidden text-ellipsis'
+              >
+                {reply?.text}
+              </p>
             </div>
           )}
-        </span>
-        {/* decore (rectangle) */}
-        <span
-          className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
-        ></span>
+          <div className=''>
+            <span className={`${isNotWords ? 'break-all' : 'break-words'}`}>
+              {item.text}
+            </span>
+            {/*start fake */}
+            <span
+              className={`opacity-0 ${author ? 'pl-7' : 'pl-3'} text-xs float-right`}
+            >
+              {item.updatedAt &&
+                item.status !== 'pending' &&
+                item.createdAt !== item.updatedAt &&
+                'edit '}
+              {format(item.createdAt, 'HH:mm')}
+            </span>
+          </div>
+          {/* end fake */}
+          <span
+            className={`absolute z-50 bottom-2 text-message_time/50 ${author ? 'right-1' : 'right-2'} flex items-end gap-1 opacity-100 text-xs float-right`}
+          >
+            <span className=''>
+              {item.updatedAt &&
+                item.status !== 'pending' &&
+                item.createdAt !== item.updatedAt &&
+                'edit '}
+              {format(item.createdAt, 'HH:mm')}
+            </span>
+
+            {author && (
+              <div>
+                {item.status === 'pending' ? (
+                  <Loader size='16' />
+                ) : (
+                  <span className={``}>
+                    {item.readUsers.length > 1 ? (
+                      <MdDoneAll size={16} />
+                    ) : (
+                      <MdDone size={16} />
+                    )}
+                  </span>
+                )}
+              </div>
+            )}
+          </span>
+          {/* decore (rectangle) */}
+          <span
+            className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
+          ></span>
+        </div>
       </div>
     </li>
   )

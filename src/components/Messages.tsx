@@ -78,7 +78,7 @@ const Messages: FC = () => {
       return data
     }, [activeRoom])
 
-  const { firstItems, lastItems } = useFirstLast(messages)
+  const { firstItems, lastItems, firstItemsOfDate } = useFirstLast(messages)
 
   const readMessage = async (messages: IResMessage[]) => {
     try {
@@ -208,6 +208,9 @@ const Messages: FC = () => {
           const unread = item.readUsers.indexOf(user?.id!) == -1
           const isfirst = firstItems?.some((el) => el.id === item.id)
           const islast = lastItems?.some((el) => el.id === item.id)
+          const isFirstOfDate = firstItemsOfDate?.some(
+            (el) => el.id === item.id,
+          )
           return (
             <MessageItem
               key={`${item.createdAt}`}
@@ -221,6 +224,7 @@ const Messages: FC = () => {
               setRef={setRef}
               isFirst={isfirst}
               isLast={islast}
+              isFirstOfDate={isFirstOfDate}
               isJoined={isJoined}
             />
           )
