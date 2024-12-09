@@ -19,6 +19,7 @@ const Sidebar: FC = () => {
     (state) => state.search,
   )
 
+  // check why this hook create 100+ rerenders....!!!!
   useNewMessagesDialogsCount()
 
   const rooms = useLiveQuery(async (): Promise<IResRoom[] | undefined> => {
@@ -44,7 +45,7 @@ const Sidebar: FC = () => {
     if (searchValue && searchType !== 'users') {
       return userData.filter((user) => {
         const hasRoom = roomsData.some((room) => {
-          if (room.type === 'chat') return false // Исключаем групповые чаты
+          if (room.type === 'chat') return false
           const roomUsers = room.name.split(',').map((name) => name.trim())
           return (
             roomUsers.includes(profile?.username || '') &&
@@ -76,10 +77,15 @@ const Sidebar: FC = () => {
       <TopBar />
       <div className='flex-grow overflow-y-auto hide-scrollbar'>
         <ul className='flex flex-col'>
+          {/* ROOMS */}
           {rooms && rooms.length > 0 && (
             <RoomsBlock type='sideBar' rooms={rooms} />
           )}
+
+          {/* USERS */}
           {users && users.length > 0 && <UsersBlock users={users} />}
+
+          {/* NOTIFICATION FOR GLOBAL SEARCH RESULTS */}
           {((globalUsersSearchResult && globalUsersSearchResult.length > 0) ||
             (globalRoomsSearchResult && globalRoomsSearchResult.length > 0)) &&
             searchValue && (
@@ -87,12 +93,16 @@ const Sidebar: FC = () => {
                 Global search result:
               </h3>
             )}
+
+          {/* GLOBAL SEARCH RESULTS FOR ROOMS */}
           {searchType == null &&
             searchValue &&
             globalRooms &&
             globalRooms.length > 0 && (
               <RoomsBlock rooms={globalRoomsSearchResult} type='global' />
             )}
+
+          {/* GLOBAL SEARCH RESULTS FOR USERS */}
           {searchType == null &&
             searchValue &&
             globalUsers &&

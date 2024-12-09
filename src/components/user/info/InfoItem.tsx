@@ -24,11 +24,11 @@ const InfoItem = <T,>({ data }: RenderProps<T>) => {
   return (
     <div
       onClick={itemClickHandler}
-      className='grid grid-cols-8 items-center gap-2 cursor-pointer py-1'
+      className='relative grid grid-cols-8 items-end gap-2 cursor-pointer last:pb-3'
     >
       {data && (
         <>
-          <span className='col-span-1'>
+          <span className='col-span-1 text-message_time/40'>
             {dataKey === 'email' ? (
               <MdAlternateEmail size={24} />
             ) : dataKey === 'username' ? (
@@ -39,10 +39,10 @@ const InfoItem = <T,>({ data }: RenderProps<T>) => {
               ''
             )}
           </span>
-          <span className='col-span-3 text-nowrap overflow-hidden text-ellipsis'>
-            {dataKey}:
+          <span className='absolute right-0 top-6 text-message_time/40 text-sm text-nowrap overflow-hidden text-ellipsis'>
+            {dataKey}
           </span>
-          <span className='flex-grow col-span-4 text-nowrap overflow-hidden text-ellipsis'>
+          <span className='flex-grow col-span-7 text-nowrap overflow-hidden text-ellipsis  border-b'>
             {editField && editField === dataKey ? (
               <Input />
             ) : (

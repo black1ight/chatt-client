@@ -13,7 +13,7 @@ const UserInfo: FC<UserInfoProps> = (props) => {
     })
 
   return (
-    <div className='flex flex-col gap-2 bg-white p-3'>
+    <div className='flex flex-col gap-8 bg-white px-3 py-6'>
       {profileArray?.map((item) => (
         <InfoItem data={item} key={`${Object.keys(item)}`} />
       ))}

@@ -158,8 +158,7 @@ const Messages: FC = () => {
 
   useEffect(() => {
     messageBodyRef.current && scrollToBottom(messageBodyRef.current)
-    console.log('render')
-  }, [messages, replyId, areaHeight])
+  }, [messages, replyId, areaHeight, messageBodyRef.current?.scrollHeight])
 
   useEffect(() => {
     activeRoom &&

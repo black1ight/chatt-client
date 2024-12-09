@@ -12,7 +12,9 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { email, online, lastSeen, parent } = props
-  const longAgo = new Date().getDate() - new Date(lastSeen!).getDate() > 1
+  const longAgo =
+    new Date().getDate() - new Date(lastSeen!).getDate() > 1 ||
+    new Date().getDate() - new Date(lastSeen!).getDate() < 0
   const today = new Date(lastSeen!).getDate() == new Date().getDate()
   const yesterday = new Date(lastSeen!).getDate() == new Date().getDate() - 1
   const getlastSeenDay = () => {
@@ -38,7 +40,7 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
       ) : (
         <div className={`flex gap-1`}>
           {online ? (
-            <span className='text-sm text-stone-500'>online</span>
+            <span className='text-sm text-cyan-700'>online</span>
           ) : (
             <span className='text-sm text-stone-500'>
               Last seen {getlastSeenDay()}

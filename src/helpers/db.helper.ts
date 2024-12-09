@@ -25,16 +25,13 @@ export const addMessagesToDb = async (serverMessages: IResMessage[]) => {
         .count()
       if (!isExist) {
         await db.table('messages').add(message)
-        console.log(message)
       } else if (
         isExist &&
         JSON.stringify(isExist) !== JSON.stringify(message)
       ) {
         await db.table('messages').put(message)
-        console.log(message)
       }
     }
-    console.log('messages has been been updated!')
   }
 }
 
@@ -48,7 +45,6 @@ export const removeMessagesFromDb = async (
       await db.table('messages').delete(message.id)
     }
   })
-  console.log('messages has been removed from db!')
 }
 
 export const addRoomsToDb = async (serverRooms: IResRoom[]) => {
@@ -61,13 +57,10 @@ export const addRoomsToDb = async (serverRooms: IResRoom[]) => {
         .count()
       if (!isExist) {
         await db.table('rooms').add(room)
-        console.log(room)
       } else if (isExist && JSON.stringify(isExist) !== JSON.stringify(room)) {
         await db.table('rooms').put(room)
-        console.log(room)
       }
     }
-    console.log('rooms has been updated!')
   }
 }
 
@@ -81,7 +74,6 @@ export const removeRoomsFromDb = async (
       await db.table('rooms').delete(room.id)
     }
   })
-  console.log('rooms has been removed from db!')
 }
 
 export const addUsersToDb = async (serverRooms: IResRoom[]) => {
@@ -96,18 +88,15 @@ export const addUsersToDb = async (serverRooms: IResRoom[]) => {
             .count()
           if (!isExist) {
             await db.table('users').add(user)
-            console.log(user)
           } else if (
             isExist &&
             JSON.stringify(isExist) !== JSON.stringify(user)
           ) {
             await db.table('users').put(user)
-            console.log(user)
           }
         }
       }
     }
-    console.log('users has been updated!')
   }
 }
 

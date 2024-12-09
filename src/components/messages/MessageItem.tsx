@@ -131,7 +131,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   return (
     <li className='relative'>
       {isFirstOfDate && (
-        <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl'>
+        <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl text-sm'>
           {format(item.createdAt, 'MMMM')} {new Date(item.createdAt).getDate()}
         </div>
       )}

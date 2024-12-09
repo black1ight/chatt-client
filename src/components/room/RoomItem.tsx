@@ -10,6 +10,7 @@ import { MdGroup } from 'react-icons/md'
 import UserLabel from '../user/UserLabel'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../../helpers/db'
+import useGetLAstTimeOfMessage from '../../hooks/useGetLastTime'
 
 interface RoomItemProps {
   room: IResRoom
@@ -30,17 +31,6 @@ const RoomItem: FC<RoomItemProps> = ({
   const { typingData } = useAppSelector((state) => state.typing)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const isJoined = room.users.some((el) => el.id === user?.id)
-
-  const getTimeOfMessage = (data: Date) => {
-    if (new Date().getDate() - new Date(data).getDate() > 1) return 'longAgo'
-    if (new Date(data).getDate() == new Date().getDate()) return 'today'
-    if (
-      new Date().getDate() !== new Date(data).getDate() &&
-      new Date(data).getDay() >= 0 &&
-      new Date(data).getDay() < new Date().getDay()
-    )
-      return 'toweek'
-  }
 
   const global = type === 'global'
   const isChat = room.type === 'chat'
@@ -70,7 +60,8 @@ const RoomItem: FC<RoomItemProps> = ({
         />
       )}
       <div
-        className={`flex w-[calc(100%-64px)] flex-col py-[7px] ${!global && 'border-b'}`}
+        // py-[7px]
+        className={`flex w-[calc(100%-64px)] flex-col justify-center ${!global && 'border-b'}`}
       >
         <div className='flex gap-2 justify-between items-center'>
           {isChat && <MdGroup size={20} opacity={0.7} />}
@@ -79,16 +70,16 @@ const RoomItem: FC<RoomItemProps> = ({
           </span>
           {lastMessage && (
             <span className='text-sm opacity-70'>
-              {getTimeOfMessage(lastMessage.createdAt) === 'today'
+              {useGetLAstTimeOfMessage(lastMessage.createdAt) === 'today'
                 ? format(lastMessage.createdAt, 'HH:mm')
-                : getTimeOfMessage(lastMessage.createdAt) === 'toweek'
+                : useGetLAstTimeOfMessage(lastMessage.createdAt) === 'toweek'
                   ? format(lastMessage.createdAt, 'EEE')
                   : format(lastMessage.createdAt, 'dd/MM/yyyy')}
             </span>
           )}
         </div>
         {!global && lastMessage && isChat && (
-          <span className='text-[15px] text-stone-900 leading-tight'>
+          <span className='text-[15px] text-stone-700 leading-tight'>
             {lastMessage.user.id === user?.id
               ? 'you'
               : (lastMessage?.user.username ??

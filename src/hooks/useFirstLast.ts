@@ -17,7 +17,10 @@ const useFirstLast = (messages: IResMessage[] | null | undefined) => {
         currentArr.length == 0 ||
         (currentArr[0].userId === item.userId &&
           new Date(currentArr[currentArr.length - 1].createdAt).getDate() ===
-            new Date(item.createdAt).getDate())
+            new Date(item.createdAt).getDate() &&
+          new Date(item.createdAt).getTime() -
+            new Date(currentArr[currentArr.length - 1].createdAt).getTime() <
+            20 * 60 * 1000)
       ) {
         currentArr.push(item)
       }
@@ -30,7 +33,10 @@ const useFirstLast = (messages: IResMessage[] | null | undefined) => {
       if (
         currentArr[0].userId !== item.userId ||
         new Date(currentArr[currentArr.length - 1].createdAt).getDate() !==
-          new Date(item.createdAt).getDate()
+          new Date(item.createdAt).getDate() ||
+        new Date(item.createdAt).getTime() -
+          new Date(currentArr[currentArr.length - 1].createdAt).getTime() >
+          20 * 60 * 1000
       ) {
         first.push(currentArr[0])
         last.push(currentArr[currentArr.length - 1])

@@ -5,11 +5,8 @@ class SocketApi {
   static socket: null | Socket = null
 
   static createConnection(id: number) {
-    console.log(this.socket?.id, +id)
     if (typeof this.socket?.id !== 'string') {
-      console.log('go connect')
-
-      // this.socket = io('http://192.168.0.104:3001', {
+      // this.socket = io('http://192.168.0.106:3001', {
       //   query: { userId: id },
       // })
 
