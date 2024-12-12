@@ -12,6 +12,7 @@ import SubscribersList from './SubscribersList'
 export interface SubscribersProps extends ModalProps {
   roomOwner: boolean
   removeSubscriber: (user: IResUser) => void
+  promoteSubscriber: (user: IResUser) => void
 }
 
 const Subscribers: FC<SubscribersProps> = (props) => {

@@ -5,6 +5,9 @@ import { useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 import { checkSubscribe } from './RoomProfile'
 import Join from './Join'
+import { useLiveQuery } from 'dexie-react-hooks'
+import db from '../../helpers/db'
+import { IResRoom } from '../../types/types'
 
 const Room: FC = () => {
   const roomRef = useRef<HTMLDivElement | null>(null)
@@ -12,6 +15,13 @@ const Room: FC = () => {
   const { replyId } = useAppSelector((state) => state.form)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
+
+  const room = useLiveQuery(async (): Promise<IResRoom | undefined> => {
+    const data = await db.table('rooms').get(activeRoom?.id!)
+    return data
+  }, [])
+
+  console.log(room)
 
   useEffect(() => {
     // return () => {

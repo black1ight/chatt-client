@@ -97,7 +97,7 @@ export const useConnectSocket = () => {
             console.log(`user ${user.email} has been added!`)
           }
         }
-        console.log(`room ${room.id} has been updated`)
+        console.log(`room ${room.name} has been updated`)
       }
     })
   }

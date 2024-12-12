@@ -59,6 +59,19 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
     }
   }
 
+  const promoteSubscriber = async (user: IResUser) => {
+    const dto = { promoteUser: user.id }
+    if (
+      roomOwner &&
+      window.confirm(`promote user ${user.username} to admin?`)
+    ) {
+      SocketApi.socket?.emit('promoteUser', {
+        roomId: activeRoom?.id,
+        dto,
+      })
+    }
+  }
+
   useEffect(() => {
     room && dispatch(addActiveRoom(room))
   }, [room])
@@ -79,6 +92,7 @@ const RoomProfile: FC<RoomProfileProps> = (props) => {
           {...props}
           roomOwner={roomOwner}
           removeSubscriber={removeSubscriber}
+          promoteSubscriber={promoteSubscriber}
         />
         {isSubscribe ? (
           <Leave

@@ -41,6 +41,7 @@ const Messages: FC = () => {
   const { user } = useAppSelector((state) => state.user)
   const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
+  const [selected, setSelected] = useState<number[] | null>(null)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
@@ -155,6 +156,21 @@ const Messages: FC = () => {
   const getMenuRef = (el: HTMLUListElement | null) => {
     el ? (menuRef.current = el) : (menuRef.current = null)
   }
+  // SELECT MESSAGES
+  const selectHandler = (item: IResMessage) => {
+    const exist = selected?.find((el) => el === item.id)
+    if (selected && exist) {
+      setSelected(selected.filter((el) => el !== item.id))
+    }
+    if (selected && !exist) {
+      setSelected([...selected, item.id])
+    }
+    if (!selected) {
+      setSelected([item.id])
+    }
+  }
+
+  console.log(selected)
 
   useEffect(() => {
     messageBodyRef.current && scrollToBottom(messageBodyRef.current)
@@ -193,6 +209,7 @@ const Messages: FC = () => {
           onCloseMenu={onCloseMenu}
           getMenuRef={getMenuRef}
           isJoined={isJoined}
+          selectHandler={selectHandler}
         />
       )}
       <ul className='flex w-full flex-col gap-[3px]'>
@@ -225,6 +242,8 @@ const Messages: FC = () => {
               isLast={islast}
               isFirstOfDate={isFirstOfDate}
               isJoined={isJoined}
+              selectHandler={selectHandler}
+              selected={selected}
             />
           )
         })}

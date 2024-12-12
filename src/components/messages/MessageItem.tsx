@@ -30,6 +30,8 @@ export interface MessageItemProps {
   setRef: (el: HTMLDivElement | null, itemIndex: number) => void
   messagesRefs: (HTMLDivElement | null)[]
   messageBodyRef: HTMLDivElement | null
+  selectHandler: (item: IResMessage) => void
+  selected: number[] | null
 }
 
 const MessageItem: FC<MessageItemProps> = (props) => {
@@ -45,6 +47,8 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     setRef,
     messageBodyRef,
     isJoined,
+    selectHandler,
+    selected,
   } = props
   const isNotWords = item.text.split(' ').some((el) => el.length > 20)
 
@@ -76,6 +80,12 @@ const MessageItem: FC<MessageItemProps> = (props) => {
       dispatch(addUnreadMessages(item))
     }
   }, [])
+
+  const clickMessageHandler = () => {
+    if (selected && selected?.length > 0) {
+      selectHandler(item)
+    }
+  }
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(([entry]) => {
@@ -129,7 +139,10 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   }, [itemRef, item])
 
   return (
-    <li className='relative'>
+    <li
+      onClick={clickMessageHandler}
+      className='relative flex gap-4 items-center'
+    >
       {isFirstOfDate && (
         <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl text-sm'>
           {format(item.createdAt, 'MMMM')} {new Date(item.createdAt).getDate()}
@@ -174,7 +187,13 @@ const MessageItem: FC<MessageItemProps> = (props) => {
           )}
           <div className=''>
             <span className={`${isNotWords ? 'break-all' : 'break-words'}`}>
-              {item.text}
+              {item.text.split('\n').map((p) => {
+                if (p.length > 0) {
+                  return <p>{p}</p>
+                } else {
+                  return <br />
+                }
+              })}
             </span>
             {/*start fake */}
             <span
@@ -221,6 +240,13 @@ const MessageItem: FC<MessageItemProps> = (props) => {
           ></span>
         </div>
       </div>
+      {selected && selected?.length > 0 && (
+        <div className='w-[30px] h-[30px] bg-stone-300 rounded-full flex justify-center items-center'>
+          {selected.indexOf(item.id) !== -1 && (
+            <MdDone size={20} className='text-stone-500' />
+          )}
+        </div>
+      )}
     </li>
   )
 }

@@ -5,13 +5,15 @@ import { IUserLabel } from './UserLabel'
 import Typing from '../Typing'
 import { useAppSelector } from '../../store/hooks'
 
-interface UserStatusInfoProps extends IUserLabel {}
+interface UserStatusInfoProps extends IUserLabel {
+  onSelectUser?: () => void
+}
 
 const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   const { typingData } = useAppSelector((state) => state.typing)
   const { user } = useAppSelector((state) => state.user)
   const { activeRoom } = useAppSelector((state) => state.rooms)
-  const { email, online, lastSeen, parent } = props
+  const { email, online, lastSeen, parent, onSelectUser } = props
   const longAgo =
     new Date().getDate() - new Date(lastSeen!).getDate() > 1 ||
     new Date().getDate() - new Date(lastSeen!).getDate() < 0
@@ -30,7 +32,7 @@ const UserStatusInfo: FC<UserStatusInfoProps> = (props) => {
   }
 
   return (
-    <div className={`flex flex-col col-span-4`}>
+    <div onClick={onSelectUser} className={`flex flex-col col-span-4`}>
       <span>{getUserName(email!)}</span>
       {typingData?.userId !== user?.id &&
       parent !== 'userProfile' &&

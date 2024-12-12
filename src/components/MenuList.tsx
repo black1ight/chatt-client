@@ -9,8 +9,9 @@ import {
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
 import { addText, removeText } from '../store/form/textSlise'
 import { IoCopy } from 'react-icons/io5'
+import { IoIosCheckmarkCircle } from 'react-icons/io'
 
-const AuthorMessageMenuList = ['reply', 'edit', 'delete']
+const AuthorMessageMenuList = ['reply', 'edit', 'delete', 'select']
 const messageMenuList = ['reply']
 
 interface IMenuListProps {
@@ -25,6 +26,7 @@ interface IMenuListProps {
   onCloseMenu: () => void
   getMenuRef: (el: HTMLUListElement | null) => void
   isJoined: boolean | undefined
+  selectHandler: (item: IResMessage) => void
 }
 
 const MenuList: FC<IMenuListProps> = ({
@@ -32,6 +34,7 @@ const MenuList: FC<IMenuListProps> = ({
   clickPoint,
   onCloseMenu,
   getMenuRef,
+  selectHandler,
 }) => {
   const dispatch = useAppDispatch()
   const menuRef = useRef<HTMLUListElement>(null)
@@ -70,6 +73,8 @@ const MenuList: FC<IMenuListProps> = ({
       dispatch(removeText())
     } else if (elem === 'reply') {
       dispatch(onReply(item.id))
+    } else if (elem === 'select') {
+      selectHandler(item)
     }
     onCloseMenu()
   }
@@ -155,7 +160,7 @@ const MenuList: FC<IMenuListProps> = ({
           <li
             key={elem}
             onClick={() => menuItemHandler(elem)}
-            className={`py-1 px-3 flex flex-row-reverse justify-between items-center gap-4 bg-white/70 active:bg-white/90 hover:bg-white/90 cursor-pointer ${!lastElem && 'border-b border-stone-300'} ${firstElem && 'rounded-t-md'} ${lastElem && 'rounded-b-md'}`}
+            className={`py-1 px-3 flex flex-row-reverse justify-between items-center gap-10 bg-white/70 active:bg-white/90 hover:bg-white/90 cursor-pointer ${!lastElem && 'border-b border-stone-300'} ${firstElem && 'rounded-t-md'} ${lastElem && 'rounded-b-md'}`}
           >
             <span>
               {elem === 'edit' ? (
@@ -166,6 +171,8 @@ const MenuList: FC<IMenuListProps> = ({
                 <IoCopy size={20} />
               ) : elem === 'forward' ? (
                 <MdOutlineReply className='-scale-x-100' size={20} />
+              ) : elem === 'select' ? (
+                <IoIosCheckmarkCircle size={20} />
               ) : (
                 <MdOutlineReply size={20} />
               )}

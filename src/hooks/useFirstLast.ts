@@ -52,6 +52,7 @@ const useFirstLast = (messages: IResMessage[] | null | undefined) => {
       }
     })
   }
+
   useEffect(() => {
     messages && getFirstLast(messages)
   }, [messages])
