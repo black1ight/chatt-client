@@ -31,7 +31,6 @@ export interface MessageItemProps {
   messagesRefs: (HTMLDivElement | null)[]
   messageBodyRef: HTMLDivElement | null
   selectHandler: (item: IResMessage) => void
-  selected: number[] | null
 }
 
 const MessageItem: FC<MessageItemProps> = (props) => {
@@ -48,16 +47,18 @@ const MessageItem: FC<MessageItemProps> = (props) => {
     messageBodyRef,
     isJoined,
     selectHandler,
-    selected,
   } = props
   const isNotWords = item.text.split(' ').some((el) => el.length > 20)
 
   const dispatch = useAppDispatch()
   const { user } = useAppSelector((state) => state.user)
+  const { selectedMessages } = useAppSelector((state) => state.messenger)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const replyTextRef = useRef<HTMLParagraphElement>(null)
 
   const itemRef = messagesRefs[itemIndex] || null
+
+  const textParagrafs = item.text.split('\n')
 
   let authorProfile = useLiveQuery(
     async (): Promise<IResUser> => await db.table('users').get(item.userId),
@@ -82,7 +83,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   }, [])
 
   const clickMessageHandler = () => {
-    if (selected && selected?.length > 0) {
+    if (selectedMessages && selectedMessages?.length > 0) {
       selectHandler(item)
     }
   }
@@ -141,7 +142,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   return (
     <li
       onClick={clickMessageHandler}
-      className='relative flex gap-4 items-center'
+      className={`relative flex gap-4 items-center ${isFirstOfDate && 'pt-10'}`}
     >
       {isFirstOfDate && (
         <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl text-sm'>
@@ -150,7 +151,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
       )}
       <div
         key={itemIndex}
-        className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'} ${isFirstOfDate && 'pt-10'}`}
+        className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'} `}
       >
         {activeRoom?.type === 'chat' && authorProfile && !author && isLast && (
           <div className='absolute bottom-0 left-0 rounded-full shadow-md'>
@@ -187,11 +188,21 @@ const MessageItem: FC<MessageItemProps> = (props) => {
           )}
           <div className=''>
             <span className={`${isNotWords ? 'break-all' : 'break-words'}`}>
-              {item.text.split('\n').map((p) => {
+              {textParagrafs.map((p, index) => {
                 if (p.length > 0) {
-                  return <p>{p}</p>
-                } else {
-                  return <br />
+                  return (
+                    <p
+                      key={p}
+                      className={`${textParagrafs.at(-1) === textParagrafs[index] && 'inline'}`}
+                    >
+                      {p}
+                    </p>
+                  )
+                } else if (
+                  p.length == 0 &&
+                  textParagrafs.at(-1) !== textParagrafs[index]
+                ) {
+                  return <br key={p} />
                 }
               })}
             </span>
@@ -240,10 +251,12 @@ const MessageItem: FC<MessageItemProps> = (props) => {
           ></span>
         </div>
       </div>
-      {selected && selected?.length > 0 && (
-        <div className='w-[30px] h-[30px] bg-stone-300 rounded-full flex justify-center items-center'>
-          {selected.indexOf(item.id) !== -1 && (
-            <MdDone size={20} className='text-stone-500' />
+      {selectedMessages && selectedMessages?.length > 0 && (
+        <div
+          className={`w-[30px] h-[30px] ${selectedMessages.indexOf(item) !== -1 && 'border border-white'} bg-stone-300 rounded-full flex justify-center items-center max-sm:-order-1`}
+        >
+          {selectedMessages.indexOf(item) !== -1 && (
+            <MdDone size={20} className='text-white' />
           )}
         </div>
       )}

@@ -34,6 +34,7 @@ export interface messengerState {
   unreadMessages: IResMessage[]
   messagesRefs: refObject[] | null
   replyMessage: IReply | null
+  selectedMessages: IResMessage[] | null
 }
 
 const initialState: messengerState = {
@@ -41,6 +42,7 @@ const initialState: messengerState = {
   unreadMessages: [],
   messagesRefs: null,
   replyMessage: null,
+  selectedMessages: null,
 }
 
 export const messengerSlice = createSlice({
@@ -89,6 +91,12 @@ export const messengerSlice = createSlice({
     removeUnreadMessages: (state) => {
       state.unreadMessages = []
     },
+    addSelectedMessages: (
+      state,
+      action: PayloadAction<IResMessage[] | null>,
+    ) => {
+      state.selectedMessages = action.payload
+    },
   },
 })
 
@@ -100,6 +108,7 @@ export const {
   addRef,
   removeRef,
   clearRefs,
+  addSelectedMessages,
 } = messengerSlice.actions
 
 export default messengerSlice.reducer

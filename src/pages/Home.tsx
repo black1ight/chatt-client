@@ -20,9 +20,11 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { IResUser } from '../types/types'
 import useModal from '../hooks/useModal'
 import UserProfile from '../components/user/UserProfile'
+import SelectedHeader from '../components/room/SelectedHeader'
 
 const Home: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
+  const { selectedMessages } = useAppSelector((state) => state.messenger)
   const { activeUser } = useAppSelector((state) => state.userProfile)
   const { isOpen, user } = useAppSelector((state) => state.user)
   const modalProps = useModal()
@@ -78,7 +80,7 @@ const Home: FC = () => {
       )}
       <Sidebar />
       <div className={`${!activeRoom && 'max-sm:hidden'} w-full flex flex-col`}>
-        <Header />
+        {selectedMessages ? <SelectedHeader /> : <Header />}
         {activeRoom ? (
           <Room />
         ) : (

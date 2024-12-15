@@ -12,7 +12,7 @@ import { IoCopy } from 'react-icons/io5'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
 
 const AuthorMessageMenuList = ['reply', 'edit', 'delete', 'select']
-const messageMenuList = ['reply']
+const messageMenuList = ['reply', 'select']
 
 interface IMenuListProps {
   item: IResMessage

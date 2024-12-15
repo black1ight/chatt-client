@@ -8,10 +8,13 @@ import Join from './Join'
 import { useLiveQuery } from 'dexie-react-hooks'
 import db from '../../helpers/db'
 import { IResRoom } from '../../types/types'
+import SelectedMenu from './SelectedMenu'
 
 const Room: FC = () => {
   const roomRef = useRef<HTMLDivElement | null>(null)
-  const { replyMessage } = useAppSelector((state) => state.messenger)
+  const { replyMessage, selectedMessages } = useAppSelector(
+    (state) => state.messenger,
+  )
   const { replyId } = useAppSelector((state) => state.form)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
@@ -20,8 +23,6 @@ const Room: FC = () => {
     const data = await db.table('rooms').get(activeRoom?.id!)
     return data
   }, [])
-
-  console.log(room)
 
   useEffect(() => {
     // return () => {
@@ -43,7 +44,13 @@ const Room: FC = () => {
           <Reply roomRef={roomRef.current} />
         </div>
       )}
-      {isSubscribe ? <Form /> : <Join position='center' />}
+      {isSubscribe && !selectedMessages ? (
+        <Form />
+      ) : selectedMessages && selectedMessages.length > 0 ? (
+        <SelectedMenu />
+      ) : (
+        <Join position='center' />
+      )}
     </div>
   )
 }

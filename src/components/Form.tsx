@@ -121,7 +121,7 @@ const Form: FC = () => {
   return (
     <form
       onSubmit={onSubmit}
-      className='relative flex items-end w-full bg-white  max-sm:rounded-none border-t border-stone-300 py-3'
+      className='relative flex items-end w-full bg-white  max-sm:rounded-none border-t border-stone-300 py-[14px]'
     >
       <TextArea />
 

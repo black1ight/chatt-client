@@ -1,6 +1,7 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import {
+  addSelectedMessages,
   IResMessage,
   removeUnreadMessages,
 } from '../store/messenger/messengerSlice'
@@ -35,13 +36,14 @@ const Messages: FC = () => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const entryItems = useAppSelector((state) => state.messenger.messagesRefs)
-  const { unreadMessages } = useAppSelector((state) => state.messenger)
+  const { unreadMessages, selectedMessages } = useAppSelector(
+    (state) => state.messenger,
+  )
   const { replyId } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
   const { user } = useAppSelector((state) => state.user)
   const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
-  const [selected, setSelected] = useState<number[] | null>(null)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
@@ -158,19 +160,23 @@ const Messages: FC = () => {
   }
   // SELECT MESSAGES
   const selectHandler = (item: IResMessage) => {
-    const exist = selected?.find((el) => el === item.id)
-    if (selected && exist) {
-      setSelected(selected.filter((el) => el !== item.id))
+    const exist = selectedMessages?.find((el) => el === item)
+    if (selectedMessages && exist) {
+      dispatch(
+        addSelectedMessages(selectedMessages.filter((el) => el !== item)),
+      )
     }
-    if (selected && !exist) {
-      setSelected([...selected, item.id])
+    if (exist && selectedMessages?.length == 1) {
+      dispatch(addSelectedMessages(null))
     }
-    if (!selected) {
-      setSelected([item.id])
+
+    if (selectedMessages && !exist) {
+      dispatch(addSelectedMessages([...selectedMessages, item]))
+    }
+    if (!selectedMessages) {
+      dispatch(addSelectedMessages([item]))
     }
   }
-
-  console.log(selected)
 
   useEffect(() => {
     messageBodyRef.current && scrollToBottom(messageBodyRef.current)
@@ -202,16 +208,17 @@ const Messages: FC = () => {
       ref={messageBodyRef}
       className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-neutral-200 p-3`}
     >
-      {onOpenMenu.current && (
-        <MenuList
-          item={onOpenMenu.current}
-          clickPoint={clickPoint}
-          onCloseMenu={onCloseMenu}
-          getMenuRef={getMenuRef}
-          isJoined={isJoined}
-          selectHandler={selectHandler}
-        />
-      )}
+      {onOpenMenu.current &&
+        (selectedMessages?.length === 0 || selectedMessages === null) && (
+          <MenuList
+            item={onOpenMenu.current}
+            clickPoint={clickPoint}
+            onCloseMenu={onCloseMenu}
+            getMenuRef={getMenuRef}
+            isJoined={isJoined}
+            selectHandler={selectHandler}
+          />
+        )}
       <ul className='flex w-full flex-col gap-[3px]'>
         {!messages && (
           <div className='flex justify-center items-center'>
@@ -243,7 +250,6 @@ const Messages: FC = () => {
               isFirstOfDate={isFirstOfDate}
               isJoined={isJoined}
               selectHandler={selectHandler}
-              selected={selected}
             />
           )
         })}

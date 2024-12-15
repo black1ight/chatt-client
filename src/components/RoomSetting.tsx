@@ -3,6 +3,9 @@ import { MdDelete } from 'react-icons/md'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { addActiveRoom } from '../store/rooms/roomsSlice'
 import SocketApi from '../api/socket-api'
+import { IoIosRemoveCircle } from 'react-icons/io'
+
+const settingList = ['Clear history', 'Delete chat']
 
 const RoomSetting: FC = () => {
   const dispatch = useAppDispatch()
@@ -25,21 +28,34 @@ const RoomSetting: FC = () => {
     }
   }
 
+  const settingHandler = (el: string) => {
+    if (el === 'Clear history') {
+      clearHistory()
+    } else if (el === 'Delete chat') {
+      deleteChat()
+    }
+  }
+
   return (
-    <div className='absolute z-[100] top-8 right-0 flex flex-col gap-2 bg-white border rounded-md px-3 py-2 text-nowrap'>
-      <div onClick={clearHistory} className='flex gap-2 items-center'>
-        <MdDelete />
-        <span>Clear history</span>
-      </div>
-      {(roomOwner || isDialog) && (
-        <button
-          disabled={!roomOwner && !isDialog}
-          onClick={deleteChat}
-          className='flex gap-2 items-center'
-        >
-          <span className='text-rose-700'>Delete chat</span>
-        </button>
-      )}
+    <div className='absolute z-[100] top-8 right-0 flex flex-col bg-white border rounded-md text-nowrap shadow-xl'>
+      {settingList.map((el, id) => {
+        return (
+          <button
+            disabled={el === 'Delete chat' && !roomOwner && !isDialog}
+            onClick={() => settingHandler(el)}
+            className={`flex gap-2 items-center ${settingList[id] !== settingList.at(-1) && 'border-b'} ${el === 'Delete chat' && !roomOwner && !isDialog && 'hidden'} px-4 py-3`}
+          >
+            {el === 'Clear history' ? (
+              <MdDelete size={20} />
+            ) : (
+              <IoIosRemoveCircle size={20} />
+            )}
+            <span className={`${el === 'Delete chat' && 'text-rose-700'}`}>
+              {el}
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }
