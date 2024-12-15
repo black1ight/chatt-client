@@ -5,9 +5,9 @@ import { useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 import { checkSubscribe } from './RoomProfile'
 import Join from './Join'
-import { useLiveQuery } from 'dexie-react-hooks'
-import db from '../../helpers/db'
-import { IResRoom } from '../../types/types'
+// import { useLiveQuery } from 'dexie-react-hooks'
+// import db from '../../helpers/db'
+// import { IResRoom } from '../../types/types'
 import SelectedMenu from './SelectedMenu'
 
 const Room: FC = () => {
