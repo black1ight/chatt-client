@@ -19,10 +19,10 @@ const Room: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
 
-  const room = useLiveQuery(async (): Promise<IResRoom | undefined> => {
-    const data = await db.table('rooms').get(activeRoom?.id!)
-    return data
-  }, [])
+  // const room = useLiveQuery(async (): Promise<IResRoom | undefined> => {
+  //   const data = await db.table('rooms').get(activeRoom?.id!)
+  //   return data
+  // }, [])
 
   useEffect(() => {
     // return () => {
