@@ -196,12 +196,14 @@ const Messages: FC = () => {
   }, [unreadMessages])
 
   useEffect(() => {
-    messageBodyRef.current?.addEventListener('click', onClickMessage)
+    if (!selectedMessages) {
+      messageBodyRef.current?.addEventListener('click', onClickMessage)
+    }
     return () => {
       onCloseMenu()
       messageBodyRef.current?.removeEventListener('click', onClickMessage)
     }
-  }, [onClickMessage])
+  }, [onClickMessage, selectedMessages])
 
   return (
     <div
