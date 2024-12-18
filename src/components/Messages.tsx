@@ -15,7 +15,6 @@ import {
   getGlobalRoomMessages,
   removeGlobalRoomMessages,
 } from '../helpers/db.helper'
-import { format } from 'date-fns'
 
 export const scrollToBottom = (ref: HTMLDivElement) => {
   if (ref !== null) {
