@@ -17,7 +17,6 @@ import db from '../../helpers/db'
 import UserLabel from '../user/UserLabel'
 
 export interface MessageItemProps {
-  key: string
   author: boolean
   reply: IReply
   unread: boolean
@@ -142,15 +141,14 @@ const MessageItem: FC<MessageItemProps> = (props) => {
   return (
     <li
       onClick={clickMessageHandler}
-      className={`relative flex gap-4 items-center ${isFirstOfDate && 'pt-10'}`}
+      className={`relative flex gap-4 items-center ${(isFirstOfDate || itemIndex === 0) && 'pt-10'}`}
     >
-      {isFirstOfDate && (
+      {(isFirstOfDate || itemIndex === 0) && (
         <div className='absolute z-50 top-1 left-1/2 -translate-x-1/2 bg-white/50 text-message_time/50 px-3 py-1 rounded-xl text-sm'>
           {format(item.createdAt, 'MMMM')} {new Date(item.createdAt).getDate()}
         </div>
       )}
       <div
-        key={itemIndex}
         className={`relative flex items-end gap-2 max-w-[80%] max-sm:max-w-[calc(100%-3rem)] ${author && 'ml-auto'} ${!author && activeRoom?.type === 'chat' && 'pl-[3rem]'} ${isLast && 'mb-1'} `}
       >
         {activeRoom?.type === 'chat' && authorProfile && !author && isLast && (
@@ -192,7 +190,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
                 if (p.length > 0) {
                   return (
                     <p
-                      key={p}
+                      key={`${p}-${index}`}
                       className={`${textParagrafs.at(-1) === textParagrafs[index] && 'inline'}`}
                     >
                       {p}
@@ -202,7 +200,7 @@ const MessageItem: FC<MessageItemProps> = (props) => {
                   p.length == 0 &&
                   textParagrafs.at(-1) !== textParagrafs[index]
                 ) {
-                  return <br key={p} />
+                  return <br key={`${p}-${index}`} />
                 }
               })}
             </span>

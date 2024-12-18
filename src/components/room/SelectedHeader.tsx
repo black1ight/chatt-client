@@ -17,20 +17,22 @@ const SelectedHeader: FC = () => {
 
   return (
     <div className='h-[72px] bg-stone-100 grid grid-cols-3 items-center p-2 text-cyan-700 text-lg'>
-      <div
-        onClick={clearHistory}
-        className='cursor-pointer hover:bg-stone-200 px-3 rounded-xl'
-      >
-        Clear chat
+      <div onClick={clearHistory} className=''>
+        <span className='cursor-pointer hover:bg-stone-200 px-3 py-1 rounded-xl'>
+          Clear chat
+        </span>
       </div>
       <div className='text-stone-800 text-center'>
         Selected {selectedMessages?.length}
       </div>
       <div
         onClick={() => dispatch(addSelectedMessages(null))}
-        className=' cursor-pointer text-end hover:bg-stone-200 px-3 rounded-xl'
+        className='text-end'
       >
-        Cancel
+        {' '}
+        <span className='cursor-pointer hover:bg-stone-200 px-3 py-1 rounded-xl'>
+          Cancel
+        </span>
       </div>
     </div>
   )

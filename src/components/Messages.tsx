@@ -15,6 +15,7 @@ import {
   getGlobalRoomMessages,
   removeGlobalRoomMessages,
 } from '../helpers/db.helper'
+import { format } from 'date-fns'
 
 export const scrollToBottom = (ref: HTMLDivElement) => {
   if (ref !== null) {
@@ -221,12 +222,13 @@ const Messages: FC = () => {
             selectHandler={selectHandler}
           />
         )}
-      <ul className='flex w-full flex-col gap-[3px]'>
+      <ul className='flex w-full flex-col gap-[3px] mt-auto'>
         {!messages && (
           <div className='flex justify-center items-center'>
             <h3>Loading...</h3>
           </div>
         )}
+
         {messages?.map((item, itemIndex) => {
           const author = item.userId === user?.id
           const reply = item.reply

@@ -41,9 +41,10 @@ const RoomSetting: FC = () => {
       {settingList.map((el, id) => {
         return (
           <button
+            key={settingList[id]}
             disabled={el === 'Delete chat' && !roomOwner && !isDialog}
             onClick={() => settingHandler(el)}
-            className={`flex gap-2 items-center ${settingList[id] !== settingList.at(-1) && 'border-b'} ${el === 'Delete chat' && !roomOwner && !isDialog && 'hidden'} px-4 py-3`}
+            className={`flex gap-2 items-center ${settingList[id] !== settingList.at(-1) && 'border-b'} ${el === 'Delete chat' && !roomOwner && !isDialog && 'hidden'} px-4 py-3 hover:bg-slate-100`}
           >
             {el === 'Clear history' ? (
               <MdDelete size={20} />

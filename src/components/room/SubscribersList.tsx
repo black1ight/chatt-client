@@ -71,7 +71,9 @@ const SubscribersList: FC<SubscribersListProps> = (props) => {
                   size={20}
                 />
               </button>
-            ) : selectUser === user.id && selectUser !== myProfile?.id ? (
+            ) : selectUser === user.id &&
+              selectUser !== myProfile?.id &&
+              activeRoom?.owner === myProfile?.id ? (
               // PROMOTE USER TO ADMIN
               <button className='opacity-50 hover:opacity-100 text-rose-800 ml-auto col-span-1'>
                 <GrUserAdmin

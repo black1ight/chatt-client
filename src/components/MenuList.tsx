@@ -8,11 +8,11 @@ import {
 } from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
 import { addText, removeText } from '../store/form/textSlise'
-import { IoCopy } from 'react-icons/io5'
+import { RiFileCopyFill } from 'react-icons/ri'
 import { IoIosCheckmarkCircle } from 'react-icons/io'
 
-const AuthorMessageMenuList = ['reply', 'edit', 'delete', 'select']
-const messageMenuList = ['reply', 'select']
+const AuthorMessageMenuList = ['reply', 'edit', 'delete', 'copy', 'select']
+const messageMenuList = ['reply', 'copy', 'select']
 
 interface IMenuListProps {
   item: IResMessage
@@ -153,12 +153,12 @@ const MenuList: FC<IMenuListProps> = ({
       ref={menuRef}
       className={`absolute z-[100] left-0 top-0 backdrop-blur-md rounded-md border border-slate-300 text-stone-700 text-lg shadow-lg`}
     >
-      {menuListCurrent.map((elem) => {
+      {menuListCurrent.map((elem, id) => {
         const firstElem = menuListCurrent[0] === elem
         const lastElem = menuListCurrent[menuListCurrent.length - 1] === elem
         return (
           <li
-            key={elem}
+            key={`${id}-${elem}`}
             onClick={() => menuItemHandler(elem)}
             className={`py-1 px-3 flex flex-row-reverse justify-between items-center gap-10 bg-white/70 active:bg-white/90 hover:bg-white/90 cursor-pointer ${!lastElem && 'border-b border-stone-300'} ${firstElem && 'rounded-t-md'} ${lastElem && 'rounded-b-md'}`}
           >
@@ -168,7 +168,7 @@ const MenuList: FC<IMenuListProps> = ({
               ) : elem === 'delete' ? (
                 <MdDelete size={20} />
               ) : elem === 'copy' ? (
-                <IoCopy size={20} />
+                <RiFileCopyFill size={20} />
               ) : elem === 'forward' ? (
                 <MdOutlineReply className='-scale-x-100' size={20} />
               ) : elem === 'select' ? (

@@ -18,7 +18,10 @@ const SelectedMenu: FC = () => {
   }
   return (
     <div className='h-20 flex justify-center items-center bg-stone-100 '>
-      <button onClick={deleteSelected} className='hover:text-rose-800 p-2'>
+      <button
+        onClick={deleteSelected}
+        className='hover:text-rose-800 hover:scale-110 p-2 transition-transform'
+      >
         <BsTrash3 size={24} />
       </button>
     </div>

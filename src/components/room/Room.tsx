@@ -1,16 +1,18 @@
 import { FC, useEffect, useRef } from 'react'
 import Messages from '../Messages'
 import Reply from '../Reply'
-import { useAppSelector } from '../../store/hooks'
+import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 import { checkSubscribe } from './RoomProfile'
 import Join from './Join'
-// import { useLiveQuery } from 'dexie-react-hooks'
-// import db from '../../helpers/db'
-// import { IResRoom } from '../../types/types'
+import { useLiveQuery } from 'dexie-react-hooks'
+import db from '../../helpers/db'
+import { IResRoom } from '../../types/types'
 import SelectedMenu from './SelectedMenu'
+import { addActiveRoom } from '../../store/rooms/roomsSlice'
 
 const Room: FC = () => {
+  const dispatch = useAppDispatch()
   const roomRef = useRef<HTMLDivElement | null>(null)
   const { replyMessage, selectedMessages } = useAppSelector(
     (state) => state.messenger,
@@ -19,10 +21,10 @@ const Room: FC = () => {
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
 
-  // const room = useLiveQuery(async (): Promise<IResRoom | undefined> => {
-  //   const data = await db.table('rooms').get(activeRoom?.id!)
-  //   return data
-  // }, [])
+  const room = useLiveQuery(async (): Promise<IResRoom | undefined> => {
+    const data = await db.table('rooms').get(activeRoom?.id!)
+    return data
+  }, [])
 
   useEffect(() => {
     // return () => {
@@ -35,6 +37,10 @@ const Room: FC = () => {
   }, [replyId, activeRoom])
 
   const isSubscribe = activeRoom ? checkSubscribe(activeRoom, user!.id) : null
+
+  useEffect(() => {
+    room && dispatch(addActiveRoom(room))
+  }, [room])
 
   return (
     <div ref={roomRef} className={`flex-grow overflow-hidden flex flex-col `}>
