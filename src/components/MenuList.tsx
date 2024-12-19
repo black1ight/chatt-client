@@ -23,7 +23,7 @@ interface IMenuListProps {
     x: number
     y: number
   } | null
-  onCloseMenu: () => void
+  setOnOpenMenu: (value: null) => void
   getMenuRef: (el: HTMLUListElement | null) => void
   isJoined: boolean | undefined
   selectHandler: (item: IResMessage) => void
@@ -32,7 +32,7 @@ interface IMenuListProps {
 const MenuList: FC<IMenuListProps> = ({
   item,
   clickPoint,
-  onCloseMenu,
+  setOnOpenMenu,
   getMenuRef,
   selectHandler,
 }) => {
@@ -49,6 +49,15 @@ const MenuList: FC<IMenuListProps> = ({
       roomId: activeRoom?.id,
       userId: item.userId,
     })
+  }
+
+  const copyItemText = () => {
+    try {
+      navigator.clipboard.writeText(item.text)
+      console.log('text is copied!')
+    } catch (err) {
+      console.error('error copied!', err)
+    }
   }
 
   const menuItemHandler = (elem: string) => {
@@ -75,8 +84,10 @@ const MenuList: FC<IMenuListProps> = ({
       dispatch(onReply(item.id))
     } else if (elem === 'select') {
       selectHandler(item)
+    } else if (elem === 'copy') {
+      copyItemText()
     }
-    onCloseMenu()
+    setOnOpenMenu(null)
   }
 
   useEffect(() => {
