@@ -156,7 +156,7 @@ const Messages: FC = () => {
   // CLOSE CONTEXT-MENU ===========================================================
   const onCloseMenu = () => {
     onOpenMenu.current = null
-    setUpdate((prev) => !prev)
+    setUpdate(!update)
   }
 
   // GET MENU-REF ==================================================================
