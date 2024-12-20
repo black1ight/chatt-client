@@ -85,7 +85,7 @@ const MenuList: FC<IMenuListProps> = ({
     } else if (elem === 'select') {
       selectHandler(item)
     } else if (elem === 'copy') {
-      // copyItemText()
+      copyItemText()
     }
     onCloseMenu()
   }
