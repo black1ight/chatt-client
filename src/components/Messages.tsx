@@ -44,6 +44,7 @@ const Messages: FC = () => {
   const { user } = useAppSelector((state) => state.user)
   const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
+  const [update, setUpdate] = useState(false)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
@@ -97,6 +98,7 @@ const Messages: FC = () => {
     }
   }
 
+  // CLICK MESSAGE ========================================================================
   const onClickMessage = useCallback(
     (e: MouseEvent | TouchEvent) => {
       const target = e.currentTarget as HTMLDivElement
@@ -151,14 +153,17 @@ const Messages: FC = () => {
     [entryItems, onOpenMenu.current],
   )
 
+  // CLOSE CONTEXT-MENU ===========================================================
   const onCloseMenu = () => {
     onOpenMenu.current = null
+    setUpdate((prev) => !prev)
   }
 
+  // GET MENU-REF ==================================================================
   const getMenuRef = (el: HTMLUListElement | null) => {
     el ? (menuRef.current = el) : (menuRef.current = null)
   }
-  // SELECT MESSAGES
+  // SELECT MESSAGES ===============================================================
   const selectHandler = (item: IResMessage) => {
     const exist = selectedMessages?.find((el) => el === item)
     if (selectedMessages && exist) {
@@ -178,10 +183,12 @@ const Messages: FC = () => {
     }
   }
 
+  // SCROLL TO BOTTOM CHAT ===========================================================
   useEffect(() => {
     messageBodyRef.current && scrollToBottom(messageBodyRef.current)
   }, [messages, replyId, areaHeight, messageBodyRef.current?.scrollHeight])
 
+  // UNSUBSCRIBE CHAT MESSAGES =======================================================
   useEffect(() => {
     activeRoom &&
       activeRoom.type === 'chat' &&
@@ -191,16 +198,17 @@ const Messages: FC = () => {
     }
   }, [activeRoom])
 
+  // REED MESSAGES ====================================================================
   useEffect(() => {
     unreadMessages?.length > 0 && readMessage(unreadMessages)
   }, [unreadMessages])
 
+  // CLICK MESSAGE =======================================================================
   useEffect(() => {
     if (!selectedMessages) {
       messageBodyRef.current?.addEventListener('click', onClickMessage)
     }
     return () => {
-      onCloseMenu()
       messageBodyRef.current?.removeEventListener('click', onClickMessage)
     }
   }, [onClickMessage, selectedMessages])
