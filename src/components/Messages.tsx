@@ -42,13 +42,13 @@ const Messages: FC = () => {
   const { replyId } = useAppSelector((state) => state.form)
   const { areaHeight } = useAppSelector((state) => state.area)
   const { user } = useAppSelector((state) => state.user)
+  const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
-  const [onOpenMenu, setOnOpenMenu] = useState<IResMessage | null>(null)
+
   const messagesRefs = useRef<(HTMLDivElement | null)[]>([])
   const menuRef = useRef<HTMLUListElement | null>(null)
-
   const isJoined = activeRoom?.users.some((el) => el.id === user?.id)
 
   const setRef = (el: HTMLDivElement | null, itemIndex: number) => {
@@ -128,15 +128,15 @@ const Messages: FC = () => {
           if (itemRef && e.composedPath().includes(itemRef)) {
             const message = messages?.find((el) => el.id === item.messageId)
 
-            if (onOpenMenu) {
-              setOnOpenMenu(null)
-            } else if (message && !onOpenMenu) {
-              setOnOpenMenu(message)
+            if (onOpenMenu.current) {
+              onOpenMenu.current = null
+            } else if (message && !onOpenMenu.current) {
+              onOpenMenu.current = message
             }
           }
         })
         if (
-          onOpenMenu &&
+          onOpenMenu.current &&
           !entryItems.some((item) => {
             const itemRef = messagesRefs.current[item.itemIndex] || null
             return itemRef && e.composedPath().includes(itemRef)
@@ -144,12 +144,16 @@ const Messages: FC = () => {
           menuRef.current &&
           !e.composedPath().includes(menuRef.current)
         ) {
-          setOnOpenMenu(null)
+          onOpenMenu.current = null
         }
       }
     },
-    [entryItems],
+    [entryItems, onOpenMenu.current],
   )
+
+  const onCloseMenu = () => {
+    onOpenMenu.current = null
+  }
 
   const getMenuRef = (el: HTMLUListElement | null) => {
     el ? (menuRef.current = el) : (menuRef.current = null)
@@ -196,7 +200,7 @@ const Messages: FC = () => {
       messageBodyRef.current?.addEventListener('click', onClickMessage)
     }
     return () => {
-      setOnOpenMenu(null)
+      onCloseMenu()
       messageBodyRef.current?.removeEventListener('click', onClickMessage)
     }
   }, [onClickMessage, selectedMessages])
@@ -206,12 +210,12 @@ const Messages: FC = () => {
       ref={messageBodyRef}
       className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-neutral-200 p-3`}
     >
-      {onOpenMenu &&
+      {onOpenMenu.current &&
         (selectedMessages?.length === 0 || selectedMessages === null) && (
           <MenuList
-            item={onOpenMenu}
+            item={onOpenMenu.current}
             clickPoint={clickPoint}
-            setOnOpenMenu={setOnOpenMenu}
+            onCloseMenu={onCloseMenu}
             getMenuRef={getMenuRef}
             isJoined={isJoined}
             selectHandler={selectHandler}

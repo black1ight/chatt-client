@@ -23,7 +23,7 @@ interface IMenuListProps {
     x: number
     y: number
   } | null
-  setOnOpenMenu: (value: null) => void
+  onCloseMenu: () => void
   getMenuRef: (el: HTMLUListElement | null) => void
   isJoined: boolean | undefined
   selectHandler: (item: IResMessage) => void
@@ -32,7 +32,7 @@ interface IMenuListProps {
 const MenuList: FC<IMenuListProps> = ({
   item,
   clickPoint,
-  setOnOpenMenu,
+  onCloseMenu,
   getMenuRef,
   selectHandler,
 }) => {
@@ -85,9 +85,9 @@ const MenuList: FC<IMenuListProps> = ({
     } else if (elem === 'select') {
       selectHandler(item)
     } else if (elem === 'copy') {
-      copyItemText()
+      // copyItemText()
     }
-    setOnOpenMenu(null)
+    onCloseMenu()
   }
 
   useEffect(() => {
