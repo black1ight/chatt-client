@@ -12,6 +12,7 @@ import { useAuth } from '../hooks/useAuth'
 import Loader from '../components/Loader'
 import { iconColors } from '../components/sidebar/CreateForm'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa'
 
 const Auth: FC = () => {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ const Auth: FC = () => {
   const [isLogin, setIsLogin] = useState(true)
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
+  const [inputType, setinputType] = useState<'password' | 'text'>('password')
   const isAuth = useAuth()
 
   const getRandomColor = () => {
@@ -99,12 +101,22 @@ const Auth: FC = () => {
           type='text'
           onChange={onChangeEmail}
         />
-        <input
-          className='input'
-          placeholder='password'
-          type='password'
-          onChange={onChangePass}
-        />
+        <div className='relative'>
+          <input
+            className='input'
+            placeholder='password'
+            type={inputType}
+            onChange={onChangePass}
+          />
+          <span
+            onClick={() =>
+              setinputType(inputType === 'password' ? 'text' : 'password')
+            }
+            className={`absolute top-1/2 -translate-y-1/2 right-2 ${inputType === 'password' && 'opacity-50'} hover:opacity-100 cursor-pointer`}
+          >
+            {inputType === 'text' ? <FaRegEye /> : <FaRegEyeSlash />}
+          </span>
+        </div>
         <button className={`relative btn btn-grey`}>
           <span className={`${isLoading === 'success' && 'animate-bounce'}`}>
             Submit
