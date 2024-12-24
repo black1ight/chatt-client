@@ -6,7 +6,7 @@ export interface IUser {
   email: string
 }
 
-export interface IReply {
+export interface IActiveMessage {
   text: string
   user: IUser
 }
@@ -20,7 +20,7 @@ export interface IResMessage {
   updatedAt: Date
   userId: number
   roomId: number
-  reply: IReply
+  reply: IActiveMessage
   user: IUser
 }
 
@@ -33,7 +33,7 @@ export interface messengerState {
   unreadDialogs: number | null
   unreadMessages: IResMessage[]
   messagesRefs: refObject[] | null
-  replyMessage: IReply | null
+  activeMessage: IActiveMessage | null
   selectedMessages: IResMessage[] | null
 }
 
@@ -41,7 +41,7 @@ const initialState: messengerState = {
   unreadDialogs: null,
   unreadMessages: [],
   messagesRefs: null,
-  replyMessage: null,
+  activeMessage: null,
   selectedMessages: null,
 }
 
@@ -49,8 +49,8 @@ export const messengerSlice = createSlice({
   name: 'messenger',
   initialState,
   reducers: {
-    addReplayMessage: (state, action: PayloadAction<IReply | null>) => {
-      state.replyMessage = action.payload
+    addActiveMessage: (state, action: PayloadAction<IActiveMessage | null>) => {
+      state.activeMessage = action.payload
     },
     addUnreadDialogs: (state, action: PayloadAction<number | null>) => {
       state.unreadDialogs = action.payload
@@ -101,7 +101,7 @@ export const messengerSlice = createSlice({
 })
 
 export const {
-  addReplayMessage,
+  addActiveMessage,
   addUnreadDialogs,
   addUnreadMessages,
   removeUnreadMessages,

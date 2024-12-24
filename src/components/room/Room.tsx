@@ -1,6 +1,5 @@
 import { FC, useEffect, useRef } from 'react'
 import Messages from '../Messages'
-import Reply from '../Reply'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import Form from '../Form'
 import { checkSubscribe } from './RoomProfile'
@@ -10,14 +9,14 @@ import db from '../../helpers/db'
 import { IResRoom } from '../../types/types'
 import SelectedMenu from './SelectedMenu'
 import { addActiveRoom } from '../../store/rooms/roomsSlice'
+import ActiveMessage from '../ActiveMessage'
 
 const Room: FC = () => {
   const dispatch = useAppDispatch()
   const roomRef = useRef<HTMLDivElement | null>(null)
-  const { replyMessage, selectedMessages } = useAppSelector(
+  const { activeMessage, selectedMessages } = useAppSelector(
     (state) => state.messenger,
   )
-  const { replyId } = useAppSelector((state) => state.form)
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const { user } = useAppSelector((state) => state.user)
 
@@ -26,15 +25,15 @@ const Room: FC = () => {
     return data
   }, [])
 
-  useEffect(() => {
-    // return () => {
-    //   if (activeRoom?.isTemp) {
-    //     const userId =
-    //       activeRoom.users.find((el) => el.id !== user?.id)?.id || 0
-    //     db.table('users').delete(userId)
-    //   }
-    // }
-  }, [replyId, activeRoom])
+  // useEffect(() => {
+  //   // return () => {
+  //   //   if (activeRoom?.isTemp) {
+  //   //     const userId =
+  //   //       activeRoom.users.find((el) => el.id !== user?.id)?.id || 0
+  //   //     db.table('users').delete(userId)
+  //   //   }
+  //   // }
+  // }, [activeMessage, activeRoom])
 
   const isSubscribe = activeRoom ? checkSubscribe(activeRoom, user!.id) : null
 
@@ -45,9 +44,9 @@ const Room: FC = () => {
   return (
     <div ref={roomRef} className={`flex-grow overflow-hidden flex flex-col `}>
       <Messages />
-      {(replyId || replyMessage) && roomRef.current && (
+      {activeMessage && roomRef.current && (
         <div className='bg-slate-100 w-full border-t'>
-          <Reply roomRef={roomRef.current} />
+          <ActiveMessage roomRef={roomRef.current} />
         </div>
       )}
       {isSubscribe && !selectedMessages ? (

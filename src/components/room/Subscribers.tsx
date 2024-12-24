@@ -27,19 +27,19 @@ const Subscribers: FC<SubscribersProps> = (props) => {
     if (addSubRef.current && !e.composedPath().includes(addSubRef.current)) {
       if (openSubscribers) {
         setOpenSubscribers(false)
-        setOpenSearch(false)
       } else {
         setOpenSubscribers(true)
       }
     }
   }
 
+  console.log(openSubscribers)
   useEffect(() => {
     subRef.current?.addEventListener('click', subscribersHandler)
     return () => {
       subRef.current?.removeEventListener('click', subscribersHandler)
     }
-  }, [])
+  }, [openSubscribers])
 
   return (
     <div>

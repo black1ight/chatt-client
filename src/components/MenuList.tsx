@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import SocketApi from '../api/socket-api'
 import { addEditId, addOnWrite, onReply } from '../store/form/formSlice'
 import {
-  addReplayMessage,
+  addActiveMessage,
   IResMessage,
 } from '../store/messenger/messengerSlice'
 import { MdDelete, MdEdit, MdOutlineReply } from 'react-icons/md'
@@ -62,16 +62,15 @@ const MenuList: FC<IMenuListProps> = ({
 
   const menuItemHandler = (elem: string) => {
     if (elem === 'edit') {
-      item.reply &&
-        dispatch(
-          addReplayMessage({
-            text: item.reply.text,
-            user: {
-              email: item.reply.user.email,
-              username: item.reply.user.username,
-            },
-          }),
-        )
+      dispatch(
+        addActiveMessage({
+          text: item.text,
+          user: {
+            email: item.user.email,
+            username: item.user.username,
+          },
+        }),
+      )
 
       dispatch(addText(item.text))
       dispatch(addOnWrite(true))
@@ -82,6 +81,15 @@ const MenuList: FC<IMenuListProps> = ({
       dispatch(removeText())
     } else if (elem === 'reply') {
       dispatch(onReply(item.id))
+      dispatch(
+        addActiveMessage({
+          text: item.text,
+          user: {
+            email: item.user.email,
+            username: item.user.username,
+          },
+        }),
+      )
     } else if (elem === 'select') {
       selectHandler(item)
     } else if (elem === 'copy') {

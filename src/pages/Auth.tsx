@@ -114,7 +114,11 @@ const Auth: FC = () => {
             }
             className={`absolute top-1/2 -translate-y-1/2 right-2 ${inputType === 'password' && 'opacity-50'} hover:opacity-100 cursor-pointer`}
           >
-            {inputType === 'text' ? <FaRegEye /> : <FaRegEyeSlash />}
+            {inputType === 'text' && password ? (
+              <FaRegEye size={20} />
+            ) : (
+              password && <FaRegEyeSlash size={20} />
+            )}
           </span>
         </div>
         <button className={`relative btn btn-grey`}>

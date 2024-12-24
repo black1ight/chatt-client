@@ -5,7 +5,7 @@ import { addEditId, onReply } from '../store/form/formSlice'
 import SocketApi from '../api/socket-api'
 import { changeIsLoading } from '../store/helpers/helpersSlice'
 import {
-  addReplayMessage,
+  addActiveMessage,
   IResMessage,
 } from '../store/messenger/messengerSlice'
 import TextArea from './TextArea'
@@ -30,7 +30,7 @@ const Form: FC = () => {
       roomId: activeRoom?.id,
       userId: user?.id,
     })
-    dispatch(addReplayMessage(null))
+    dispatch(addActiveMessage(null))
     dispatch(onReply(null))
     dispatch(removeText())
     dispatch(addEditId(null))
@@ -101,7 +101,7 @@ const Form: FC = () => {
         SocketApi.socket?.emit('new-message', newMessageDto)
       }
 
-      dispatch(addReplayMessage(null))
+      dispatch(addActiveMessage(null))
       dispatch(onReply(null))
       dispatch(removeText())
     }

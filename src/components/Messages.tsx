@@ -216,7 +216,7 @@ const Messages: FC = () => {
   return (
     <div
       ref={messageBodyRef}
-      className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-neutral-200 p-3`}
+      className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-stone-100 p-3`}
     >
       {onOpenMenu.current &&
         (selectedMessages?.length === 0 || selectedMessages === null) && (
