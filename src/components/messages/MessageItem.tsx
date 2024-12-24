@@ -2,7 +2,7 @@ import { FC, useCallback, useEffect, useRef } from 'react'
 import {
   addRef,
   addUnreadMessages,
-  IReply,
+  IActiveMessage,
   IResMessage,
   removeRef,
 } from '../../store/messenger/messengerSlice'
@@ -18,7 +18,7 @@ import UserLabel from '../user/UserLabel'
 
 export interface MessageItemProps {
   author: boolean
-  reply: IReply
+  reply: IActiveMessage
   unread: boolean
   item: IResMessage
   itemIndex: number
