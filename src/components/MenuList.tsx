@@ -68,6 +68,7 @@ const MenuList: FC<IMenuListProps> = ({
           user: {
             email: item.user.email,
             username: item.user.username,
+            color: item.user.color,
           },
         }),
       )
@@ -87,6 +88,7 @@ const MenuList: FC<IMenuListProps> = ({
           user: {
             email: item.user.email,
             username: item.user.username,
+            color: item.user.color,
           },
         }),
       )
