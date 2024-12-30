@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import Messages from '../Messages'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
 import Form from '../Form'
@@ -10,10 +10,14 @@ import { IResRoom } from '../../types/types'
 import SelectedMenu from './SelectedMenu'
 import { addActiveRoom } from '../../store/rooms/roomsSlice'
 import ActiveMessage from '../ActiveMessage'
+import ScrollBtn from '../messages/ScrollBtn'
 
 const Room: FC = () => {
   const dispatch = useAppDispatch()
   const roomRef = useRef<HTMLDivElement | null>(null)
+  const [onScroll, setOnScroll] = useState(false)
+  const [showBtn, setShowBtn] = useState(false)
+
   const { activeMessage, selectedMessages } = useAppSelector(
     (state) => state.messenger,
   )
@@ -42,10 +46,20 @@ const Room: FC = () => {
   }, [room])
 
   return (
-    <div ref={roomRef} className={`flex-grow overflow-hidden flex flex-col `}>
-      <Messages />
+    <div
+      ref={roomRef}
+      className={`relative flex-grow overflow-hidden flex flex-col `}
+    >
+      <ScrollBtn setOnScroll={setOnScroll} showBtn={showBtn} />
+
+      <Messages
+        onScroll={onScroll}
+        setOnScroll={setOnScroll}
+        showBtn={showBtn}
+        setShowBtn={setShowBtn}
+      />
       {activeMessage && roomRef.current && (
-        <div className='bg-slate-100 w-full border-t'>
+        <div className='bg-white w-full border-t'>
           <ActiveMessage roomRef={roomRef.current} />
         </div>
       )}

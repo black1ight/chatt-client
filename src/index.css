@@ -23,6 +23,10 @@
   .container {
     @apply w-full max-w-[1000px];
   }
+
+  .bg-mask {
+    @apply after:absolute after:w-full after:h-full after:rounded after:top-0 after:left-0 after:bg-stone-900/5;
+  }
 }
 
 @layer utilities {

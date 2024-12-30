@@ -4,6 +4,10 @@ export interface IUser {
   id?: number
   username?: string
   email: string
+  color: {
+    first: string
+    second: string
+  }
 }
 
 export interface IActiveMessage {
@@ -32,6 +36,7 @@ type refObject = {
 export interface messengerState {
   unreadDialogs: number | null
   unreadMessages: IResMessage[]
+  unreadMessagesCount: number | null
   messagesRefs: refObject[] | null
   activeMessage: IActiveMessage | null
   selectedMessages: IResMessage[] | null
@@ -40,6 +45,7 @@ export interface messengerState {
 const initialState: messengerState = {
   unreadDialogs: null,
   unreadMessages: [],
+  unreadMessagesCount: null,
   messagesRefs: null,
   activeMessage: null,
   selectedMessages: null,
@@ -88,6 +94,9 @@ export const messengerSlice = createSlice({
         state.unreadMessages?.push(action.payload)
       }
     },
+    addUnreadMessagesCount: (state, action: PayloadAction<number | null>) => {
+      state.unreadMessagesCount = action.payload
+    },
     removeUnreadMessages: (state) => {
       state.unreadMessages = []
     },
@@ -104,6 +113,7 @@ export const {
   addActiveMessage,
   addUnreadDialogs,
   addUnreadMessages,
+  addUnreadMessagesCount,
   removeUnreadMessages,
   addRef,
   removeRef,

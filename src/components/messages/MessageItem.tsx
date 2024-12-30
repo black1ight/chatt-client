@@ -158,18 +158,18 @@ const MessageItem: FC<MessageItemProps> = (props) => {
         )}
         <div
           ref={(el) => setRef(el, itemIndex)}
-          className={`flex relative flex-col text-white' ${author ? 'bg-message_bg_author' : 'bg-message_bg'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} p-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} shadow-md group`}
+          className={`flex relative flex-col text-white' ${author ? 'bg-message_bg_author' : 'bg-neutral-100'} ${author && 'ml-auto'} rounded-md ${author ? 'rounded-l-xl' : 'rounded-r-xl'} ${isFirst && author && 'rounded-tr-2xl'} ${isFirst && !author && 'rounded-tl-2xl'} p-2 ${activeRoom?.type === 'chat' && !author && 'pt-1'} ${isLast && author && 'rounded-br-none'} ${isLast && !author && 'rounded-bl-none'} group bg-mask overflow-hidden`}
         >
           <div className='flex gap-4 justify-between'>
             {!author && activeRoom?.type === 'chat' && (
-              <span className={`text-message_username`}>
+              <span style={{ color: item?.user.color.second }} className={``}>
                 {item.user?.email.split('@')[0]}
               </span>
             )}
           </div>
           {reply && (
             <div
-              className={`relative ${author ? 'bg-reply_bg_author/10' : 'bg-reply_bg'} px-2 rounded-md ${isFirst && author && 'rounded-tr-xl'} ${isFirst && !author && 'rounded-tl-xl'} text-sm before:content-[''] before:w-[3px] before:h-full ${author ? 'before:bg-reply_border_author/50' : 'before:bg-reply_border'} before:absolute before:left-0 before:z-100 overflow-hidden mb-1`}
+              className={`relative ${author ? 'bg-reply_bg_author/10' : 'bg-neutral-200'} px-2 rounded-md ${isFirst && author && 'rounded-tr-xl'} ${isFirst && !author && 'rounded-tl-xl'} text-sm before:content-[''] before:w-[3px] before:h-full ${author ? 'before:bg-reply_border_author/50' : 'before:bg-reply_border'} before:absolute before:left-0 before:z-100 overflow-hidden mb-1`}
             >
               <span
                 className={`${author ? 'text-reply_username_author/60' : 'text-reply_username'}`}
@@ -244,9 +244,9 @@ const MessageItem: FC<MessageItemProps> = (props) => {
             )}
           </span>
           {/* decore (rectangle) */}
-          <span
-            className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-message_bg_author' : 'border-message_bg'} ${!isLast && 'hidden'}`}
-          ></span>
+          {/* <span
+            className={`absolute bottom-0 ${author ? '-right-1' : '-left-1'} w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[16px] ${author ? 'border-message_bg_author' : 'border-neutral-100'} ${!isLast && 'hidden'}`}
+          ></span> */}
         </div>
       </div>
       {selectedMessages && selectedMessages?.length > 0 && (

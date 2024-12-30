@@ -2,6 +2,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import {
   addSelectedMessages,
+  addUnreadMessagesCount,
   IResMessage,
   removeUnreadMessages,
 } from '../store/messenger/messengerSlice'
@@ -24,6 +25,13 @@ export const scrollToBottom = (ref: HTMLDivElement) => {
   }
 }
 
+interface MessageProps {
+  onScroll: boolean
+  showBtn: boolean
+  setOnScroll: (value: boolean) => void
+  setShowBtn: (value: boolean) => void
+}
+
 interface ClickPointData {
   scrollHeight: number
   scrollTop: number
@@ -32,7 +40,12 @@ interface ClickPointData {
   y: number
 }
 
-const Messages: FC = () => {
+const Messages: FC<MessageProps> = ({
+  onScroll,
+  showBtn,
+  setOnScroll,
+  setShowBtn,
+}) => {
   const dispatch = useAppDispatch()
   const { activeRoom } = useAppSelector((state) => state.rooms)
   const entryItems = useAppSelector((state) => state.messenger.messagesRefs)
@@ -45,6 +58,7 @@ const Messages: FC = () => {
   const onOpenMenu = useRef<IResMessage | null>(null)
   const [clickPoint, setClickPoint] = useState<ClickPointData | null>(null)
   const [update, setUpdate] = useState(false)
+  const [onLoad, setOnLoad] = useState(false)
 
   const messageBodyRef = useRef<HTMLDivElement>(null)
 
@@ -185,8 +199,22 @@ const Messages: FC = () => {
 
   // SCROLL TO BOTTOM CHAT ===========================================================
   useEffect(() => {
-    messageBodyRef.current && scrollToBottom(messageBodyRef.current)
-  }, [messages, replyId, areaHeight, messageBodyRef.current?.scrollHeight])
+    if (showBtn && onScroll) {
+      messageBodyRef.current && scrollToBottom(messageBodyRef.current)
+      setOnScroll(false)
+      // setShowBtn(false)
+    }
+    if (!showBtn) {
+      messageBodyRef.current && scrollToBottom(messageBodyRef.current)
+      setTimeout(() => setOnLoad(true), 50)
+    }
+  }, [
+    messages,
+    replyId,
+    areaHeight,
+    messageBodyRef.current?.scrollHeight,
+    onScroll,
+  ])
 
   // UNSUBSCRIBE CHAT MESSAGES =======================================================
   useEffect(() => {
@@ -213,10 +241,41 @@ const Messages: FC = () => {
     }
   }, [onClickMessage, selectedMessages])
 
+  // TRIGGER FOR SCROLL-BUTTON ===========================================================
+  useEffect(() => {
+    const current = messageBodyRef.current
+    if (
+      current &&
+      current.scrollTop > current?.scrollHeight - (current?.clientHeight + 100)
+    ) {
+      setShowBtn(false)
+    }
+    if (
+      onLoad &&
+      !showBtn &&
+      current &&
+      current.scrollTop <= current?.scrollHeight - (current?.clientHeight + 100)
+    ) {
+      setShowBtn(true)
+    }
+  }, [messageBodyRef.current?.scrollTop])
+
+  // GET NEW-MESSAGES COUNT ===============================================================
+  useEffect(() => {
+    const newMessages = messages?.filter(
+      (item) => item.readUsers.indexOf(user?.id!) == -1,
+    )
+    if (newMessages && newMessages?.length > 0) {
+      dispatch(addUnreadMessagesCount(newMessages.length))
+    } else {
+      dispatch(addUnreadMessagesCount(null))
+    }
+  }, [messages])
+
   return (
     <div
       ref={messageBodyRef}
-      className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-stone-100 p-3`}
+      className={`relative flex flex-grow-[3] w-full overflow-y-auto bg-white p-3`}
     >
       {onOpenMenu.current &&
         (selectedMessages?.length === 0 || selectedMessages === null) && (
